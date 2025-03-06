@@ -61,7 +61,7 @@ export default function PromotePage() {
               Minimum duration is 3 days.
             </small>
           </Label>
-          <div className="w-full max-w-md">
+          <div className="w-full flex justify-center">
             <Calendar
               mode="range"
               selected={promotionPeriod}
