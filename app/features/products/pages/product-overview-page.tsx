@@ -7,7 +7,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
   ];
 };
 
-export function ProductOverviewPage({
+export default function ProductOverviewPage({
   params: { productId },
 }: Route.ComponentProps) {
   return (
