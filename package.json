@@ -6,7 +6,9 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",
@@ -51,7 +53,12 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.30.5",
+    "drizzle-orm": "^0.40.0",
+    "i": "^0.3.7",
+    "npm": "^11.2.0",
     "postcss": "^8.5.3",
+    "postgres": "^3.4.5",
     "react-router-devtools": "^1.1.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.14",

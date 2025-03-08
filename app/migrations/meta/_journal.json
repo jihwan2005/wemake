@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1741421258498,
+      "tag": "0000_ordinary_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741421398932,
+      "tag": "0001_quick_banshee",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741421439097,
+      "tag": "0002_confused_chamber",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1741421545107,
+      "tag": "0003_nosy_sunset_bain",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1741421601580,
+      "tag": "0004_nifty_khan",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1741421669691,
+      "tag": "0005_vengeful_the_liberteens",
+      "breakpoints": true
+    }
+  ]
+}
