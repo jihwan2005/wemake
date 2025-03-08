@@ -38,6 +38,7 @@ export default function ProductOverviewLayout() {
       </div>
       <div className="flex gap-2.5">
         <NavLink
+          end
           to={`/products/1/overview`}
           className={({ isActive }) =>
             cn([

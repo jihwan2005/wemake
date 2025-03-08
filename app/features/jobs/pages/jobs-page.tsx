@@ -8,24 +8,23 @@ import { cn } from "~/lib/utils";
 
 export const meta: Route.MetaFunction = () => {
   return [
-    { title: "Jobs | WeMake" },
-    { name: "description", content: "Find the best jobs" },
+    { title: "Jobs | wemake" },
+    { name: "description", content: "Find your dream job at wemake" },
   ];
 };
 
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const onFilerClick = (key: string, value: string) => {
+  const onFilterClick = (key: string, value: string) => {
     searchParams.set(key, value);
     setSearchParams(searchParams);
   };
-
   return (
     <div className="space-y-20">
-      <Hero title="Jobs" subtitle="Find the best jobs" />
-      <div className="grid grid-cols-6 gap-20 items-start">
-        <div className="grid grid-cols-3 col-span-4 gap-5">
-          {Array.from({ length: 11 }).map((_, index) => (
+      <Hero title="Jobs" subtitle="Companies looking for makers" />
+      <div className="grid grid-cols-1 xl:grid-cols-6 gap-20 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:col-span-4 gap-5">
+          {Array.from({ length: 20 }).map((_, index) => (
             <JobCard
               key={`jobId-${index}`}
               id={`jobId-${index}`}
@@ -40,57 +39,57 @@ export default function JobsPage() {
             />
           ))}
         </div>
-        <div className="col-span-2 flex flex-col gap-10 sticky top-20">
-          <div className="flex flex-col gap-2.5 items-start">
+        <div className="xl:col-span-2 sticky top-20 flex flex-col gap-10">
+          <div className="flex flex-col items-start gap-2.5">
             <h4 className="text-sm text-muted-foreground font-bold">Type</h4>
             <div className="flex flex-wrap gap-2">
-              {JOB_TYPES.map((jobType) => (
+              {JOB_TYPES.map((type) => (
                 <Button
-                  variant="outline"
-                  onClick={() => onFilerClick("type", jobType.value)}
+                  variant={"outline"}
+                  onClick={() => onFilterClick("type", type.value)}
                   className={cn(
-                    jobType.value === searchParams.get("type")
-                      ? "bg-accent"
-                      : ""
+                    type.value === searchParams.get("type") ? "bg-accent" : ""
                   )}
                 >
-                  {jobType.label}
+                  {type.label}
                 </Button>
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2.5 items-start">
+          <div className="flex flex-col items-start gap-2.5">
             <h4 className="text-sm text-muted-foreground font-bold">
               Location
             </h4>
             <div className="flex flex-wrap gap-2">
-              {LOCATION_TYPES.map((locationType) => (
+              {LOCATION_TYPES.map((type) => (
                 <Button
-                  variant="outline"
-                  onClick={() => onFilerClick("location", locationType.value)}
+                  variant={"outline"}
+                  onClick={() => onFilterClick("location", type.value)}
                   className={cn(
-                    locationType.value === searchParams.get("location")
+                    type.value === searchParams.get("location")
                       ? "bg-accent"
                       : ""
                   )}
                 >
-                  {locationType.label}
+                  {type.label}
                 </Button>
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2.5 items-start">
-            <h4 className="text-sm text-muted-foreground font-bold">Salary</h4>
+          <div className="flex flex-col items-start gap-2.5">
+            <h4 className="text-sm text-muted-foreground font-bold">
+              Salary Range
+            </h4>
             <div className="flex flex-wrap gap-2">
-              {SALARY_TYPES.map((salaryType) => (
+              {SALARY_TYPES.map((range) => (
                 <Button
-                  variant="outline"
-                  onClick={() => onFilerClick("salary", salaryType)}
+                  variant={"outline"}
+                  onClick={() => onFilterClick("salary", range)}
                   className={cn(
-                    salaryType === searchParams.get("salary") ? "bg-accent" : ""
+                    range === searchParams.get("salary") ? "bg-accent" : ""
                   )}
                 >
-                  {salaryType}
+                  {range}
                 </Button>
               ))}
             </div>

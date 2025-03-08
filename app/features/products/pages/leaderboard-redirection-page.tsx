@@ -1,6 +1,6 @@
 import { data, redirect } from "react-router";
-import type { Route } from "./+types/leaderboard-redirection-page";
 import { DateTime } from "luxon";
+import type { Route } from "./+types/leaderboard-redirection-page";
 
 export function loader({ params }: Route.LoaderArgs) {
   const { period } = params;
