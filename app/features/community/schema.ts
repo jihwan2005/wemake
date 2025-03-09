@@ -28,6 +28,7 @@ export const posts = pgTable("posts", {
   profile_id: uuid().references(() => profiles.profile_id, {
     onDelete: "cascade",
   }),
+  upvotes: bigint({ mode: "number" }).default(0),
 });
 
 export const postUpvotes = pgTable(

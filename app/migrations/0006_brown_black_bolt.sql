@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "upvotes" bigint DEFAULT 0;
