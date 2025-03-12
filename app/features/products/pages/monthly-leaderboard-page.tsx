@@ -6,6 +6,7 @@ import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 import type { Route } from "./+types/monthly-leaderboard-page";
+import { getProductsByDateRange, getProductPagesByDateRange } from "../queries";
 
 const paramsSchema = z.object({
   year: z.coerce.number(),
@@ -21,7 +22,7 @@ export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: `${title} | wmake` }];
 };
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
   if (!success) {
     throw data(
@@ -36,15 +37,20 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     year: parsedData.year,
     month: parsedData.month,
   }).setZone("Asia/Seoul");
-  const today = DateTime.now().setZone("Asia/Seoul").startOf("month");
+  const url = new URL(request.url);
 
-  if (!date.isValid || date > today) {
-    return {
-      year: today.year,
-      month: today.month,
-    };
-  }
+  const products = await getProductsByDateRange({
+    startDate: date.startOf("month"),
+    endDate: date.endOf("month"),
+    limit: 15,
+  });
+  const totalPages = await getProductPagesByDateRange({
+    startDate: date.startOf("month"),
+    endDate: date.endOf("month"),
+  });
   return {
+    products,
+    totalPages,
     ...parsedData,
   };
 };
@@ -57,9 +63,6 @@ export default function MonthlyLeaderboardPage({
     year: loaderData.year,
     month: loaderData.month,
   });
-  const previousMonth = urlDate.minus({ months: 1 });
-  const nextMonth = urlDate.plus({ months: 1 });
-  const isToday = urlDate.equals(today);
 
   const navigate = useNavigate();
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -136,46 +139,20 @@ export default function MonthlyLeaderboardPage({
         </select>
       </div>
 
-      <div className="flex items-center justify-center gap-2">
-        <Button variant="secondary" asChild>
-          <Link
-            to={`/products/leaderboards/monthly/${previousMonth.year}/${previousMonth.month}`}
-          >
-            &larr;{" "}
-            {previousMonth.toLocaleString({
-              month: "long",
-              year: "2-digit",
-            })}
-          </Link>
-        </Button>
-        {!isToday ? (
-          <Button variant="secondary" asChild>
-            <Link
-              to={`/products/leaderboards/monthly/${nextMonth.year}/${nextMonth.month}`}
-            >
-              {nextMonth.toLocaleString({
-                month: "long",
-                year: "2-digit",
-              })}{" "}
-              &rarr;
-            </Link>
-          </Button>
-        ) : null}
-      </div>
       <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={`productId-${index}`}
-            id={`productId-${index}`}
-            name="Product Name"
-            description="Product Description"
-            commentsCount={12}
-            viewsCount={12}
-            votesCount={120}
+            key={product.product_id}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewsCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
       </div>
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }

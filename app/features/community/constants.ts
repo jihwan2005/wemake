@@ -6,3 +6,5 @@ export const PERIOD_OPTIONS = [
   "month",
   "year",
 ] as const;
+
+export const PAGE_SIZE = 2;

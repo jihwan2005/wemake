@@ -1,6 +1,6 @@
 import { Hero } from "~/common/components/hero";
 import type { Route } from "./+types/community-page";
-import { Await, Form, Link, useSearchParams } from "react-router";
+import { data, Await, Form, Link, useSearchParams } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import {
   DropdownMenu,
@@ -16,15 +16,53 @@ import { PERIOD_OPTIONS, SORT_OPTIONS } from "../constants";
 import { PostCard } from "../components/post-card";
 import { getTopics, getPosts } from "../queries";
 import { Suspense } from "react";
+import { z } from "zod";
+import PostPagination from "~/common/components/post-pagination";
+import { getPostPages } from "../queries";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Community | wemake" }];
 };
 
-export const loader = async () => {
+const searchParamsSchema = z.object({
+  sorting: z.enum(["newest", "popular"]).optional().default("newest"),
+  period: z
+    .enum(["all", "today", "week", "month", "year"])
+    .optional()
+    .default("all"),
+  keyword: z.string().optional(),
+  topic: z.string().optional(),
+});
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const { success, data: parsedData } = searchParamsSchema.safeParse(
+    Object.fromEntries(url.searchParams)
+  );
+  if (!success) {
+    throw data(
+      {
+        error_code: "invalid_search_params",
+        message: "Invalid search params",
+      },
+      { status: 400 }
+    );
+  }
   const topics = await getTopics();
-  const posts = getPosts();
-  return { topics, posts };
+  const posts = getPosts({
+    limit: 7,
+    sorting: parsedData.sorting,
+    period: parsedData.period,
+    keyword: parsedData.keyword,
+    topic: parsedData.topic,
+    page: Number(url.searchParams.get("page") || 1),
+  });
+  const totalPages = await getPostPages({
+    period: parsedData.period,
+    keyword: parsedData.keyword,
+    topic: parsedData.topic,
+  });
+  return { topics, posts, totalPages };
 };
 
 export default function CommunityPage({ loaderData }: Route.ComponentProps) {
@@ -93,7 +131,7 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
               <Form className="w-2/3">
                 <Input
                   type="text"
-                  name="search"
+                  name="keyword"
                   placeholder="Search for discussions"
                 />
               </Form>
@@ -142,6 +180,7 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
           </div>
         </aside>
       </div>
+      <PostPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }

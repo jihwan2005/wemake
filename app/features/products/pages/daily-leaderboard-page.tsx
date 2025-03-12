@@ -7,6 +7,8 @@ import { ProductCard } from "../components/product-card";
 import { useNavigate } from "react-router";
 import ProductPagination from "~/common/components/product-pagination";
 import "react-datepicker/dist/react-datepicker.css";
+import { getProductsByDateRange, getProductPagesByDateRange } from "../queries";
+import { PAGE_SIZE } from "../constants";
 
 const paramsSchema = z.object({
   year: z.coerce.number(),
@@ -14,15 +16,17 @@ const paramsSchema = z.object({
   day: z.coerce.number(),
 });
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
   if (!success) {
     throw new Response("Invalid date", { status: 400 });
   }
 
-  const date = DateTime.fromObject(parsedData)
-    .setZone("Asia/Seoul")
-    .startOf("day");
+  const date = DateTime.fromObject({
+    year: parsedData.year,
+    month: parsedData.month,
+    day: parsedData.day,
+  }).setZone("Asia/Seoul");
 
   if (!date.isValid) {
     throw new Error("Invalid date");
@@ -31,8 +35,20 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   if (date > today) {
     throw new Error("Date is in the future");
   }
-
+  const url = new URL(request.url);
+  const products = await getProductsByDateRange({
+    startDate: date.startOf("day"),
+    endDate: date.endOf("day"),
+    limit: PAGE_SIZE,
+    page: Number(url.searchParams.get("page") || 1),
+  });
+  const totalPages = await getProductPagesByDateRange({
+    startDate: date.startOf("day"),
+    endDate: date.endOf("day"),
+  });
   return {
+    products,
+    totalPages,
     ...parsedData,
   };
 };
@@ -49,8 +65,13 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function DailyLeaderboardPage({
   loaderData,
 }: Route.ComponentProps) {
+  console.log(loaderData);
   const navigate = useNavigate();
-  const urlDate = DateTime.fromObject(loaderData);
+  const urlDate = DateTime.fromObject({
+    year: loaderData.year,
+    month: loaderData.month,
+    day: loaderData.day,
+  });
   const today = DateTime.now().setZone("Asia/Seoul").startOf("day");
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -152,20 +173,20 @@ export default function DailyLeaderboardPage({
       </div>
 
       <div className="space-y-5 w-full max-w-screen-md mx-auto pb-10">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={`productId-${index}`}
-            id={`productId-${index}`}
-            name="Product Name"
-            description="Product Description"
-            commentsCount={12}
-            viewsCount={12}
-            votesCount={120}
+            key={product.product_id}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewsCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
       </div>
 
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }
