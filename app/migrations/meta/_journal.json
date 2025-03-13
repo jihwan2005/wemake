@@ -57,6 +57,20 @@
       "when": 1741616471183,
       "tag": "0007_magical_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1741834837847,
+      "tag": "0008_typical_vector",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1741835000377,
+      "tag": "0009_yielding_magma",
+      "breakpoints": true
     }
   ]
 }

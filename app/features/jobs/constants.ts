@@ -45,3 +45,5 @@ export const SALARY_TYPES = [
   "$50,000 - $60,000",
   "$60,000 - $70,000",
 ] as const;
+
+export const PAGE_SIZE = 2;

@@ -14,9 +14,9 @@ import {
 import { Button } from "~/common/components/ui/button";
 
 interface TeamCardProps {
-  id: string;
+  id: number;
   leaderUsername: string;
-  leaderAvatarUrl: string;
+  leaderAvatarUrl: string | null;
   positions: string[];
   projectDescription: string;
 }
@@ -29,8 +29,8 @@ export function TeamCard({
   projectDescription,
 }: TeamCardProps) {
   return (
-    <Link to={`/teams/${id}`}>
-      <Card className="bg-transparent hover:bg-card/50 transition-colors">
+    <Link to={`/teams/${id}`} className="block">
+      <Card className="bg-transparent hover:bg-card/50 flex flex-col justify-between transition-color h-full">
         <CardHeader className="flex flex-row items-center">
           <CardTitle className="text-base leading-loose">
             <Badge
@@ -40,7 +40,7 @@ export function TeamCard({
               <span>@{leaderUsername}</span>
               <Avatar className="size-5">
                 <AvatarFallback>{leaderUsername[0]}</AvatarFallback>
-                <AvatarImage src={leaderAvatarUrl} />
+                {leaderAvatarUrl ? <AvatarImage src={leaderAvatarUrl} /> : null}
               </Avatar>
             </Badge>
             <span> is looking for </span>

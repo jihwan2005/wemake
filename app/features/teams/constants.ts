@@ -4,3 +4,5 @@ export const PRODUCT_STAGES = [
   { label: "MVP", value: "mvp" },
   { label: "Product", value: "product" },
 ];
+
+export const PAGE_SIZE = 2;
