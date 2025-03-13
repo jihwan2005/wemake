@@ -45,3 +45,22 @@ export const getTeamsPages = async ({ keyword }: { keyword?: string }) => {
   if (!count) return 1;
   return Math.ceil(count / PAGE_SIZE);
 };
+
+export const getTeamById = async (teamId: string) => {
+  const { data, error } = await client
+    .from("teams")
+    .select(
+      `
+      *,
+      team_leader:profiles!inner(
+        name,
+        avatar,
+        role
+      )
+      `
+    )
+    .eq("team_id", teamId)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};

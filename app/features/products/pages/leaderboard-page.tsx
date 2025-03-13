@@ -60,9 +60,9 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
         {loaderData.dailyProducts.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id.toString()}
+            id={product.product_id}
             name={product.name}
-            description={product.description}
+            description={product.tagline}
             reviewsCount={product.reviews}
             viewsCount={product.views}
             votesCount={product.upvotes}
@@ -86,9 +86,9 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
         {loaderData.weeklyProducts.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id.toString()}
+            id={product.product_id}
             name={product.name}
-            description={product.description}
+            description={product.tagline}
             reviewsCount={product.reviews}
             viewsCount={product.views}
             votesCount={product.upvotes}
@@ -112,9 +112,9 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
         {loaderData.monthlyProducts.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id.toString()}
+            id={product.product_id}
             name={product.name}
-            description={product.description}
+            description={product.tagline}
             reviewsCount={product.reviews}
             viewsCount={product.views}
             votesCount={product.upvotes}
@@ -138,9 +138,9 @@ export default function LeaderboardPage({ loaderData }: Route.ComponentProps) {
         {loaderData.yearlyProducts.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id.toString()}
+            id={product.product_id}
             name={product.name}
-            description={product.description}
+            description={product.tagline}
             reviewsCount={product.reviews}
             viewsCount={product.views}
             votesCount={product.upvotes}

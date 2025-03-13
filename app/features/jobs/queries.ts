@@ -86,3 +86,15 @@ export const getJobsPages = async ({
   if (!count) return 1;
   return Math.ceil(count / PAGE_SIZE);
 };
+
+export const getJobById = async (jobId: string) => {
+  const { data, error } = await client
+    .from("jobs")
+    .select("*")
+    .eq("job_id", jobId)
+    .single();
+  if (error) {
+    throw error;
+  }
+  return data;
+};

@@ -17,12 +17,18 @@ import {
 } from "~/common/components/ui/avatar";
 import { Badge } from "~/common/components/ui/badge";
 import { Reply } from "~/features/community/components/reply";
-
+import { getPostById } from "../queries";
+import { DateTime } from "luxon";
 export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: `${params.postId} | wemake` }];
 };
 
-export default function PostPage() {
+export async function loader({ params }: Route.LoaderArgs) {
+  const post = await getPostById(params.postId);
+  return { post };
+}
+
+export default function PostPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-10">
       <Breadcrumb>
@@ -35,15 +41,15 @@ export default function PostPage() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to="/community?topic=productivity">Productivity</Link>
+              <Link to={`/community?topic=${loaderData.post.topic_slug}`}>
+                {loaderData.post.topic_name}
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to="/community/postId">
-                What is the best productivity tool?
-              </Link>
+              <Link to={`/community/postId`}>{loaderData.post.title}</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
@@ -53,26 +59,22 @@ export default function PostPage() {
           <div className="flex w-full items-start gap-10">
             <Button variant="outline" className="flex flex-col h-14">
               <ChevronUpIcon className="size-4 shrink-0" />
-              <span>10</span>
+              <span>{loaderData.post.upvotes}</span>
             </Button>
             <div className="space-y-20">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold">
-                  What is the best productivity tool?
-                </h2>
+                <h2 className="text-3xl font-bold">{loaderData.post.title}</h2>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>@nico</span>
+                  <span>{loaderData.post.author_name}</span>
                   <DotIcon className="size-5" />
-                  <span>12 hours ago</span>
+                  <span>
+                    {DateTime.fromISO(loaderData.post.created_at).toRelative()}
+                  </span>
                   <DotIcon className="size-5" />
-                  <span>10 replies</span>
+                  <span>{loaderData.post.replies} replies</span>
                 </div>
                 <p className="text-muted-foreground w-3/4">
-                  Hello, I'm looking for a productivity tool that can help me
-                  manage my tasks and projects. Any recommendations? I have
-                  tried Notion, but it's not what I'm looking for. I dream of a
-                  tool that can help me manage my tasks and projects. Any
-                  recommendations?
+                  {loaderData.post.content}
                 </p>
               </div>
               <Form className="flex items-start gap-5 w-3/4">
@@ -90,7 +92,9 @@ export default function PostPage() {
                 </div>
               </Form>
               <div className="space-y-10">
-                <h4 className="font-semibold">10 Replies</h4>
+                <h4 className="font-semibold">
+                  {loaderData.post.replies} Replies
+                </h4>
                 <div className="flex flex-col gap-5">
                   <Reply
                     username="Nicolas"
@@ -107,17 +111,26 @@ export default function PostPage() {
         <aside className="col-span-2 space-y-5 border rounded-lg p-6 shadow-sm">
           <div className="flex gap-5">
             <Avatar className="size-14">
-              <AvatarFallback>N</AvatarFallback>
-              <AvatarImage src="https://github.com/serranoarevalo.png" />
+              <AvatarFallback>{loaderData.post.author_name[0]}</AvatarFallback>
+              {loaderData.post.author_avatar ? (
+                <AvatarImage src={loaderData.post.author_avatar} />
+              ) : null}
             </Avatar>
-            <div className="flex flex-col">
-              <h4 className="text-lg font-medium">Nicolas</h4>
-              <Badge variant="secondary">Entrepreneur</Badge>
+            <div className="flex flex-col items-start">
+              <h4 className="text-lg font-medium">
+                {loaderData.post.author_name}
+              </h4>
+              <Badge variant="secondary" className="capitalize">
+                {loaderData.post.author_role}
+              </Badge>
             </div>
           </div>
           <div className="gap-2 text-sm flex flex-col">
-            <span>🎂 Joined 3 months ago</span>
-            <span>🚀 Launched 10 products</span>
+            <span>
+              🎂 Joined{" "}
+              {DateTime.fromISO(loaderData.post.author_created_at).toRelative()}
+            </span>
+            <span>🚀 Launched {loaderData.post.products} products</span>
           </div>
           <Button variant="outline" className="w-full">
             Follow

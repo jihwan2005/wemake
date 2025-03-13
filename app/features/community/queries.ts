@@ -100,3 +100,14 @@ export const getPostPages = async ({
   if (!count) return 1;
   return Math.ceil(count / PAGE_SIZE);
 };
+
+export const getPostById = async (postId: string) => {
+  const { data, error } = await client
+    .from("community_post_detail")
+    .select("*")
+    .eq("post_id", postId)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};
+

@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import {
   Card,
   CardDescription,
@@ -8,7 +8,7 @@ import {
 } from "~/common/components/ui/card";
 
 interface CategoryCardProps {
-  id: string;
+  id: number;
   name: string;
   description: string;
 }
