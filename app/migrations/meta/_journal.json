@@ -71,6 +71,13 @@
       "when": 1741835000377,
       "tag": "0009_yielding_magma",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1741952309718,
+      "tag": "0010_bored_molten_man",
+      "breakpoints": true
     }
   ]
 }

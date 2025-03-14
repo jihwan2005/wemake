@@ -28,11 +28,11 @@ const chartData = [
 const chartConfig = {
   views: {
     label: "Page Views",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
   visitors: {
     label: "Visitors",
-    color: "hsl(var(--chart-3))",
+    color: "var(--chart-3)",
   },
 } satisfies ChartConfig;
 

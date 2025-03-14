@@ -27,7 +27,7 @@ const chartData = [
 const chartConfig = {
   views: {
     label: "👁️",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
