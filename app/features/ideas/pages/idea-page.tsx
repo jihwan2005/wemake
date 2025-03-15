@@ -5,7 +5,7 @@ import { DotIcon } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import { getGptIdea } from "../queries";
 import { DateTime } from "luxon";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = ({
   data: {
     idea: { gpt_idea_id },
@@ -17,8 +17,9 @@ export const meta: Route.MetaFunction = ({
   ];
 };
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-  const idea = await getGptIdea(params.ideaId);
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const idea = await getGptIdea(client, { ideaId: params.ideaId });
   return { idea };
 };
 

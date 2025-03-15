@@ -1,15 +1,19 @@
-import client from "~/supa-client";
 import { PAGE_SIZE } from "./constants";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "~/supa-client";
 
-export const getGptIdeas = async ({
-  limit,
-  keyword,
-  page = 1,
-}: {
-  limit: number;
-  keyword?: string;
-  page?: number;
-}) => {
+export const getGptIdeas = async (
+  client: SupabaseClient<Database>,
+  {
+    limit,
+    keyword,
+    page = 1,
+  }: {
+    limit: number;
+    keyword?: string;
+    page?: number;
+  }
+) => {
   const baseQuery = client
     .from("gpt_ideas_view")
     .select(`*`)
@@ -23,11 +27,14 @@ export const getGptIdeas = async ({
   return data;
 };
 
-export const getGptIdea = async (ideaId: string) => {
+export const getGptIdea = async (
+  client: SupabaseClient<Database>,
+  { ideaId }: { ideaId: string }
+) => {
   const { data, error } = await client
     .from("gpt_ideas_view")
     .select("*")
-    .eq("gpt_idea_id", ideaId)
+    .eq("gpt_idea_id", Number(ideaId))
     .single();
   if (error) {
     throw new Error(error.message);
@@ -35,7 +42,10 @@ export const getGptIdea = async (ideaId: string) => {
   return data;
 };
 
-export const getGptIdeaPages = async ({ keyword }: { keyword?: string }) => {
+export const getGptIdeaPages = async (
+  client: SupabaseClient<Database>,
+  { keyword }: { keyword?: string }
+) => {
   const baseQuery = client
     .from("gpt_ideas_view")
     .select(`*`, { count: "exact" });

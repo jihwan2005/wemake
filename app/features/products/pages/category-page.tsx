@@ -8,7 +8,7 @@ import {
   getCategoryPages,
 } from "../queries";
 import { z } from "zod";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = ({ params }) => {
   return [
     { title: `${params.category} | ProductHunt Clone` },
@@ -27,12 +27,17 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
   if (!success) {
     throw new Response("Invalid category", { status: 400 });
   }
-  const category = await getCategory(parsedData.category);
-  const products = await getProductsByCategory({
+  const { client } = makeSSRClient(request);
+  const category = await getCategory(client, {
+    categoryId: parsedData.category,
+  });
+  const products = await getProductsByCategory(client, {
     categoryId: parsedData.category,
     page: Number(page),
   });
-  const totalPages = await getCategoryPages(parsedData.category);
+  const totalPages = await getCategoryPages(client, {
+    categoryId: parsedData.category,
+  });
   return { products, category, totalPages };
 };
 

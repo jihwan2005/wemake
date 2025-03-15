@@ -19,7 +19,7 @@ import { Suspense } from "react";
 import { z } from "zod";
 import PostPagination from "~/common/components/post-pagination";
 import { getPostPages } from "../queries";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Community | wemake" }];
 };
@@ -48,8 +48,9 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const topics = await getTopics();
-  const posts = getPosts({
+  const { client } = makeSSRClient(request);
+  const topics = await getTopics(client);
+  const posts = getPosts(client, {
     limit: 7,
     sorting: parsedData.sorting,
     period: parsedData.period,
@@ -57,7 +58,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     topic: parsedData.topic,
     page: Number(url.searchParams.get("page") || 1),
   });
-  const totalPages = await getPostPages({
+  const totalPages = await getPostPages(client, {
     period: parsedData.period,
     keyword: parsedData.keyword,
     topic: parsedData.topic,

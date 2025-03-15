@@ -9,7 +9,7 @@ import ProductPagination from "~/common/components/product-pagination";
 import "react-datepicker/dist/react-datepicker.css";
 import { getProductsByDateRange, getProductPagesByDateRange } from "../queries";
 import { PAGE_SIZE } from "../constants";
-
+import { makeSSRClient } from "~/supa-client";
 const paramsSchema = z.object({
   year: z.coerce.number(),
   month: z.coerce.number(),
@@ -36,13 +36,14 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     throw new Error("Date is in the future");
   }
   const url = new URL(request.url);
-  const products = await getProductsByDateRange({
+  const { client } = makeSSRClient(request);
+  const products = await getProductsByDateRange(client, {
     startDate: date.startOf("day"),
     endDate: date.endOf("day"),
     limit: PAGE_SIZE,
     page: Number(url.searchParams.get("page") || 1),
   });
-  const totalPages = await getProductPagesByDateRange({
+  const totalPages = await getProductPagesByDateRange(client, {
     startDate: date.startOf("day"),
     endDate: date.endOf("day"),
   });

@@ -7,7 +7,7 @@ import { data, Form } from "react-router";
 import TeamPagination from "~/common/components/team-pagination";
 import { z } from "zod";
 import { getTeamsPages } from "../quries";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => [{ title: "Teams | wemake" }];
 
 const searchParamsSchema = z.object({
@@ -28,12 +28,13 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const teams = await getTeams({
+  const { client } = makeSSRClient(request);
+  const teams = await getTeams(client, {
     limit: 8,
     page: Number(url.searchParams.get("page") || 1),
     keyword: parsedData.keyword,
   });
-  const totalPages = await getTeamsPages({
+  const totalPages = await getTeamsPages(client, {
     keyword: parsedData.keyword,
   });
   return { teams, totalPages };

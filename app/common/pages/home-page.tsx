@@ -13,6 +13,7 @@ import { getPosts } from "~/features/community/queries";
 import { getGptIdeas } from "~/features/ideas/queries";
 import { getJobs } from "~/features/jobs/queries";
 import { getTeams } from "~/features/teams/quries";
+import { makeSSRClient } from "~/supa-client";
 export const meta: MetaFunction = () => {
   return [
     { title: "Home | wemake" },
@@ -20,19 +21,20 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
-  const products = await getProductsByDateRange({
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client, headers } = makeSSRClient(request);
+  const products = await getProductsByDateRange(client, {
     startDate: DateTime.now().startOf("day"),
     endDate: DateTime.now().endOf("day"),
     limit: 7,
   });
-  const posts = await getPosts({
+  const posts = await getPosts(client, {
     limit: 7,
     sorting: "newest",
   });
-  const ideas = await getGptIdeas({ limit: 7 });
-  const jobs = await getJobs({ limit: 11 });
-  const teams = await getTeams({ limit: 7 });
+  const ideas = await getGptIdeas(client, { limit: 7 });
+  const jobs = await getJobs(client, { limit: 11 });
+  const teams = await getTeams(client, { limit: 7 });
   return { products, posts, ideas, jobs, teams };
 };
 

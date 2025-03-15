@@ -2,7 +2,7 @@ import { Hero } from "~/common/components/hero";
 import { CategoryCard } from "~/features/products/components/category-card";
 import type { Route } from "./+types/categories-page";
 import { getCategories } from "../queries";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Categories | ProductHunt Clone" },
@@ -10,8 +10,9 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
-  const categories = await getCategories();
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const categories = await getCategories(client);
   return { categories };
 };
 

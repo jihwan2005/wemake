@@ -11,6 +11,7 @@ import { data } from "react-router";
 import JobPagination from "~/common/components/job-pagination";
 import { Input } from "~/common/components/ui/input";
 import { Form } from "react-router";
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Jobs | wemake" },
@@ -32,7 +33,8 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const jobs = await getJobs({
+  const { client } = makeSSRClient(request);
+  const jobs = await getJobs(client, {
     limit: 20,
     location: parsedData.location,
     type: parsedData.type,
@@ -40,7 +42,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     page: Number(url.searchParams.get("page") || 1),
     keyword: parsedData.keyword,
   });
-  const totalPages = await getJobsPages({
+  const totalPages = await getJobsPages(client, {
     location: parsedData.location,
     type: parsedData.type,
     salary: parsedData.salary,

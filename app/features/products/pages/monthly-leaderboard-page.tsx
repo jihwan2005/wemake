@@ -7,7 +7,7 @@ import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 import type { Route } from "./+types/monthly-leaderboard-page";
 import { getProductsByDateRange, getProductPagesByDateRange } from "../queries";
-
+import { makeSSRClient } from "~/supa-client";
 const paramsSchema = z.object({
   year: z.coerce.number(),
   month: z.coerce.number(),
@@ -38,13 +38,13 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
     month: parsedData.month,
   }).setZone("Asia/Seoul");
   const url = new URL(request.url);
-
-  const products = await getProductsByDateRange({
+  const { client } = makeSSRClient(request);
+  const products = await getProductsByDateRange(client, {
     startDate: date.startOf("month"),
     endDate: date.endOf("month"),
     limit: 15,
   });
-  const totalPages = await getProductPagesByDateRange({
+  const totalPages = await getProductPagesByDateRange(client, {
     startDate: date.startOf("month"),
     endDate: date.endOf("month"),
   });

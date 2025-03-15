@@ -1,16 +1,19 @@
-import client from "~/supa-client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { PAGE_SIZE } from "./constants";
-import { data } from "react-router";
+import type { Database } from "~/supa-client";
 
-export const getTeams = async ({
-  limit,
-  page = 1,
-  keyword,
-}: {
-  limit: number;
-  page?: number;
-  keyword?: string;
-}) => {
+export const getTeams = async (
+  client: SupabaseClient<Database>,
+  {
+    limit,
+    page = 1,
+    keyword,
+  }: {
+    limit: number;
+    page?: number;
+    keyword?: string;
+  }
+) => {
   const baseQuery = client
     .from("teams")
     .select(
@@ -34,7 +37,10 @@ export const getTeams = async ({
   return data;
 };
 
-export const getTeamsPages = async ({ keyword }: { keyword?: string }) => {
+export const getTeamsPages = async (
+  client: SupabaseClient<Database>,
+  { keyword }: { keyword?: string }
+) => {
   const baseQuery = client.from("teams").select("*", { count: "exact" });
   if (keyword) {
     baseQuery.ilike("roles", `%${keyword}%`);
@@ -46,7 +52,10 @@ export const getTeamsPages = async ({ keyword }: { keyword?: string }) => {
   return Math.ceil(count / PAGE_SIZE);
 };
 
-export const getTeamById = async (teamId: string) => {
+export const getTeamById = async (
+  client: SupabaseClient<Database>,
+  { teamId }: { teamId: string }
+) => {
   const { data, error } = await client
     .from("teams")
     .select(
@@ -59,7 +68,7 @@ export const getTeamById = async (teamId: string) => {
       )
       `
     )
-    .eq("team_id", teamId)
+    .eq("team_id", Number(teamId))
     .single();
   if (error) throw new Error(error.message);
   return data;

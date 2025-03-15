@@ -11,7 +11,7 @@ import {
 import { Separator } from "~/common/components/ui/separator";
 import { getJobById } from "../queries";
 import { DateTime } from "luxon";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Job | WeMake" },
@@ -19,8 +19,9 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
-  const job = await getJobById(params.jobId);
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const job = await getJobById(client, { jobId: params.jobId });
   return { job };
 };
 

@@ -6,7 +6,7 @@ import { Form, data } from "react-router";
 import { Input } from "~/common/components/ui/input";
 import { z } from "zod";
 import IdeaPagination from "~/common/components/idea-pagination";
-
+import { makeSSRClient } from "~/supa-client";
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "IdeasGPT | WeMake" },
@@ -32,12 +32,13 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const ideas = await getGptIdeas({
+  const { client } = makeSSRClient(request);
+  const ideas = await getGptIdeas(client, {
     limit: 7,
     keyword: parsedData.keyword,
     page: Number(url.searchParams.get("page") || 1),
   });
-  const totalPages = await getGptIdeaPages({
+  const totalPages = await getGptIdeaPages(client, {
     keyword: parsedData.keyword,
   });
   return { ideas, totalPages };
