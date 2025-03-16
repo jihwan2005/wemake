@@ -78,6 +78,13 @@
       "when": 1741952309718,
       "tag": "0010_bored_molten_man",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1742122093357,
+      "tag": "0011_boring_silver_samurai",
+      "breakpoints": true
     }
   ]
 }

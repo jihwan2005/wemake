@@ -57,3 +57,4 @@ export const getGptIdeaPages = async (
   if (!count) return 1;
   return Math.ceil(count / PAGE_SIZE);
 };
+

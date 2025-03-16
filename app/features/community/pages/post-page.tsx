@@ -21,6 +21,10 @@ import { getPostById, getReplies } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
+import { z } from "zod";
+import { useEffect, useRef, useState } from "react";
+import { createReply } from "../mutations";
+
 export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: `${params.postId} | wemake` }];
 };
@@ -35,15 +39,49 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 export const action = async ({ request, params }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
+  const formData = await request.formData();
+  const { success, error, data } = formSchema.safeParse(
+    Object.fromEntries(formData)
+  );
+  if (!success) {
+    return {
+      formErrors: error.flatten().fieldErrors,
+    };
+  }
+  const { reply, topLevelId } = data;
+  await createReply(client, {
+    postId: params.postId,
+    reply,
+    userId,
+    topLevelId,
+  });
+  return {
+    ok: true,
+  };
 };
 
-export default function PostPage({ loaderData }: Route.ComponentProps) {
+const formSchema = z.object({
+  reply: z.string().min(1),
+  topLevelId: z.coerce.number().optional(),
+});
+
+export default function PostPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const { isLoggedIn, name, username, avatar } = useOutletContext<{
     isLoggedIn: boolean;
     name?: string;
     username?: string;
     avatar?: string;
   }>();
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (actionData?.ok) {
+      formRef.current?.reset();
+    }
+  }, [actionData?.ok]);
+
   return (
     <div className="space-y-10">
       <Breadcrumb>
@@ -93,7 +131,11 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                 </p>
               </div>
               {isLoggedIn ? (
-                <Form className="flex items-start gap-5 w-3/4" method="post">
+                <Form
+                  ref={formRef}
+                  className="flex items-start gap-5 w-3/4"
+                  method="post"
+                >
                   <Avatar className="size-14">
                     <AvatarFallback>{name?.[0]}</AvatarFallback>
                     <AvatarImage src={avatar} />
@@ -116,12 +158,14 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                 <div className="flex flex-col gap-5">
                   {loaderData.replies.map((reply) => (
                     <Reply
-                      username={reply.user.name}
+                      name={reply.user.name}
+                      username={reply.user.username}
                       avatarUrl={reply.user.avatar}
                       content={reply.reply}
                       timestamp={reply.created_at}
                       topLevel={true}
                       replies={reply.post_replies}
+                      topLevelId={reply.post_reply_id}
                     />
                   ))}
                 </div>
