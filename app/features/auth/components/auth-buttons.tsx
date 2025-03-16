@@ -2,6 +2,7 @@ import { GithubIcon, LockIcon, MessageCircleIcon } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { Separator } from "~/common/components/ui/separator";
+import { GoogleIcon } from "./googleicon";
 
 export default function AuthButtons() {
   return (
@@ -24,6 +25,12 @@ export default function AuthButtons() {
           <Link to="/auth/social/github/start">
             <GithubIcon className="w-4 h-4" />
             Github
+          </Link>
+        </Button>
+        <Button variant="outline" className="w-full" asChild>
+          <Link to="/auth/social/google/start">
+            <GoogleIcon className="w-4 h-4" />
+            Google
           </Link>
         </Button>
         <Button variant="outline" className="w-full" asChild>

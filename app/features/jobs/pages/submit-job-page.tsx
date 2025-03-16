@@ -1,10 +1,14 @@
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import type { Route } from "./+types/submit-job-page";
 import { Hero } from "~/common/components/hero";
 import InputPair from "~/common/components/input-pair";
 import SelectPair from "~/common/components/select-pair";
 import { JOB_TYPES, LOCATION_TYPES, SALARY_TYPES } from "../constants";
 import { Button } from "~/common/components/ui/button";
+import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
+import { z } from "zod";
+import { createJob } from "../mutations";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -13,11 +17,58 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function SubmitJobPage() {
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  await getLoggedInUserId(client);
+};
+
+export const formSchema = z.object({
+  position: z.string().min(1).max(40),
+  overview: z.string().min(1).max(400),
+  responsibilities: z.string().min(1).max(400),
+  qualifications: z.string().min(1).max(400),
+  benefits: z.string().min(1).max(400),
+  skills: z.string().min(1).max(400),
+  companyName: z.string().min(1).max(40),
+  companyLogoUrl: z.string().min(1).max(40),
+  companyLocation: z.string().min(1).max(40),
+  applyUrl: z.string().min(1).max(40),
+  jobType: z.enum(
+    JOB_TYPES.map((jobType) => jobType.value) as [string, ...string[]]
+  ),
+  jobLocation: z.enum(
+    LOCATION_TYPES.map((jobLocation) => jobLocation.value) as [
+      string,
+      ...string[]
+    ]
+  ),
+  salary: z.enum(SALARY_TYPES),
+});
+
+export const action = async ({ request }: Route.ActionArgs) => {
+  const { client } = makeSSRClient(request);
+  await getLoggedInUserId(client);
+  const formData = await request.formData();
+  const { success, data, error } = formSchema.safeParse(
+    Object.fromEntries(formData)
+  );
+  if (!success) {
+    return {
+      fieldErrors: error.flatten().fieldErrors,
+    };
+  }
+  const { job_id } = await createJob(client, data);
+  return redirect(`/jobs/${job_id}`);
+};
+
+export default function SubmitJobPage({ actionData }: Route.ComponentProps) {
   return (
     <div>
       <Hero title="Post Job" subtitle="Reach out to the best candidates" />
-      <Form className="max-w-screen-2xl mx-auto flex flex-col gap-10 items-center">
+      <Form
+        className="max-w-screen-2xl mx-auto flex flex-col gap-10 items-center"
+        method="post"
+      >
         <div className="grid grid-cols-3 gap-10 w-full">
           <InputPair
             id="position"
@@ -27,8 +78,11 @@ export default function SubmitJobPage() {
             maxLength={40}
             type="text"
             required
-            placeholder="Software Engineer"
+            defaultValue="Senior React Developer"
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.position}</p>
+          )}
           <InputPair
             id="overview"
             label="Overview"
@@ -37,9 +91,12 @@ export default function SubmitJobPage() {
             maxLength={400}
             type="text"
             required
-            placeholder="We are looking for a software engineer with 3+ years of experience. The ideal candidate will have a strong understanding of software development principles and a passion for building scalable and efficient systems."
+            defaultValue="We are looking for a Senior React Developer"
             textArea
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.overview}</p>
+          )}
           <InputPair
             id="responsibilities"
             label="Responsibilities"
@@ -48,9 +105,14 @@ export default function SubmitJobPage() {
             maxLength={400}
             type="text"
             required
-            placeholder="Implement new features, Debug issues, etc."
+            defaultValue="Implement new features, Maintain code quality, etc."
             textArea
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">
+              {actionData.fieldErrors.responsibilities}
+            </p>
+          )}
           <InputPair
             id="qualifications"
             label="Qualifications"
@@ -59,9 +121,14 @@ export default function SubmitJobPage() {
             maxLength={400}
             type="text"
             required
-            placeholder="Bachelor's degree in Computer Science or related field"
+            defaultValue="3+ years of experience, Strong TypeScript skills, etc."
             textArea
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">
+              {actionData.fieldErrors.qualifications}
+            </p>
+          )}
           <InputPair
             id="benefits"
             label="Benefits"
@@ -70,9 +137,12 @@ export default function SubmitJobPage() {
             maxLength={400}
             type="text"
             required
-            placeholder="Healthcare, Dental, Vision, 401k"
+            defaultValue="Flexible working hours, Health insurance, etc."
             textArea
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.benefits}</p>
+          )}
           <InputPair
             id="skills"
             label="Skills"
@@ -81,9 +151,12 @@ export default function SubmitJobPage() {
             maxLength={400}
             type="text"
             required
-            placeholder="React, Node.js, Express, MongoDB"
+            defaultValue="React, TypeScript, etc."
             textArea
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.skills}</p>
+          )}
           <InputPair
             id="companyName"
             label="Company Name"
@@ -92,8 +165,11 @@ export default function SubmitJobPage() {
             maxLength={40}
             type="text"
             required
-            placeholder="Meta Inc"
+            defaultValue="wemake"
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.companyName}</p>
+          )}
           <InputPair
             id="companyLogoUrl"
             label="Company Logo Url"
@@ -102,8 +178,13 @@ export default function SubmitJobPage() {
             maxLength={40}
             type="url"
             required
-            placeholder="https://example.com/logo.png"
+            defaultValue="https://wemake.services/logo.png"
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">
+              {actionData.fieldErrors.companyLogoUrl}
+            </p>
+          )}
           <InputPair
             id="companyLocation"
             label="Company Location"
@@ -112,8 +193,13 @@ export default function SubmitJobPage() {
             maxLength={40}
             type="text"
             required
-            placeholder="San Francisco, CA"
+            defaultValue="Remote, New York, etc."
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">
+              {actionData.fieldErrors.companyLocation}
+            </p>
+          )}
           <InputPair
             id="applyUrl"
             label="Apply Url"
@@ -122,8 +208,11 @@ export default function SubmitJobPage() {
             maxLength={40}
             type="url"
             required
-            placeholder="https://example.com/apply"
+            defaultValue="https://wemake.services/apply"
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.applyUrl}</p>
+          )}
           <SelectPair
             label="Job Type"
             description="Select the job type"
@@ -135,6 +224,9 @@ export default function SubmitJobPage() {
               value: jobType.value,
             }))}
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.jobType}</p>
+          )}
           <SelectPair
             label="Job Location"
             description="Select the job location"
@@ -146,6 +238,9 @@ export default function SubmitJobPage() {
               value: jobLocation.value,
             }))}
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.jobLocation}</p>
+          )}
           <SelectPair
             label="Salary"
             description="Select the salary"
@@ -157,6 +252,9 @@ export default function SubmitJobPage() {
               value: salary,
             }))}
           />
+          {actionData && "fieldErrors" in actionData && (
+            <p className="text-red-500">{actionData.fieldErrors.salary}</p>
+          )}
         </div>
         <Button
           type="submit"

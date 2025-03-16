@@ -12,9 +12,9 @@ import { Separator } from "~/common/components/ui/separator";
 import { getJobById } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({ data }) => {
   return [
-    { title: "Job | WeMake" },
+    { title: `${data?.job.position} | WeMake` },
     { name: "description", content: "Find the best job" },
   ];
 };

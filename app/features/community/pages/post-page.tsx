@@ -6,7 +6,7 @@ import {
   BreadcrumbSeparator,
 } from "~/common/components/ui/breadcrumb";
 import type { Route } from "./+types/post-page";
-import { Form, Link } from "react-router";
+import { Form, Link, useOutletContext } from "react-router";
 import { ChevronUpIcon, DotIcon } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import { Textarea } from "~/common/components/ui/textarea";
@@ -20,6 +20,7 @@ import { Reply } from "~/features/community/components/reply";
 import { getPostById, getReplies } from "../queries";
 import { DateTime } from "luxon";
 import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
 export const meta: Route.MetaFunction = ({ params }) => {
   return [{ title: `${params.postId} | wemake` }];
 };
@@ -31,7 +32,18 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { post, replies };
 }
 
+export const action = async ({ request, params }: Route.ActionArgs) => {
+  const { client } = makeSSRClient(request);
+  const userId = await getLoggedInUserId(client);
+};
+
 export default function PostPage({ loaderData }: Route.ComponentProps) {
+  const { isLoggedIn, name, username, avatar } = useOutletContext<{
+    isLoggedIn: boolean;
+    name?: string;
+    username?: string;
+    avatar?: string;
+  }>();
   return (
     <div className="space-y-10">
       <Breadcrumb>
@@ -80,20 +92,23 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                   {loaderData.post.content}
                 </p>
               </div>
-              <Form className="flex items-start gap-5 w-3/4">
-                <Avatar className="size-14">
-                  <AvatarFallback>N</AvatarFallback>
-                  <AvatarImage src="https://github.com/serranoarevalo.png" />
-                </Avatar>
-                <div className="flex flex-col gap-5 items-end w-full">
-                  <Textarea
-                    placeholder="Write a reply"
-                    className="w-full resize-none"
-                    rows={5}
-                  />
-                  <Button>Reply</Button>
-                </div>
-              </Form>
+              {isLoggedIn ? (
+                <Form className="flex items-start gap-5 w-3/4" method="post">
+                  <Avatar className="size-14">
+                    <AvatarFallback>{name?.[0]}</AvatarFallback>
+                    <AvatarImage src={avatar} />
+                  </Avatar>
+                  <div className="flex flex-col gap-5 items-end w-full">
+                    <Textarea
+                      name="reply"
+                      placeholder="Write a reply"
+                      className="w-full resize-none"
+                      rows={5}
+                    />
+                    <Button>Reply</Button>
+                  </div>
+                </Form>
+              ) : null}
               <div className="space-y-10">
                 <h4 className="font-semibold">
                   {loaderData.post.replies} Replies
