@@ -185,6 +185,11 @@ body {
   margin: 0;
 }
 
+html, body {
+  min-width: 1920px; /* 최소 너비 */
+  min-height: 800px; /* 최소 높이 (선택) */
+  overflow: auto; /* 스크롤 가능하게 */
+}
 /*
 ---break---
 */
@@ -253,3 +258,4 @@ body {
     @apply bg-background text-foreground;
 }
 }
+

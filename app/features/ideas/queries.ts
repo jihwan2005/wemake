@@ -58,3 +58,16 @@ export const getGptIdeaPages = async (
   return Math.ceil(count / PAGE_SIZE);
 };
 
+export const getClaimedIdeas = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("gpt_ideas")
+    .select("gpt_idea_id, claimed_at, idea")
+    .eq("claimed_by", userId);
+  if (error) {
+    throw error;
+  }
+  return data;
+};

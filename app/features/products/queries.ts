@@ -178,7 +178,8 @@ export const getReviews = async (
       )
       `
     )
-    .eq("product_id", Number(productId));
+    .eq("product_id", Number(productId))
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };
