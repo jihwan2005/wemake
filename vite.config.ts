@@ -5,4 +5,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  server: {
+    fs: {
+      strict: false, // 경로 관련 엄격한 제한을 해제
+    },
+  },
 });
