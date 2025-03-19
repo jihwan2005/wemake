@@ -97,7 +97,7 @@ export default function TeamPage({ loaderData }: Route.ComponentProps) {
                 <AvatarImage src={loaderData.team.team_leader.avatar} />
               ) : null}
             </Avatar>
-            <div className="flex flex-col">
+            <div className="flex flex-col items-start">
               <h4 className="text-lg font-medium">
                 {loaderData.team.team_leader.name}
               </h4>
@@ -106,11 +106,15 @@ export default function TeamPage({ loaderData }: Route.ComponentProps) {
               </Badge>
             </div>
           </div>
-          <Form className="space-y-5">
+          <Form
+            className="space-y-5"
+            method="post"
+            action={`/users/${loaderData.team.team_leader.username}/messages`}
+          >
             <InputPair
               label="Introduce yourself"
               description="Tell us about yourself"
-              name="introduction"
+              name="content"
               type="text"
               id="introduction"
               required

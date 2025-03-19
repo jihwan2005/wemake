@@ -95,3 +95,67 @@ export const getLoggedInUserId = async (client: SupabaseClient<Database>) => {
   return data.user.id;
 };
 
+export const getNotifications = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("notifications")
+    .select(
+      `
+      notification_id,
+      type,
+      source:profiles!source_id(
+        profile_id,
+        name,
+        avatar
+      ),
+      product:products!product_id(
+        product_id,
+        name
+      ),
+      post:posts!post_id(
+        post_id,
+        title
+      ),
+      seen,
+      created_at
+      `
+    )
+    .eq("target_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const countNotifications = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { count, error } = await client
+    .from("notifications")
+    .select("*", { count: "exact", head: true })
+    .eq("seen", false)
+    .eq("target_id", userId);
+  if (error) {
+    throw error;
+  }
+  return count ?? 0;
+};
+
+export const getMessages = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("messages_view")
+    .select("*")
+    .eq("profile_id", userId)
+    .neq("other_profile_id", userId);
+  if (error) {
+    throw error;
+  }
+  return data;
+};

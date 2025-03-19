@@ -7,21 +7,33 @@ import {
   SidebarProvider,
 } from "~/common/components/ui/sidebar";
 import MessageRoomCard from "../components/message-room-card";
+import type { Route } from "./+types/messages-layout";
+import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId, getMessages } from "../queries";
 
-export default function MessagesLayout() {
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = await makeSSRClient(request);
+  const userId = await getLoggedInUserId(client);
+  const messages = await getMessages(client, { userId });
+  return {
+    messages,
+  };
+};
+
+export default function MessagesLayout({ loaderData }: Route.ComponentProps) {
   return (
     <SidebarProvider className="flex max-h-[calc(100vh-14rem)] overflow-hidden h-[calc(100vh-14rem)] min-h-full">
       <Sidebar className="pt-16" variant="floating">
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              {Array.from({ length: 20 }).map((_, index) => (
+              {loaderData.messages.map((message) => (
                 <MessageRoomCard
-                  key={index}
-                  id={index.toString()}
-                  name={`User ${index}`}
-                  lastMessage={`Last message ${index}`}
-                  avatarUrl={`https://github.com/serranoarevalo.png`}
+                  key={message.message_room_id}
+                  id={message.message_room_id.toString()}
+                  name={message.name}
+                  lastMessage={message.last_message}
+                  avatarUrl={message.avatar}
                 />
               ))}
             </SidebarMenu>

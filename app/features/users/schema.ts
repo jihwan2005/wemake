@@ -79,6 +79,7 @@ export const notifications = pgTable("notifications", {
       onDelete: "cascade",
     })
     .notNull(),
+  seen: boolean().default(false).notNull(),
   type: notificationType().notNull(),
   created_at: timestamp().notNull().defaultNow(),
 });
@@ -113,15 +114,16 @@ export const messages = pgTable("messages", {
   message_id: bigint({ mode: "number" })
     .primaryKey()
     .generatedAlwaysAsIdentity(),
-  message_room_id: bigint({ mode: "number" }).references(
-    () => messageRooms.message_room_id,
-    {
+  message_room_id: bigint({ mode: "number" })
+    .references(() => messageRooms.message_room_id, {
       onDelete: "cascade",
-    }
-  ),
-  sender_id: uuid().references(() => profiles.profile_id, {
-    onDelete: "cascade",
-  }),
+    })
+    .notNull(),
+  sender_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   content: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
 });

@@ -79,6 +79,7 @@ export default [
   ...prefix("/community", [
     index("features/community/pages/community-page.tsx"),
     route("/:postId", "features/community/pages/post-page.tsx"),
+    route("/:postId/upvote", "features/community/pages/upvote-post-page.tsx"),
     route("/submit", "features/community/pages/submit-post-page.tsx"),
   ]),
   ...prefix("/teams", [
@@ -106,12 +107,17 @@ export default [
     route("/profile", "features/users/pages/my-profile-page.tsx"),
     route("/settings", "features/users/pages/settings-page.tsx"),
     route("/notifications", "features/users/pages/notifications-page.tsx"),
+    route(
+      "/notifications/:notificationId/see",
+      "features/users/pages/see-notification-page.tsx"
+    ),
   ]),
-  layout("features/users/layouts/profile-layout.tsx", [
-    ...prefix("/users/:username", [
+  ...prefix("/users/:username", [
+    layout("features/users/layouts/profile-layout.tsx", [
       index("features/users/pages/profile-page.tsx"),
       route("/products", "features/users/pages/profile-products-page.tsx"),
       route("/posts", "features/users/pages/profile-posts-page.tsx"),
     ]),
+    route("/messages", "features/users/pages/send-message-page.tsx"),
   ]),
 ] satisfies RouteConfig;
