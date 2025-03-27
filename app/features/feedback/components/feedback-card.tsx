@@ -20,7 +20,6 @@ interface FeedbackCardProps {
   content: string;
   author: string;
   authorAvatarUrl: string | null;
-  category: string;
   postedAt: string;
   expanded?: boolean;
   votesCount?: number;
