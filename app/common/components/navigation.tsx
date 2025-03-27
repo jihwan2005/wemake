@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   BarChart3Icon,
@@ -28,7 +29,9 @@ import {
   MessageCircleIcon,
   SettingsIcon,
   UserIcon,
+  MenuIcon,
 } from "lucide-react";
+import { useState } from "react";
 
 const menus = [
   {
@@ -177,9 +180,67 @@ export default function Navigation({
   name?: string;
   avatar?: string | null;
 }) {
+  const [open, setOpen] = useState(false);
   return (
     <nav className="flex px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background/50">
-      <div className="flex items-center">
+      <div className="lg:hidden">
+        <div className="flex flex-col mt-10">
+          <Link to="/" className="font-bold tracking-tighter text-lg">
+            wemake
+          </Link>
+
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button size="icon" variant="ghost" onClick={() => setOpen(true)}>
+                <MenuIcon className="size-6" />
+              </Button>
+            </SheetTrigger>
+
+            <SheetContent
+              className="w-64 bg-white p-4 max-h-screen overflow-y-auto left-0"
+              style={{ animation: "none" }}
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-bold">Menu</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                ></Button>
+              </div>
+              <div className="mt-4 space-y-2">
+                {menus.map((menu) => (
+                  <div key={menu.name}>
+                    <Link
+                      className="block p-2 text-lg font-medium"
+                      to={menu.to}
+                      onClick={() => setOpen(false)}
+                    >
+                      {menu.name}
+                    </Link>
+                    {menu.items && (
+                      <div className="ml-4 space-y-1">
+                        {menu.items.map((item) => (
+                          <Link
+                            key={item.name}
+                            className="block p-2 text-sm text-gray-600"
+                            to={item.to}
+                            onClick={() => setOpen(false)}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+      <div className="hidden lg:flex items-center">
         <Link to="/" className="font-bold tracking-tighter text-lg">
           wemake
         </Link>
