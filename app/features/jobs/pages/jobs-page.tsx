@@ -3,7 +3,7 @@ import type { Route } from "./+types/jobs-page";
 import { JobCard } from "../components/job-card";
 import { Button } from "~/common/components/ui/button";
 import { JOB_TYPES, LOCATION_TYPES, SALARY_TYPES } from "../constants";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { cn } from "~/lib/utils";
 import { getJobs, getJobsPages } from "../queries";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import JobPagination from "~/common/components/job-pagination";
 import { Input } from "~/common/components/ui/input";
 import { Form } from "react-router";
 import { makeSSRClient } from "~/supa-client";
+
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Jobs | wemake" },

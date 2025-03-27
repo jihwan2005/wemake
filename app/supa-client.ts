@@ -43,12 +43,17 @@ export type Database = MergeDeep<
             SupabaseDatabase["public"]["Views"]["community_post_detail"]["Row"]
           >;
         };
+        feedback_list_view: {
+          Row: SetNonNullable<
+            SupabaseDatabase["public"]["Views"]["feedback_list_view"]["Row"]
+          >;
+        };
       };
     };
   }
 >;
 
-export const browerClient = createBrowserClient<Database>(
+export const browserClient = createBrowserClient<Database>(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!
 );

@@ -6,6 +6,8 @@ export const jobTypes = pgEnum(
   JOB_TYPES.map((type) => type.value) as [string, ...string[]]
 );
 
+//[string, ...string[]] : 비어 있으면 안 되고, 최소한 하나는 있어야 함.
+
 export const locations = pgEnum(
   "location",
   LOCATION_TYPES.map((type) => type.value) as [string, ...string[]]

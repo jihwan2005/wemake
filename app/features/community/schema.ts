@@ -9,6 +9,57 @@ import {
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { profiles } from "../users/schema";
 
+export const votePosts = pgTable("vote_posts", {
+  vote_post_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  title: text().notNull(),
+  content: text().notNull(),
+  created_at: timestamp().notNull().defaultNow().notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  upvotes: bigint({ mode: "number" }).default(0),
+});
+
+export const voteOptions = pgTable("vote_options", {
+  vote_option_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  vote_post_id: bigint({ mode: "number" })
+    .references(() => votePosts.vote_post_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  option_text: text().notNull(),
+  vote_count: bigint({ mode: "number" }).default(0),
+});
+
+export const userVotes = pgTable(
+  "user_votes",
+  {
+    vote_post_id: bigint({ mode: "number" })
+      .references(() => votePosts.vote_post_id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    profile_id: uuid()
+      .references(() => profiles.profile_id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    vote_option_id: bigint({ mode: "number" })
+      .references(() => voteOptions.vote_option_id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    voted_at: timestamp().notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.vote_post_id, table.profile_id] })]
+);
+
 export const topics = pgTable("topics", {
   topic_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),

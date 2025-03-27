@@ -33,6 +33,78 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          content: string
+          created_at: string
+          feedback_id: number
+          profile_id: string
+          updated_at: string
+          upvotes: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          feedback_id?: never
+          profile_id: string
+          updated_at?: string
+          upvotes?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          feedback_id?: never
+          profile_id?: string
+          updated_at?: string
+          upvotes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
+      feedback_upvotes: {
+        Row: {
+          feedback_id: number
+          profile_id: string
+        }
+        Insert: {
+          feedback_id: number
+          profile_id: string
+        }
+        Update: {
+          feedback_id?: number
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_upvotes_feedback_id_feedback_feedback_id_fk"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedback"
+            referencedColumns: ["feedback_id"]
+          },
+          {
+            foreignKeyName: "feedback_upvotes_feedback_id_feedback_feedback_id_fk"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_list_view"
+            referencedColumns: ["feedback_id"]
+          },
+          {
+            foreignKeyName: "feedback_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string
@@ -248,22 +320,22 @@ export type Database = {
           content: string
           created_at: string
           message_id: number
-          message_room_id: number | null
-          sender_id: string | null
+          message_room_id: number
+          sender_id: string
         }
         Insert: {
           content: string
           created_at?: string
           message_id?: never
-          message_room_id?: number | null
-          sender_id?: string | null
+          message_room_id: number
+          sender_id: string
         }
         Update: {
           content?: string
           created_at?: string
           message_id?: never
-          message_room_id?: number | null
-          sender_id?: string | null
+          message_room_id?: number
+          sender_id?: string
         }
         Relationships: [
           {
@@ -796,6 +868,113 @@ export type Database = {
         }
         Relationships: []
       }
+      user_votes: {
+        Row: {
+          profile_id: string
+          vote_option_id: number
+          vote_post_id: number
+          voted_at: string
+        }
+        Insert: {
+          profile_id: string
+          vote_option_id: number
+          vote_post_id: number
+          voted_at?: string
+        }
+        Update: {
+          profile_id?: string
+          vote_option_id?: number
+          vote_post_id?: number
+          voted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_votes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "user_votes_vote_option_id_vote_options_vote_option_id_fk"
+            columns: ["vote_option_id"]
+            isOneToOne: false
+            referencedRelation: "vote_options"
+            referencedColumns: ["vote_option_id"]
+          },
+          {
+            foreignKeyName: "user_votes_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
+            referencedRelation: "vote_posts"
+            referencedColumns: ["vote_post_id"]
+          },
+        ]
+      }
+      vote_options: {
+        Row: {
+          option_text: string
+          vote_count: number | null
+          vote_option_id: number
+          vote_post_id: number
+        }
+        Insert: {
+          option_text: string
+          vote_count?: number | null
+          vote_option_id?: never
+          vote_post_id: number
+        }
+        Update: {
+          option_text?: string
+          vote_count?: number | null
+          vote_option_id?: never
+          vote_post_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_options_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
+            referencedRelation: "vote_posts"
+            referencedColumns: ["vote_post_id"]
+          },
+        ]
+      }
+      vote_posts: {
+        Row: {
+          content: string
+          created_at: string
+          profile_id: string
+          title: string
+          upvotes: number | null
+          vote_post_id: number
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          profile_id: string
+          title: string
+          upvotes?: number | null
+          vote_post_id?: never
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          profile_id?: string
+          title?: string
+          upvotes?: number | null
+          vote_post_id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
     }
     Views: {
       community_post_detail: {
@@ -833,6 +1012,19 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback_list_view: {
+        Row: {
+          author: string | null
+          author_avatar: string | null
+          author_username: string | null
+          content: string | null
+          created_at: string | null
+          feedback_id: number | null
+          is_upvoted: boolean | null
+          upvotes: number | null
+        }
+        Relationships: []
+      }
       gpt_ideas_view: {
         Row: {
           created_at: string | null
@@ -863,14 +1055,14 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]

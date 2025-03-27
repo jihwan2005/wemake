@@ -117,6 +117,11 @@ const menus = [
         description: "Create a post in our community",
         to: "/community/create",
       },
+      {
+        name: "Vote Posts",
+        description: "Vote for your favorite posts",
+        to: "/community/votes",
+      },
     ],
   },
   {
@@ -136,6 +141,22 @@ const menus = [
         name: "Create a Team",
         description: "Create a team in our community",
         to: "/teams/create",
+      },
+    ],
+  },
+  {
+    name: "Feedback",
+    to: "/feedback",
+    items: [
+      {
+        name: "All Feedbacks",
+        description: "See all Feedback",
+        to: "/feedback",
+      },
+      {
+        name: "Submit a Feedback",
+        description: "Submit a feedback in our community",
+        to: "/feedback/submit",
       },
     ],
   },

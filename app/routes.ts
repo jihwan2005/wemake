@@ -56,6 +56,11 @@ export default [
     index("features/ideas/pages/ideas-page.tsx"),
     route("/:ideaId", "features/ideas/pages/idea-page.tsx"),
   ]),
+  ...prefix("/feedback", [
+    index("features/feedback/pages/feedback-page.tsx"),
+    route("/submit", "features/feedback/pages/submit-feedback-page.tsx"),
+  ]),
+
   ...prefix("/jobs", [
     index("features/jobs/pages/jobs-page.tsx"),
     route("/:jobId", "features/jobs/pages/job-page.tsx"),
@@ -81,6 +86,7 @@ export default [
     route("/:postId", "features/community/pages/post-page.tsx"),
     route("/:postId/upvote", "features/community/pages/upvote-post-page.tsx"),
     route("/submit", "features/community/pages/submit-post-page.tsx"),
+    route("/votes", "features/community/pages/votes-page.tsx"),
   ]),
   ...prefix("/teams", [
     index("features/teams/pages/teams-page.tsx"),
@@ -101,7 +107,7 @@ export default [
     layout("features/users/layouts/messages-layout.tsx", [
       ...prefix("/messages", [
         index("features/users/pages/messages-page.tsx"),
-        route("/:messageId", "features/users/pages/message-page.tsx"),
+        route("/:messageRoomId", "features/users/pages/message-page.tsx"),
       ]),
     ]),
     route("/profile", "features/users/pages/my-profile-page.tsx"),

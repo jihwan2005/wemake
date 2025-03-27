@@ -18,7 +18,7 @@ interface NotificationCardProps {
   avatarUrl: string;
   avatarFallback: string;
   userName: string;
-  type: "follow" | "review" | "reply";
+  type: "follow" | "review" | "reply" | "mention";
   timestamp: string;
   seen: boolean;
   productName?: string;
@@ -39,7 +39,7 @@ export function NotificationCard({
   payloadId,
   id,
 }: NotificationCardProps) {
-  const getMessage = (type: "follow" | "review" | "reply") => {
+  const getMessage = (type: "follow" | "review" | "reply" | "mention") => {
     switch (type) {
       case "follow":
         return " followed you.";

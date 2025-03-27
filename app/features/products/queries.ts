@@ -183,3 +183,17 @@ export const getReviews = async (
   if (error) throw error;
   return data;
 };
+
+export const getUserProducts = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("products")
+    .select(`*`)
+    .eq("profile_id", userId);
+  if (error) {
+    throw error;
+  }
+  return data;
+};
