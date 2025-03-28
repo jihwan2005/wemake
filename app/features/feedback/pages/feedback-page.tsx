@@ -71,6 +71,10 @@ export default function FeedbackPage({ loaderData }: Route.ComponentProps) {
   const removeKeyword = (keyword: string) => {
     setKeywords((prev) => prev.filter((item) => item !== keyword));
   };
+  const handleKeywordClick = (keyword: string) => {
+    searchParams.set("keyword", keyword);
+    setSearchParams(searchParams);
+  };
   return (
     <div className="space-y-20">
       <Hero title="Feedback" subtitle="Feedbacks of our users" />
@@ -107,7 +111,12 @@ export default function FeedbackPage({ loaderData }: Route.ComponentProps) {
                 key={index}
                 className="flex items-center bg-gray-200 text-gray-700 px-3 py-1 rounded-lg"
               >
-                <span className="mr-2">{keyword}</span>
+                <button
+                  onClick={() => handleKeywordClick(keyword)}
+                  className="mr-2 hover:underline"
+                >
+                  {keyword}
+                </button>
                 <button
                   onClick={() => removeKeyword(keyword)}
                   className="text-gray-500 hover:text-red-500"

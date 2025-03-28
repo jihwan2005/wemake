@@ -33,6 +33,38 @@ export type Database = {
         }
         Relationships: []
       }
+      faq: {
+        Row: {
+          created_at: string
+          faq_id: number
+          profile_id: string
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          faq_id?: never
+          profile_id: string
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          faq_id?: never
+          profile_id?: string
+          question?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faq_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           content: string
@@ -906,6 +938,13 @@ export type Database = {
             foreignKeyName: "user_votes_vote_post_id_vote_posts_vote_post_id_fk"
             columns: ["vote_post_id"]
             isOneToOne: false
+            referencedRelation: "vote_post_list_view"
+            referencedColumns: ["vote_post_id"]
+          },
+          {
+            foreignKeyName: "user_votes_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
             referencedRelation: "vote_posts"
             referencedColumns: ["vote_post_id"]
           },
@@ -931,6 +970,13 @@ export type Database = {
           vote_post_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "vote_options_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
+            referencedRelation: "vote_post_list_view"
+            referencedColumns: ["vote_post_id"]
+          },
           {
             foreignKeyName: "vote_options_vote_post_id_vote_posts_vote_post_id_fk"
             columns: ["vote_post_id"]
@@ -1012,6 +1058,17 @@ export type Database = {
         }
         Relationships: []
       }
+      faq_list_view: {
+        Row: {
+          author: string | null
+          author_avatar: string | null
+          author_username: string | null
+          created_at: string | null
+          faq_id: number | null
+          question: string | null
+        }
+        Relationships: []
+      }
       feedback_list_view: {
         Row: {
           author: string | null
@@ -1055,14 +1112,14 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
@@ -1082,6 +1139,18 @@ export type Database = {
           upvotes: string | null
           url: string | null
           views: string | null
+        }
+        Relationships: []
+      }
+      vote_post_list_view: {
+        Row: {
+          author: string | null
+          author_avatar: string | null
+          author_username: string | null
+          content: string | null
+          created_at: string | null
+          title: string | null
+          vote_post_id: number | null
         }
         Relationships: []
       }

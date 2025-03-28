@@ -1,6 +1,7 @@
 import { Link, useFetcher } from "react-router";
 import {
   Card,
+  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -15,7 +16,7 @@ import { ChevronUpIcon, DotIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DateTime } from "luxon";
 
-interface PostCardProps {
+interface VotePostCardProps {
   id: number;
   title: string;
   author: string;
@@ -24,10 +25,11 @@ interface PostCardProps {
   expanded?: boolean;
   votesCount?: number;
   isUpvoted?: boolean;
-  optionContent?: string;
+  optionContent?: string[];
+  content: string;
 }
 
-export function PostCard({
+export function VotePostCard({
   id,
   title,
   author,
@@ -36,8 +38,9 @@ export function PostCard({
   expanded = false,
   votesCount = 0,
   isUpvoted = false,
-  optionContent,
-}: PostCardProps) {
+  content,
+  optionContent = [],
+}: VotePostCardProps) {
   const fetcher = useFetcher();
   const optimisticVoteCount =
     fetcher.state === "idle"
@@ -52,6 +55,12 @@ export function PostCard({
       method: "POST",
       action: `/community/${id}/upvote`,
     });
+  };
+  const handleVoteOptionClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    option: string
+  ) => {
+    e.preventDefault();
   };
   return (
     <Link to={`/community/${id}`} className="block">
@@ -75,6 +84,21 @@ export function PostCard({
             </div>
           </div>
         </CardHeader>
+        <CardContent>
+          <p>{content}</p>
+          <div className="mt-2 space-y-2">
+            {optionContent.map((option, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="w-full text-left"
+                onClick={(e) => handleVoteOptionClick(e, option)}
+              >
+                {index + 1}. {option}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
         {!expanded && (
           <CardFooter className="flex justify-end">
             <Button variant="link">Reply &rarr;</Button>

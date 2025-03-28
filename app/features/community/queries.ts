@@ -152,4 +152,14 @@ export const getReplies = async (
   return data;
 };
 
+export const getVotePosts = async (client: SupabaseClient<Database>) => {
+  const { data, error } = await client.from("vote_post_list_view").select(`*`);
+  if (error) throw error;
+  return data;
+};
 
+export const getVoteContent = async (client: SupabaseClient<Database>) => {
+  const { data, error } = await client.from("vote_options").select(`*`);
+  if (error) throw error;
+  return data;
+};

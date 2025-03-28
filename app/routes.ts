@@ -60,7 +60,7 @@ export default [
     index("features/feedback/pages/feedback-page.tsx"),
     route("/submit", "features/feedback/pages/submit-feedback-page.tsx"),
   ]),
-
+  ...prefix("/faq", [index("features/faq/pages/faq-page.tsx")]),
   ...prefix("/jobs", [
     index("features/jobs/pages/jobs-page.tsx"),
     route("/:jobId", "features/jobs/pages/job-page.tsx"),

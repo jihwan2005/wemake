@@ -84,7 +84,10 @@ export const createVotePost = async (
     })
     .select("vote_post_id")
     .single();
-  if (error) throw error;
+  if (error) {
+    console.error("Error inserting vote post:", error);
+    throw error;
+  }
   const votePostId = data.vote_post_id;
   try {
     await Promise.all(

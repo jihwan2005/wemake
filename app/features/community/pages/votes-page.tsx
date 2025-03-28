@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,6 +18,10 @@ import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/votes-page";
 import { createVotePost } from "~/features/products/mutations";
+import { useNavigation } from "react-router";
+import { LoaderCircle } from "lucide-react";
+import { VotePostCard } from "../components/vote-post-card";
+import { getVoteContent, getVotePosts } from "../queries";
 
 const formSchema = z.object({
   title: z.string().min(1).max(40),
@@ -30,39 +33,53 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
   const formData = await request.formData();
-  const { success, data, error } = formSchema.safeParse(
-    Object.fromEntries(formData)
-  );
+  console.log("FormData entries:", [...formData.entries()]);
+  const parsedData = {
+    title: formData.get("title"),
+    content: formData.get("content"),
+    option_text: formData.getAll("option_text[]"),
+  };
+  const { success, data, error } = formSchema.safeParse(parsedData);
   if (!success) {
     return {
       fieldErrors: error.flatten().fieldErrors,
     };
   }
   const { title, content, option_text } = data;
-  const { post_id } = await createVotePost(client, {
+  await createVotePost(client, {
     title,
     content,
     optionTexts: option_text,
     userId,
   });
-  return redirect(`/votes/${post_id}`);
+  return redirect("/community/votes");
 };
 
-export default function VotesPage() {
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const { client } = makeSSRClient(request);
+  const votePosts = await getVotePosts(client);
+  const voteContents = await getVoteContent(client);
+  return { votePosts, voteContents };
+};
+
+export default function VotesPage({ loaderData }: Route.ComponentProps) {
   const [optionCount, setOptionCount] = useState(2);
   const handleOptionCountChange = (value: string) => {
     setOptionCount(Number(value));
   };
-
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
   return (
     <div>
       <Hero title="Votes" subtitle="Vote for your opinion" />
-      <Form method="post">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">투표 올리기</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">투표 올리기</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form method="post">
             <DialogHeader>
               <DialogTitle>투표 작성하기</DialogTitle>
               <DialogDescription>
@@ -131,12 +148,41 @@ export default function VotesPage() {
                 ))}
               </div>
             </div>
-            <DialogFooter>
-              <Button type="submit">저장하기</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </Form>
+            <Button className="w-full" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                "Submit Vote"
+              )}
+            </Button>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      <div className="mt-5">
+        {loaderData.votePosts.map((votePost) => {
+          const correspondingVoteContents = loaderData.voteContents.filter(
+            (voteContent) => voteContent.vote_post_id === votePost.vote_post_id
+          );
+          const optionContent =
+            correspondingVoteContents?.map(
+              (voteContent) => voteContent.option_text
+            ) || [];
+          return (
+            <div key={votePost.vote_post_id} className="mt-10">
+              <VotePostCard
+                id={votePost.vote_post_id}
+                title={votePost.title}
+                content={votePost.content}
+                author={votePost.author}
+                authorAvatarUrl={votePost.author_avatar}
+                postedAt={votePost.created_at}
+                optionContent={optionContent}
+                votesCount={12}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
