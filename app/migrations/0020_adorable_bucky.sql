@@ -1,0 +1,1 @@
+ALTER TABLE "vote_options" ALTER COLUMN "vote_count" SET NOT NULL;

@@ -21,7 +21,6 @@ export const votePosts = pgTable("vote_posts", {
       onDelete: "cascade",
     })
     .notNull(),
-  upvotes: bigint({ mode: "number" }).default(0),
 });
 
 export const voteOptions = pgTable("vote_options", {
@@ -34,7 +33,7 @@ export const voteOptions = pgTable("vote_options", {
     })
     .notNull(),
   option_text: text().notNull(),
-  vote_count: bigint({ mode: "number" }).default(0),
+  vote_count: bigint({ mode: "number" }).default(0).notNull(),
 });
 
 export const userVotes = pgTable(
@@ -108,6 +107,56 @@ export const postReplies = pgTable("post_replies", {
   }),
   parent_id: bigint({ mode: "number" }).references(
     (): AnyPgColumn => postReplies.post_reply_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  reply: text().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+  updated_at: timestamp().notNull().defaultNow(),
+});
+
+export const videoPosts = pgTable("videos", {
+  video_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  title: text(),
+  description: text(),
+  video_url: text().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  video_thumbnail: text(),
+});
+
+export const videoPostUpvotes = pgTable(
+  "videos_upvotes",
+  {
+    video_id: bigint({ mode: "number" }).references(() => videoPosts.video_id, {
+      onDelete: "cascade",
+    }),
+    profile_id: uuid().references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [primaryKey({ columns: [table.video_id, table.profile_id] })]
+);
+
+export const videoPostReplies = pgTable("videos_replies", {
+  video_reply_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  video_id: bigint({ mode: "number" }).references(() => videoPosts.video_id, {
+    onDelete: "cascade",
+  }),
+  parent_id: bigint({ mode: "number" }).references(
+    (): AnyPgColumn => videoPostReplies.video_reply_id,
     {
       onDelete: "cascade",
     }

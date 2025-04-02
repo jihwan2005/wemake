@@ -125,6 +125,11 @@ const menus = [
         description: "Vote for your favorite posts",
         to: "/community/votes",
       },
+      {
+        name: "Videos",
+        description: "Watch and upload your video",
+        to: "/community/videos",
+      },
     ],
   },
   {

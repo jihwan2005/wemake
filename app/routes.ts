@@ -87,6 +87,9 @@ export default [
     route("/:postId/upvote", "features/community/pages/upvote-post-page.tsx"),
     route("/submit", "features/community/pages/submit-post-page.tsx"),
     route("/votes", "features/community/pages/votes-page.tsx"),
+    route("/:postId/vote", "features/community/pages/vote-post-page.tsx"),
+    route("/videos", "features/community/pages/videos-page.tsx"),
+    route("/videos/:videoId", "features/community/pages/video-page.tsx"),
   ]),
   ...prefix("/teams", [
     index("features/teams/pages/teams-page.tsx"),

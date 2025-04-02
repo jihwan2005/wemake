@@ -159,7 +159,40 @@ export const getVotePosts = async (client: SupabaseClient<Database>) => {
 };
 
 export const getVoteContent = async (client: SupabaseClient<Database>) => {
-  const { data, error } = await client.from("vote_options").select(`*`);
+  const { data, error } = await client
+    .from("vote_options_with_vote_status")
+    .select(`*`);
   if (error) throw error;
   return data;
+};
+
+export const getVideos = async (client: SupabaseClient<Database>) => {
+  const { data, error } = await client.from("video_list_view").select(`*`);
+  if (error) throw error;
+  return data;
+};
+
+export type Video = {
+  video_id: number;
+  title: string;
+  description: string;
+  created_at: string;
+  video_url: string;
+  video_thumbnail: string;
+  author: string;
+  author_avatar: string | null;
+  author_username: string;
+};
+
+export const groupVideosByAuthor = (
+  videos: Video[]
+): Record<string, Video[]> => {
+  return videos.reduce((acc: Record<string, Video[]>, video) => {
+    const { author } = video;
+    if (!acc[author]) {
+      acc[author] = [];
+    }
+    acc[author].push(video);
+    return acc;
+  }, {});
 };

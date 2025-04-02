@@ -1,6 +1,3 @@
-/*
-  view는 DB에 저장돼있는 데이터를 가져올 때 사용됨. aggreagte function, join, left join을 사용한다면 view를 만드는 것이 좋음. 
-*/
 CREATE OR REPLACE VIEW community_post_list_view AS
 SELECT
   posts.post_id,

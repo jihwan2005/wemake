@@ -33,7 +33,6 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
   const formData = await request.formData();
-  console.log("FormData entries:", [...formData.entries()]);
   const parsedData = {
     title: formData.get("title"),
     content: formData.get("content"),
@@ -158,7 +157,7 @@ export default function VotesPage({ loaderData }: Route.ComponentProps) {
           </Form>
         </DialogContent>
       </Dialog>
-      <div className="mt-5">
+      <div className="mt-5 grid grid-cols-2 gap-5">
         {loaderData.votePosts.map((votePost) => {
           const correspondingVoteContents = loaderData.voteContents.filter(
             (voteContent) => voteContent.vote_post_id === votePost.vote_post_id
@@ -167,8 +166,16 @@ export default function VotesPage({ loaderData }: Route.ComponentProps) {
             correspondingVoteContents?.map(
               (voteContent) => voteContent.option_text
             ) || [];
+          const voteCount =
+            correspondingVoteContents?.map(
+              (voteContent) => voteContent.vote_count
+            ) || [];
+          const isVoted =
+            correspondingVoteContents?.map(
+              (voteContent) => voteContent.is_voted
+            ) || [];
           return (
-            <div key={votePost.vote_post_id} className="mt-10">
+            <div key={votePost.vote_post_id}>
               <VotePostCard
                 id={votePost.vote_post_id}
                 title={votePost.title}
@@ -177,7 +184,8 @@ export default function VotesPage({ loaderData }: Route.ComponentProps) {
                 authorAvatarUrl={votePost.author_avatar}
                 postedAt={votePost.created_at}
                 optionContent={optionContent}
-                votesCount={12}
+                votesCount={voteCount}
+                isVoted={isVoted}
               />
             </div>
           );

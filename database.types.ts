@@ -935,6 +935,13 @@ export type Database = {
             referencedColumns: ["vote_option_id"]
           },
           {
+            foreignKeyName: "user_votes_vote_option_id_vote_options_vote_option_id_fk"
+            columns: ["vote_option_id"]
+            isOneToOne: false
+            referencedRelation: "vote_options_with_vote_status"
+            referencedColumns: ["vote_option_id"]
+          },
+          {
             foreignKeyName: "user_votes_vote_post_id_vote_posts_vote_post_id_fk"
             columns: ["vote_post_id"]
             isOneToOne: false
@@ -950,22 +957,156 @@ export type Database = {
           },
         ]
       }
+      videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          profile_id: string
+          title: string | null
+          video_id: number
+          video_thumbnail: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          profile_id: string
+          title?: string | null
+          video_id?: never
+          video_thumbnail?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          profile_id?: string
+          title?: string | null
+          video_id?: never
+          video_thumbnail?: string | null
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
+      videos_replies: {
+        Row: {
+          created_at: string
+          parent_id: number | null
+          profile_id: string
+          reply: string
+          updated_at: string
+          video_id: number | null
+          video_reply_id: number
+        }
+        Insert: {
+          created_at?: string
+          parent_id?: number | null
+          profile_id: string
+          reply: string
+          updated_at?: string
+          video_id?: number | null
+          video_reply_id?: never
+        }
+        Update: {
+          created_at?: string
+          parent_id?: number | null
+          profile_id?: string
+          reply?: string
+          updated_at?: string
+          video_id?: number | null
+          video_reply_id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_replies_parent_id_videos_replies_video_reply_id_fk"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "videos_replies"
+            referencedColumns: ["video_reply_id"]
+          },
+          {
+            foreignKeyName: "videos_replies_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "videos_replies_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["video_id"]
+          },
+          {
+            foreignKeyName: "videos_replies_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["video_id"]
+          },
+        ]
+      }
+      videos_upvotes: {
+        Row: {
+          profile_id: string
+          video_id: number
+        }
+        Insert: {
+          profile_id: string
+          video_id: number
+        }
+        Update: {
+          profile_id?: string
+          video_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "videos_upvotes_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["video_id"]
+          },
+          {
+            foreignKeyName: "videos_upvotes_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["video_id"]
+          },
+        ]
+      }
       vote_options: {
         Row: {
           option_text: string
-          vote_count: number | null
+          vote_count: number
           vote_option_id: number
           vote_post_id: number
         }
         Insert: {
           option_text: string
-          vote_count?: number | null
+          vote_count?: number
           vote_option_id?: never
           vote_post_id: number
         }
         Update: {
           option_text?: string
-          vote_count?: number | null
+          vote_count?: number
           vote_option_id?: never
           vote_post_id?: number
         }
@@ -992,7 +1133,6 @@ export type Database = {
           created_at: string
           profile_id: string
           title: string
-          upvotes: number | null
           vote_post_id: number
         }
         Insert: {
@@ -1000,7 +1140,6 @@ export type Database = {
           created_at?: string
           profile_id: string
           title: string
-          upvotes?: number | null
           vote_post_id?: never
         }
         Update: {
@@ -1008,7 +1147,6 @@ export type Database = {
           created_at?: string
           profile_id?: string
           title?: string
-          upvotes?: number | null
           vote_post_id?: never
         }
         Relationships: [
@@ -1112,14 +1250,14 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
@@ -1141,6 +1279,59 @@ export type Database = {
           views: string | null
         }
         Relationships: []
+      }
+      video_list_view: {
+        Row: {
+          author: string | null
+          author_avatar: string | null
+          author_username: string | null
+          created_at: string | null
+          description: string | null
+          title: string | null
+          video_id: number | null
+          video_thumbnail: string | null
+          video_url: string | null
+        }
+        Relationships: []
+      }
+      vote_options_with_vote_status: {
+        Row: {
+          is_voted: boolean | null
+          option_text: string | null
+          vote_count: number | null
+          vote_option_id: number | null
+          vote_post_id: number | null
+        }
+        Insert: {
+          is_voted?: never
+          option_text?: string | null
+          vote_count?: number | null
+          vote_option_id?: number | null
+          vote_post_id?: number | null
+        }
+        Update: {
+          is_voted?: never
+          option_text?: string | null
+          vote_count?: number | null
+          vote_option_id?: number | null
+          vote_post_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vote_options_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
+            referencedRelation: "vote_post_list_view"
+            referencedColumns: ["vote_post_id"]
+          },
+          {
+            foreignKeyName: "vote_options_vote_post_id_vote_posts_vote_post_id_fk"
+            columns: ["vote_post_id"]
+            isOneToOne: false
+            referencedRelation: "vote_posts"
+            referencedColumns: ["vote_post_id"]
+          },
+        ]
       }
       vote_post_list_view: {
         Row: {

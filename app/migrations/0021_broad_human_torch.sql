@@ -1,0 +1,1 @@
+ALTER TABLE "vote_posts" DROP COLUMN "upvotes";
