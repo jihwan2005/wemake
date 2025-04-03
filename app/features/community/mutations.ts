@@ -138,3 +138,94 @@ export const createVideo = async (
   return data;
 };
 
+export const updateVideoInfo = async (
+  client: SupabaseClient<Database>,
+  {
+    id,
+    title,
+    description,
+  }: {
+    id: string;
+    title: string;
+    description: string;
+  }
+) => {
+  const { error } = await client
+    .from("videos")
+    .update({ title, description })
+    .eq("video_id", Number(id));
+  if (error) {
+    throw error;
+  }
+};
+
+export const updateVideoThumbnail = async (
+  client: SupabaseClient<Database>,
+  {
+    id,
+    videoThumbnail,
+  }: {
+    id: string;
+    videoThumbnail: string;
+  }
+) => {
+  const { error } = await client
+    .from("videos")
+    .update({ video_thumbnail: videoThumbnail })
+    .eq("video_id", Number(id));
+  if (error) {
+    throw error;
+  }
+};
+
+export async function deleteVideo(
+  client: SupabaseClient<Database>,
+  {
+    videoId,
+    videoUrl,
+    thumbnailUrl,
+  }: {
+    videoId: string;
+    videoUrl: string;
+    thumbnailUrl: string;
+  }
+) {
+  function extractFilePath(url: string): string {
+    return url.replace(
+      "https://trwxbnzdoifmjxezpanj.supabase.co/storage/v1/object/public/videos/",
+      ""
+    );
+  }
+
+  function extractThumbnailPath(url: string): string {
+    return url.replace(
+      "https://trwxbnzdoifmjxezpanj.supabase.co/storage/v1/object/public/thumbnail/",
+      ""
+    );
+  }
+
+  const videoPath = extractFilePath(videoUrl);
+  const thumbnailPath = extractThumbnailPath(thumbnailUrl);
+  const { error: storageError } = await client.storage
+    .from("videos")
+    .remove([videoPath]);
+
+  const { error: thumbnailError } = await client.storage
+    .from("thumbnail")
+    .remove([thumbnailPath]);
+
+  if (storageError) {
+    throw new Error(
+      `Failed to delete video from storage: ${storageError.message}`
+    );
+  }
+  const { error: dbError } = await client
+    .from("videos")
+    .delete()
+    .eq("video_id", Number(videoId));
+
+  if (dbError) {
+    console.error("❌ DB Delete Error:", dbError);
+    throw new Error("Failed to delete video from database");
+  }
+}

@@ -196,3 +196,17 @@ export const groupVideosByAuthor = (
     return acc;
   }, {});
 };
+
+export const getVideoById = async (
+  client: SupabaseClient<Database>,
+  { id }: { id: string }
+) => {
+  const { data, error } = await client
+    .from("video_list_view")
+    .select("*")
+    .eq("video_id", Number(id))
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};
+

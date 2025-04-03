@@ -26,7 +26,7 @@ import { groupVideosByAuthor } from "../queries";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/store/modalSlice";
 import Modal from "../components/Modal";
-import { useState } from "react";
+
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
@@ -48,11 +48,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
       contentType: thumbnail.type,
     });
   if (error) {
-    console.log(error);
     return { ok: false, error: "비디오 업로드 실패" };
   }
   if (thumbnailError) {
-    console.log(error);
     return { ok: false, error: "썸네일 업로드 실패" };
   }
   const {
