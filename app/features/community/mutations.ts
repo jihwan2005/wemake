@@ -78,6 +78,33 @@ export const toggleUpvote = async (
   }
 };
 
+export const toggleVideoUpvote = async (
+  client: SupabaseClient<Database>,
+  { videoId, userId }: { videoId: string; userId: string }
+) => {
+  const numericVideoId = Number(videoId);
+
+  const { count } = await client
+    .from("videos_upvotes")
+    .select("*", { count: "exact", head: true })
+    .eq("video_id", numericVideoId)
+    .eq("profile_id", userId);
+
+  if (count === 0) {
+    await client.from("videos_upvotes").insert({
+      video_id: numericVideoId,
+      profile_id: userId,
+    });
+  } else {
+    await client
+      .from("videos_upvotes")
+      .delete()
+      .eq("video_id", numericVideoId)
+      .eq("profile_id", userId);
+  }
+};
+
+
 export const toggleVote = async (
   client: SupabaseClient<Database>,
   {

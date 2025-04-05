@@ -14,7 +14,7 @@ const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    openModal: (state, action) => {
+    openModal: (state, action: PayloadAction<any>) => {
       state.isOpen = true;
       state.selectedVideo = action.payload;
     },

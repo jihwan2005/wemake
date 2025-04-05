@@ -1,5 +1,5 @@
 import { LoaderCircle } from "lucide-react";
-import { Form, useNavigation } from "react-router";
+import { Form, useLocation, useNavigation } from "react-router";
 import { Hero } from "~/common/components/hero";
 import { Button } from "~/common/components/ui/button";
 import {
@@ -16,17 +16,14 @@ import type { Route } from "./+types/videos-page";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { createVideo } from "../mutations";
-import { getVideos } from "../queries";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "~/common/components/ui/carousel";
+import { getVideos, type Video } from "../queries";
 import { groupVideosByAuthor } from "../queries";
 import { useDispatch } from "react-redux";
-import { openModal } from "~/store/modalSlice";
+import { openModal, closeModal } from "~/store/modalSlice";
 import Modal from "../components/Modal";
-
+import { useEffect, useState } from "react";
+import { CarouselGroup } from "../components/CarouselGroup";
+import { video } from "motion/react-client";
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
@@ -84,15 +81,43 @@ export default function VideosPage({ loaderData }: Route.ComponentProps) {
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const handleThumbnailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname === "/community/videos") {
+      dispatch(closeModal());
+    }
+  }, [location.pathname, dispatch]);
+
   return (
     <div className="space-y-20">
       <Hero title="Videos" subtitle="Upload your videos" />
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">영상 올리기</Button>
+          <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
+            영상 올리기
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
-          <Form method="post" encType="multipart/form-data">
+          <Form
+            method="post"
+            encType="multipart/form-data"
+            onSubmit={() => setIsDialogOpen(false)}
+          >
             <DialogHeader>
               <DialogTitle>영상 업로드</DialogTitle>
               <DialogDescription>
@@ -136,12 +161,23 @@ export default function VideosPage({ loaderData }: Route.ComponentProps) {
                   className="col-span-3"
                   name="thumbnail"
                   type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
                 />
               </div>
+              {thumbnailPreview && (
+                <div className="mt-4 flex justify-center">
+                  <img
+                    src={thumbnailPreview}
+                    alt="썸네일 미리보기"
+                    className="w-32 h-32 object-cover rounded-lg border"
+                  />
+                </div>
+              )}
             </div>
             <Button className="w-full" type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
-                <LoaderCircle className="animate-spin" />
+                <LoaderCircle className="animate-spin w-5 h-5" />
               ) : (
                 "Submit Vote"
               )}
@@ -153,28 +189,7 @@ export default function VideosPage({ loaderData }: Route.ComponentProps) {
         {Object.entries(loaderData.groupedVideos).map(([author, videos]) => (
           <div key={author} className="space-y-4">
             <h2 className="text-lg font-semibold">{author}님의 영상</h2>
-            <Carousel className="w-full">
-              <CarouselContent>
-                {videos.map((video) => (
-                  <CarouselItem key={video.video_id} className="relative">
-                    <div
-                      className="relative cursor-pointer"
-                      onClick={() => dispatch(openModal(video))}
-                    >
-                      {video.video_thumbnail && (
-                        <img
-                          src={video.video_thumbnail}
-                          className="w-full h-full object-cover rounded-lg absolute"
-                        />
-                      )}
-                      <video className="w-full cursor-pointer">
-                        <source src={video.video_url} type="video/mp4" />
-                      </video>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+            <CarouselGroup videos={videos} />
           </div>
         ))}
       </div>

@@ -169,6 +169,13 @@
       "when": 1743573699571,
       "tag": "0023_bored_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1743825388422,
+      "tag": "0024_short_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

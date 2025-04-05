@@ -1,0 +1,1 @@
+ALTER TABLE "videos" ADD COLUMN "upvotes" bigint DEFAULT 0;

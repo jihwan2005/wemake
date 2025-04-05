@@ -2,7 +2,7 @@ import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/video-page";
 import { getVideoById } from "../queries";
 import InputPair from "~/common/components/input-pair";
-import { Form, redirect } from "react-router";
+import { Form, redirect, useNavigate } from "react-router";
 import { Label } from "~/common/components/ui/label";
 import { Input } from "~/common/components/ui/input";
 import { useState } from "react";
@@ -13,7 +13,14 @@ import { z } from "zod";
 import { useNavigation } from "react-router";
 import { LoaderCircle } from "lucide-react";
 import { deleteVideo } from "../mutations";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "~/common/components/ui/dialog";
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const url = new URL(request.url);
   const { client } = makeSSRClient(request);
@@ -117,7 +124,10 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   return redirect("/community/videos");
 };
 
-export default function VideoPage({ loaderData }: Route.ComponentProps) {
+export default function VideoPage({
+  loaderData,
+  actionData,
+}: Route.ComponentProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(
     loaderData.video.video_thumbnail
   );
@@ -128,6 +138,7 @@ export default function VideoPage({ loaderData }: Route.ComponentProps) {
     }
   };
   const navigation = useNavigation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
   return (
@@ -190,22 +201,37 @@ export default function VideoPage({ loaderData }: Route.ComponentProps) {
           )}
         </Button>
       </Form>
-      <Form method="post">
-        <Button
-          id="delete"
-          className="w-full bg-red-500 hover:bg-red-600"
-          type="submit"
-          name="delete"
-          value="delete"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <LoaderCircle className="animate-spin" />
-          ) : (
-            "영상 삭제"
-          )}
-        </Button>
-      </Form>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger>
+          <Button onClick={() => setIsDialogOpen(true)}>영상 삭제하기</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>영상 삭제하기</DialogTitle>
+          <DialogDescription>영상을 정말 삭제하시겠습니까?</DialogDescription>
+          <DialogFooter>
+            <Button type="submit" onClick={() => setIsDialogOpen(false)}>
+              취소하기
+            </Button>
+            <Form method="post">
+              <Button
+                id="delete"
+                className="bg-primary"
+                type="submit"
+                name="delete"
+                value="delete"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "영상 삭제"
+                )}
+              </Button>
+            </Form>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

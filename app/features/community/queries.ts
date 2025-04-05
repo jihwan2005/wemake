@@ -167,7 +167,10 @@ export const getVoteContent = async (client: SupabaseClient<Database>) => {
 };
 
 export const getVideos = async (client: SupabaseClient<Database>) => {
-  const { data, error } = await client.from("video_list_view").select(`*`);
+  const { data, error } = await client
+    .from("video_list_view")
+    .select(`*`)
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };

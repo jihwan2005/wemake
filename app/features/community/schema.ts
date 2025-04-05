@@ -133,6 +133,7 @@ export const videoPosts = pgTable("videos", {
     })
     .notNull(),
   video_thumbnail: text(),
+  upvotes: bigint({ mode: "number" }).default(0),
 });
 
 export const videoPostUpvotes = pgTable(
