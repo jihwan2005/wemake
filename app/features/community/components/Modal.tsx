@@ -11,15 +11,16 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "~/common/components/ui/avatar";
-import { Link, useFetcher } from "react-router";
+import { Form, Link, useFetcher } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { useOutletContext } from "react-router";
-import { Heart } from "lucide-react";
+import { Heart, Send } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import * as motion from "motion/react-client";
 import { AnimatePresence } from "motion/react";
+import { Input } from "~/common/components/ui/input";
 
 export default function Modal() {
   const { isOpen, selectedVideo } = useSelector((state: any) => state.modal);
@@ -31,6 +32,7 @@ export default function Modal() {
   const [isLiked, setIsLiked] = useState(selectedVideo?.is_upvoted ?? false);
   const [voteCount, setVoteCount] = useState(selectedVideo?.upvotes ?? 0);
   const [showComments, setShowComments] = useState(false);
+  const [comment, setComment] = useState("");
   useEffect(() => {
     if (selectedVideo) {
       setIsLiked(selectedVideo.is_upvoted);
@@ -46,6 +48,15 @@ export default function Modal() {
       method: "POST",
       action: `/community/videos/${selectedVideo.video_id}/upvote`,
     });
+  };
+  const sendReply = () => {
+    const formData = new FormData();
+    formData.append("reply", comment);
+    fetcher.submit(formData, {
+      method: "POST",
+      action: `/community/videos/${selectedVideo.video_id}/reply`,
+    });
+    setComment("");
   };
   return (
     <Dialog open={isOpen} onOpenChange={() => dispatch(closeModal())}>
@@ -118,10 +129,16 @@ export default function Modal() {
               animate={{ y: "0%" }}
               exit={{ y: "100%" }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="absolute bottom-0 left-0 w-full bg-background border-t rounded-t-xl z-50 h-[350px] no-scrollbar"
-              style={{ height: "50%", overflowY: "auto" }}
+              className="absolute bottom-0 left-0 w-full bg-background border-t rounded-t-xl z-50 h-[350px] no-scrollbar p-0 m-0"
+              style={{ height: "50%", overflowY: "scroll" }}
             >
-              <div className="flex justify-between items-center mb-2 sticky top-0 bg-background z-10 shadow-md p-4">
+              <div
+                className="flex justify-between items-center mb-2 sticky top-0 bg-background z-10 shadow-md p-4"
+                style={{
+                  willChange: "transform",
+                  transform: "translateZ(0)",
+                }}
+              >
                 <h3 className="font-semibold text-sm">댓글</h3>
                 <button onClick={() => setShowComments(false)}>닫기</button>
               </div>
@@ -139,6 +156,24 @@ export default function Modal() {
                 <p>댓글3</p>
                 <p>댓글3</p>
               </div>
+              <Form
+                className="sticky bottom-0 bg-background z-10 shadow-md"
+                method="post"
+              >
+                <div className="flex items-center gap-4 p-3 border-2">
+                  <Input
+                    className="h-10"
+                    placeholder="댓글 작성하기"
+                    id="reply"
+                    name="reply"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <Button onClick={sendReply}>
+                    <Send className="size-4" />
+                  </Button>
+                </div>
+              </Form>
             </motion.div>
           )}
         </AnimatePresence>

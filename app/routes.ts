@@ -94,6 +94,10 @@ export default [
       "/videos/:videoId/upvote",
       "features/community/pages/upvote-video-page.tsx"
     ),
+    route(
+      "/videos/:videoId/reply",
+      "features/community/pages/reply-video-page.tsx"
+    ),
   ]),
   ...prefix("/teams", [
     index("features/teams/pages/teams-page.tsx"),

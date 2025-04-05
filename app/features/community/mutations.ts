@@ -43,13 +43,25 @@ export const createReply = async (
     topLevelId,
   }: { postId: string; reply: string; userId: string; topLevelId?: number }
 ) => {
-  const { error } = await client
-    .from("post_replies")
-    .insert({
-      ...(topLevelId ? { parent_id: topLevelId } : { post_id: Number(postId) }),
-      reply,
-      profile_id: userId,
-    });
+  const { error } = await client.from("post_replies").insert({
+    ...(topLevelId ? { parent_id: topLevelId } : { post_id: Number(postId) }),
+    reply,
+    profile_id: userId,
+  });
+  if (error) {
+    throw error;
+  }
+};
+
+export const createVideoReply = async (
+  client: SupabaseClient<Database>,
+  { videoId, reply, userId }: { videoId: string; reply: string; userId: string }
+) => {
+  const { error } = await client.from("videos_replies").insert({
+    video_id: Number(videoId),
+    reply,
+    profile_id: userId,
+  });
   if (error) {
     throw error;
   }

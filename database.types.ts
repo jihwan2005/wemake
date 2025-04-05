@@ -1148,7 +1148,6 @@ export type Database = {
       videos_replies: {
         Row: {
           created_at: string
-          parent_id: number | null
           profile_id: string
           reply: string
           updated_at: string
@@ -1157,7 +1156,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          parent_id?: number | null
           profile_id: string
           reply: string
           updated_at?: string
@@ -1166,7 +1164,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          parent_id?: number | null
           profile_id?: string
           reply?: string
           updated_at?: string
@@ -1174,13 +1171,6 @@ export type Database = {
           video_reply_id?: never
         }
         Relationships: [
-          {
-            foreignKeyName: "videos_replies_parent_id_videos_replies_video_reply_id_fk"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "videos_replies"
-            referencedColumns: ["video_reply_id"]
-          },
           {
             foreignKeyName: "videos_replies_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]

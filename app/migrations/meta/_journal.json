@@ -176,6 +176,13 @@
       "when": 1743825388422,
       "tag": "0024_short_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1743869538342,
+      "tag": "0025_red_thunderbolt_ross",
+      "breakpoints": true
     }
   ]
 }

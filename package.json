@@ -28,6 +28,7 @@
     "@react-router/node": "^7.0.1",
     "@react-router/serve": "^7.0.1",
     "@reduxjs/toolkit": "^2.6.1",
+    "@remix-run/node": "^2.16.4",
     "@remix-run/react": "^2.16.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",

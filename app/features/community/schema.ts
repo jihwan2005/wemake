@@ -156,12 +156,6 @@ export const videoPostReplies = pgTable("videos_replies", {
   video_id: bigint({ mode: "number" }).references(() => videoPosts.video_id, {
     onDelete: "cascade",
   }),
-  parent_id: bigint({ mode: "number" }).references(
-    (): AnyPgColumn => videoPostReplies.video_reply_id,
-    {
-      onDelete: "cascade",
-    }
-  ),
   profile_id: uuid()
     .references(() => profiles.profile_id, {
       onDelete: "cascade",
