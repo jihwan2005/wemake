@@ -11,10 +11,10 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const formData = await request.formData();
   const reply = formData.get("reply") as string;
-  await createVideoReply(client, {
+  const newReply = await createVideoReply(client, {
     videoId: params.videoId,
     reply,
     userId,
   });
-  return Response.json({ ok: true });
+  return Response.json(newReply);
 };

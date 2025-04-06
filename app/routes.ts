@@ -102,6 +102,10 @@ export default [
       "/videos/:videoId/delete",
       "features/community/pages/delete-video-page.tsx"
     ),
+    route(
+      "/videos/:videoId/update",
+      "features/community/pages/update-video-page.tsx"
+    ),
   ]),
   ...prefix("/teams", [
     index("features/teams/pages/teams-page.tsx"),

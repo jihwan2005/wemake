@@ -70,6 +70,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "faq_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       feedback: {
@@ -110,6 +117,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "feedback_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -156,6 +170,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "feedback_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       follows: {
@@ -190,6 +211,13 @@ export type Database = {
             referencedColumns: ["author_id"]
           },
           {
+            foreignKeyName: "follows_follower_id_profiles_profile_id_fk"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
             foreignKeyName: "follows_following_id_profiles_profile_id_fk"
             columns: ["following_id"]
             isOneToOne: false
@@ -201,6 +229,13 @@ export type Database = {
             columns: ["following_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_profiles_profile_id_fk"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -245,6 +280,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "gpt_ideas_claimed_by_profiles_profile_id_fk"
+            columns: ["claimed_by"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       gpt_ideas_likes: {
@@ -287,6 +329,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "gpt_ideas_likes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -386,6 +435,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       message_rooms: {
@@ -445,6 +501,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_profiles_profile_id_fk"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -531,6 +594,13 @@ export type Database = {
             referencedColumns: ["author_id"]
           },
           {
+            foreignKeyName: "notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
             foreignKeyName: "notifications_target_id_profiles_profile_id_fk"
             columns: ["target_id"]
             isOneToOne: false
@@ -542,6 +612,13 @@ export type Database = {
             columns: ["target_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -617,6 +694,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "post_replies_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       post_upvotes: {
@@ -668,6 +752,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "post_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       posts: {
@@ -714,6 +805,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -772,6 +870,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "product_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -842,6 +947,13 @@ export type Database = {
             referencedColumns: ["author_id"]
           },
           {
+            foreignKeyName: "products_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
             foreignKeyName: "products_to_profiles"
             columns: ["profile_id"]
             isOneToOne: false
@@ -853,6 +965,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "products_to_profiles"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -956,6 +1075,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       teams: {
@@ -1008,6 +1134,13 @@ export type Database = {
             columns: ["team_leader_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "teams_team_leader_id_profiles_profile_id_fk"
+            columns: ["team_leader_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -1065,6 +1198,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "user_votes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -1143,6 +1283,13 @@ export type Database = {
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
+          {
+            foreignKeyName: "videos_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
         ]
       }
       videos_replies: {
@@ -1183,6 +1330,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "videos_replies_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -1227,6 +1381,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "videos_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -1316,6 +1477,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "vote_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -1411,6 +1579,13 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["other_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1420,8 +1595,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -1434,7 +1609,14 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "video_list_view"
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
         ]
@@ -1475,6 +1657,7 @@ export type Database = {
       video_replies_list_view: {
         Row: {
           author_avatar: string | null
+          author_id: string | null
           author_username: string | null
           created_at: string | null
           reply: string | null

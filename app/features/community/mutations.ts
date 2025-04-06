@@ -57,14 +57,30 @@ export const createVideoReply = async (
   client: SupabaseClient<Database>,
   { videoId, reply, userId }: { videoId: string; reply: string; userId: string }
 ) => {
-  const { error } = await client.from("videos_replies").insert({
-    video_id: Number(videoId),
-    reply,
-    profile_id: userId,
-  });
+  const { data, error } = await client
+    .from("videos_replies")
+    .insert({
+      video_id: Number(videoId),
+      reply,
+      profile_id: userId,
+    })
+    .select(
+      `
+      video_reply_id,
+      reply,
+      created_at,
+      video_id,
+      profile:profile_id (
+        username,
+        avatar
+      )
+      `
+    )
+    .single();
   if (error) {
     throw error;
   }
+  return data;
 };
 
 export const toggleUpvote = async (
@@ -115,7 +131,6 @@ export const toggleVideoUpvote = async (
       .eq("profile_id", userId);
   }
 };
-
 
 export const toggleVote = async (
   client: SupabaseClient<Database>,
@@ -279,3 +294,13 @@ export async function deleteReply(
     .eq("video_reply_id", Number(replyId));
   if (error) throw error;
 }
+
+export const upadateReply = async (
+  client: SupabaseClient<Database>,
+  { replyId, reply }: { replyId: string; reply: string }
+) => {
+  const { error } = await client
+    .from("videos_replies")
+    .update({ reply })
+    .eq("video_reply_id", Number(replyId));
+};
