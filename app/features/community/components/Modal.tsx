@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { closeModal } from "~/store/modalSlice";
+import { closeModal, updateSelectedVideo } from "~/store/modalSlice";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,15 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "~/common/components/ui/avatar";
-import { Form, Link, useFetcher } from "react-router";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/common/components/ui/popover";
+import { Link, useFetcher } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { useOutletContext } from "react-router";
-import { Heart, Send } from "lucide-react";
+import { Heart, Send, MoreVertical, Pencil, Trash } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
@@ -24,8 +29,10 @@ import { Input } from "~/common/components/ui/input";
 
 export default function Modal() {
   const { isOpen, selectedVideo } = useSelector((state: any) => state.modal);
-  const { userId } = useOutletContext<{
+  const { userId, username, avatar } = useOutletContext<{
     userId: string;
+    username: string;
+    avatar: string;
   }>();
   const dispatch = useDispatch();
   const fetcher = useFetcher();
@@ -39,6 +46,7 @@ export default function Modal() {
       setVoteCount(selectedVideo.upvotes);
     }
   }, [selectedVideo]);
+
   if (!isOpen || !selectedVideo) return null;
   const isUploader = selectedVideo.author_id === userId;
   const absordclick = () => {
@@ -49,7 +57,7 @@ export default function Modal() {
       action: `/community/videos/${selectedVideo.video_id}/upvote`,
     });
   };
-  const sendReply = () => {
+  const sendReply = async () => {
     const formData = new FormData();
     formData.append("reply", comment);
     fetcher.submit(formData, {
@@ -58,6 +66,25 @@ export default function Modal() {
     });
     setComment("");
   };
+  const deleteReply = (replyId: string) => {
+    const formData = new FormData();
+    formData.append("reply_id", String(replyId));
+    fetcher.submit(formData, {
+      method: "POST",
+      action: `/community/videos/${selectedVideo.video_id}/delete`,
+    });
+    const updatedComments = selectedVideo.comments.filter(
+      (c: any) => c.video_reply_id !== replyId
+    );
+
+    dispatch(
+      updateSelectedVideo({
+        ...selectedVideo,
+        comments: updatedComments,
+      })
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={() => dispatch(closeModal())}>
       <DialogOverlay />
@@ -129,9 +156,10 @@ export default function Modal() {
               animate={{ y: "0%" }}
               exit={{ y: "100%" }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="absolute bottom-0 left-0 w-full bg-background border-t rounded-t-xl z-50 h-[350px] no-scrollbar p-0 m-0"
-              style={{ height: "50%", overflowY: "scroll" }}
+              className="absolute bottom-0 left-0 w-full bg-background border-t rounded-t-xl z-50 h-[350px] flex flex-col p-0 m-0"
+              style={{ height: "50%" }}
             >
+              {/* 헤더 */}
               <div
                 className="flex justify-between items-center mb-2 sticky top-0 bg-background z-10 shadow-md p-4"
                 style={{
@@ -142,38 +170,75 @@ export default function Modal() {
                 <h3 className="font-semibold text-sm">댓글</h3>
                 <button onClick={() => setShowComments(false)}>닫기</button>
               </div>
-              <div className="space-y-2">
-                <p>댓글1</p>
-                <p>댓글2</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
-                <p>댓글3</p>
+
+              {/* 댓글 리스트 */}
+              <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-2">
+                {selectedVideo.comments && selectedVideo.comments.length > 0 ? (
+                  selectedVideo.comments.map((reply: any) => (
+                    <div key={reply.reply_id} className="text-sm border-b pb-2">
+                      <div className="flex justify-between">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Avatar className="size-6">
+                            <AvatarImage src={reply.author_avatar} />
+                            <AvatarFallback>
+                              {reply.author_username}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">
+                            {reply.author_username}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {DateTime.fromISO(reply.created_at).toRelative()}
+                          </span>
+                        </div>
+                        <div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <MoreVertical className="size-6" />
+                            </PopoverTrigger>
+                            <PopoverContent className="w-35 h-30 flex flex-col gap-2 items-center">
+                              <div className="flex items-center gap-4">
+                                <Button>
+                                  <Pencil className="size-5" />
+                                  <span>수정하기</span>
+                                </Button>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <Button
+                                  onClick={() =>
+                                    deleteReply(reply.video_reply_id)
+                                  }
+                                >
+                                  <Trash className="size-5" />
+                                  <span>삭제하기</span>
+                                </Button>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+                      <p>{reply.reply}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">아직 댓글이 없습니다.</p>
+                )}
               </div>
-              <Form
-                className="sticky bottom-0 bg-background z-10 shadow-md"
-                method="post"
-              >
-                <div className="flex items-center gap-4 p-3 border-2">
-                  <Input
-                    className="h-10"
-                    placeholder="댓글 작성하기"
-                    id="reply"
-                    name="reply"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  />
-                  <Button onClick={sendReply}>
-                    <Send className="size-4" />
-                  </Button>
-                </div>
-              </Form>
+
+              {/* 댓글 입력창 */}
+              <div className="border-t p-3 flex items-center gap-4 bg-background">
+                <Input
+                  className="h-10"
+                  placeholder="댓글 작성하기"
+                  id="reply"
+                  name="reply"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <Button onClick={sendReply}>
+                  <Send className="size-4" />
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

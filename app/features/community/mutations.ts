@@ -268,3 +268,14 @@ export async function deleteVideo(
     throw new Error("Failed to delete video from database");
   }
 }
+
+export async function deleteReply(
+  client: SupabaseClient<Database>,
+  { replyId }: { replyId: string }
+) {
+  const { error } = await client
+    .from("videos_replies")
+    .delete()
+    .eq("video_reply_id", Number(replyId));
+  if (error) throw error;
+}

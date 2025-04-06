@@ -1411,13 +1411,6 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
-          },
-          {
-            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1426,13 +1419,20 @@ export type Database = {
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
@@ -1471,6 +1471,32 @@ export type Database = {
           video_url: string | null
         }
         Relationships: []
+      }
+      video_replies_list_view: {
+        Row: {
+          author_avatar: string | null
+          author_username: string | null
+          created_at: string | null
+          reply: string | null
+          video_id: number | null
+          video_reply_id: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_replies_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["video_id"]
+          },
+          {
+            foreignKeyName: "videos_replies_video_id_videos_video_id_fk"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["video_id"]
+          },
+        ]
       }
       vote_options_with_vote_status: {
         Row: {

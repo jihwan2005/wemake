@@ -98,6 +98,10 @@ export default [
       "/videos/:videoId/reply",
       "features/community/pages/reply-video-page.tsx"
     ),
+    route(
+      "/videos/:videoId/delete",
+      "features/community/pages/delete-video-page.tsx"
+    ),
   ]),
   ...prefix("/teams", [
     index("features/teams/pages/teams-page.tsx"),

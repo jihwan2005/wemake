@@ -152,6 +152,19 @@ export const getReplies = async (
   return data;
 };
 
+export const getVideoReplies = async (
+  client: SupabaseClient<Database>,
+  { videoIds }: { videoIds: number[] }
+) => {
+  const { data, error } = await client
+    .from("video_replies_list_view")
+    .select("*")
+    .in("video_id", videoIds)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+};
+
 export const getVotePosts = async (client: SupabaseClient<Database>) => {
   const { data, error } = await client.from("vote_post_list_view").select(`*`);
   if (error) throw error;

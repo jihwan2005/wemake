@@ -1,20 +1,18 @@
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/reply-video-page";
-import { createVideoReply } from "../mutations";
+
+import { deleteReply } from "../mutations";
+import type { Route } from "./+types/delete-video-page";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
     throw new Response("Method Not Allowed", { status: 405 });
   }
   const { client } = makeSSRClient(request);
-  const userId = await getLoggedInUserId(client);
   const formData = await request.formData();
-  const reply = formData.get("reply") as string;
-  await createVideoReply(client, {
-    videoId: params.videoId,
-    reply,
-    userId,
+  const replyId = formData.get("reply_id") as string;
+  await deleteReply(client, {
+    replyId,
   });
   return Response.json({ ok: true });
 };

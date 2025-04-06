@@ -16,7 +16,7 @@ import type { Route } from "./+types/videos-page";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { createVideo } from "../mutations";
-import { getVideos, type Video } from "../queries";
+import { getVideoReplies, getVideos, type Video } from "../queries";
 import { groupVideosByAuthor } from "../queries";
 import { useDispatch } from "react-redux";
 import { openModal, closeModal } from "~/store/modalSlice";
@@ -73,7 +73,24 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
   const videos = await getVideos(client);
   const groupedVideos = groupVideosByAuthor(videos);
-  return { groupedVideos };
+  const videoIds = videos.map((video) => Number(video.video_id));
+  const replies = await getVideoReplies(client, { videoIds });
+  const groupedReplies = replies.reduce((acc, reply) => {
+    const videoId = reply.video_id;
+    if (!acc[videoId]) acc[videoId] = [];
+    acc[videoId].push(reply);
+    return acc;
+  }, {} as Record<number, typeof replies>);
+  const groupedVideosWithComments = Object.fromEntries(
+    Object.entries(groupedVideos).map(([author, videos]) => [
+      author,
+      videos.map((video) => ({
+        ...video,
+        comments: groupedReplies[video.video_id] || [],
+      })),
+    ])
+  );
+  return { groupedVideos: groupedVideosWithComments };
 };
 
 export default function VideosPage({ loaderData }: Route.ComponentProps) {

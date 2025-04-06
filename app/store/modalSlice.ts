@@ -22,8 +22,12 @@ const modalSlice = createSlice({
       state.isOpen = false;
       state.selectedVideo = null;
     },
+    updateSelectedVideo: (state, action: PayloadAction<any>) => {
+      state.selectedVideo = action.payload;
+    },
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { openModal, closeModal, updateSelectedVideo } =
+  modalSlice.actions;
 export default modalSlice.reducer;
