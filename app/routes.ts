@@ -56,6 +56,10 @@ export default [
     index("features/ideas/pages/ideas-page.tsx"),
     route("/:ideaId", "features/ideas/pages/idea-page.tsx"),
   ]),
+  ...prefix("/classes", [
+    index("features/classes/pages/classes-page.tsx"),
+    route("/:classId", "features/classes/pages/class-page.tsx"),
+  ]),
   ...prefix("/feedback", [
     index("features/feedback/pages/feedback-page.tsx"),
     route("/submit", "features/feedback/pages/submit-feedback-page.tsx"),

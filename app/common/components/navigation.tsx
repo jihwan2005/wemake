@@ -133,6 +133,10 @@ const menus = [
     ],
   },
   {
+    name: "Class",
+    to: "/classes",
+  },
+  {
     name: "IdeasGPT",
     to: "/ideas",
   },

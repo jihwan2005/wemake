@@ -33,6 +33,71 @@ export type Database = {
         }
         Relationships: []
       }
+      class_posts: {
+        Row: {
+          class_post_id: number
+          class_poster: string | null
+          created_at: string
+          description: string
+          end_at: string
+          profile_id: string
+          start_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          class_post_id?: never
+          class_poster?: string | null
+          created_at?: string
+          description: string
+          end_at?: string
+          profile_id: string
+          start_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          class_post_id?: never
+          class_poster?: string | null
+          created_at?: string
+          description?: string
+          end_at?: string
+          profile_id?: string
+          start_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       faq: {
         Row: {
           created_at: string
@@ -56,6 +121,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "faq_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "faq_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -105,6 +177,13 @@ export type Database = {
           upvotes?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "feedback_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "feedback_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -160,6 +239,13 @@ export type Database = {
             foreignKeyName: "feedback_upvotes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "feedback_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -200,6 +286,13 @@ export type Database = {
             foreignKeyName: "follows_follower_id_profiles_profile_id_fk"
             columns: ["follower_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "follows_follower_id_profiles_profile_id_fk"
+            columns: ["follower_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -215,6 +308,13 @@ export type Database = {
             columns: ["follower_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_profiles_profile_id_fk"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -270,6 +370,13 @@ export type Database = {
             foreignKeyName: "gpt_ideas_claimed_by_profiles_profile_id_fk"
             columns: ["claimed_by"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "gpt_ideas_claimed_by_profiles_profile_id_fk"
+            columns: ["claimed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -316,6 +423,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "gpt_ideas_view"
             referencedColumns: ["gpt_idea_id"]
+          },
+          {
+            foreignKeyName: "gpt_ideas_likes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "gpt_ideas_likes_profile_id_profiles_profile_id_fk"
@@ -425,6 +539,13 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -488,6 +609,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "message_rooms"
             referencedColumns: ["message_room_id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_profiles_profile_id_fk"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "messages_sender_id_profiles_profile_id_fk"
@@ -583,6 +711,13 @@ export type Database = {
             foreignKeyName: "notifications_source_id_profiles_profile_id_fk"
             columns: ["source_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -598,6 +733,13 @@ export type Database = {
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -684,6 +826,13 @@ export type Database = {
             foreignKeyName: "post_replies_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "post_replies_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -742,6 +891,13 @@ export type Database = {
             foreignKeyName: "post_upvotes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "post_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -793,6 +949,13 @@ export type Database = {
           upvotes?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "posts_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -857,6 +1020,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "products"
             referencedColumns: ["product_id"]
+          },
+          {
+            foreignKeyName: "product_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "product_upvotes_profile_id_profiles_profile_id_fk"
@@ -936,6 +1106,13 @@ export type Database = {
             foreignKeyName: "products_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "products_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -951,6 +1128,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "products_to_profiles"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -1065,6 +1249,13 @@ export type Database = {
             foreignKeyName: "reviews_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -1122,6 +1313,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "teams_team_leader_id_profiles_profile_id_fk"
+            columns: ["team_leader_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "teams_team_leader_id_profiles_profile_id_fk"
             columns: ["team_leader_id"]
@@ -1186,6 +1384,13 @@ export type Database = {
           voted_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_votes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "user_votes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -1273,6 +1478,13 @@ export type Database = {
             foreignKeyName: "videos_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "videos_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -1318,6 +1530,13 @@ export type Database = {
           video_reply_id?: never
         }
         Relationships: [
+          {
+            foreignKeyName: "videos_replies_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "videos_replies_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -1369,6 +1588,13 @@ export type Database = {
           video_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "videos_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
           {
             foreignKeyName: "videos_upvotes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -1469,6 +1695,13 @@ export type Database = {
             foreignKeyName: "vote_posts_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "vote_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           },
@@ -1490,6 +1723,21 @@ export type Database = {
       }
     }
     Views: {
+      class_list_view: {
+        Row: {
+          author_avatar: string | null
+          author_id: string | null
+          author_username: string | null
+          class_post_id: number | null
+          class_poster: string | null
+          created_at: string | null
+          description: string | null
+          end_at: string | null
+          start_at: string | null
+          title: string | null
+        }
+        Relationships: []
+      }
       community_post_detail: {
         Row: {
           author_avatar: string | null
@@ -1576,6 +1824,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "message_rooms"
             referencedColumns: ["message_room_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["other_profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -1735,10 +1997,7 @@ export type Database = {
     }
     Functions: {
       get_room: {
-        Args: {
-          from_user_id: string
-          to_user_id: string
-        }
+        Args: { from_user_id: string; to_user_id: string }
         Returns: {
           message_room_id: number
         }[]
@@ -1775,27 +2034,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -1803,20 +2064,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -1824,20 +2087,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1845,21 +2110,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -1868,6 +2135,27 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      job_type: ["full-time", "part-time", "hybrid", "freelance", "internship"],
+      location: ["remote", "in-person", "hybrid"],
+      notification_type: ["follow", "review", "reply", "mention"],
+      product_stage: ["idea", "prototype", "mvp", "product"],
+      role: ["developer", "designer", "marketer", "founder", "product-manager"],
+      salary_range: [
+        "$0 - $10,000",
+        "$10,000 - $20,000",
+        "$20,000 - $30,000",
+        "$30,000 - $40,000",
+        "$40,000 - $50,000",
+        "$50,000 - $60,000",
+        "$60,000 - $70,000",
+      ],
+    },
+  },
+} as const

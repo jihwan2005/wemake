@@ -183,6 +183,55 @@
       "when": 1743869538342,
       "tag": "0025_red_thunderbolt_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1744028163999,
+      "tag": "0026_fearless_patriot",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1744029008040,
+      "tag": "0027_wild_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1744030301452,
+      "tag": "0028_young_lake",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1744031143214,
+      "tag": "0029_tense_gorilla_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1744031344351,
+      "tag": "0030_peaceful_genesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1744031388635,
+      "tag": "0031_early_whizzer",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1744031484185,
+      "tag": "0032_skinny_phalanx",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "class_posts" RENAME COLUMN "class_post" TO "class_poster";

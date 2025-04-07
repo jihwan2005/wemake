@@ -2,12 +2,11 @@ import {
   isRouteErrorResponse,
   Links,
   Meta,
-  Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
+  Outlet,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./common/components/navigation";
@@ -66,6 +65,9 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();
+  const location = useLocation();
+  const state = location.state as { backgroundLocation?: Location };
+  const backgroundLocation = state?.backgroundLocation;
   const isLoggedIn = loaderData.user !== null;
   return (
     <Provider store={store}>

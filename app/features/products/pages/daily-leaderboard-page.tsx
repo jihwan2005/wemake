@@ -66,7 +66,6 @@ export const meta: Route.MetaFunction = ({ params }) => {
 export default function DailyLeaderboardPage({
   loaderData,
 }: Route.ComponentProps) {
-  console.log(loaderData);
   const navigate = useNavigate();
   const urlDate = DateTime.fromObject({
     year: loaderData.year,

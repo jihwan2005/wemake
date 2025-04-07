@@ -1,0 +1,1 @@
+ALTER TABLE "class_posts" ALTER COLUMN "class_poster" DROP NOT NULL;

@@ -16,14 +16,13 @@ import type { Route } from "./+types/videos-page";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { createVideo } from "../mutations";
-import { getVideoReplies, getVideos, type Video } from "../queries";
+import { getVideoReplies, getVideos } from "../queries";
 import { groupVideosByAuthor } from "../queries";
 import { useDispatch } from "react-redux";
-import { openModal, closeModal } from "~/store/modalSlice";
+import { closeModal } from "~/store/modalSlice";
 import Modal from "../components/Modal";
 import { useEffect, useState } from "react";
-import { CarouselGroup } from "../components/CarouselGroup";
-import { video } from "motion/react-client";
+import { CarouselGroup } from "../components/CarouselGroup";;
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const { client } = makeSSRClient(request);
