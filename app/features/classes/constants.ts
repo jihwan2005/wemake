@@ -5,7 +5,7 @@ export const DIFFICULTY_TYPES = [
   },
   {
     label: "Intermediate",
-    value: "Intermediate",
+    value: "intermediate",
   },
   {
     label: "Advanced",

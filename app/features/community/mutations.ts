@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "~/supa-client";
-
+type DifficultyType = Database["public"]["Enums"]["difficulty_type"];
 export const createPost = async (
   client: SupabaseClient<Database>,
   {
@@ -303,4 +303,46 @@ export const upadateReply = async (
     .from("videos_replies")
     .update({ reply })
     .eq("video_reply_id", Number(replyId));
+};
+
+export const createClass = async (
+  client: SupabaseClient<Database>,
+  {
+    title,
+    description,
+    start_at,
+    end_at,
+    field,
+    difficulty_type,
+    poster,
+    userId,
+  }: {
+    title: string;
+    description: string;
+    start_at: string;
+    end_at: string;
+    userId: string;
+    field: string;
+    difficulty_type: DifficultyType;
+    poster: string;
+  }
+) => {
+  const { data, error } = await client
+    .from("class_posts")
+    .insert({
+      title,
+      description,
+      class_poster: poster,
+      profile_id: userId,
+      start_at,
+      end_at,
+      field,
+      difficulty_type,
+    })
+    .single();
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
 };

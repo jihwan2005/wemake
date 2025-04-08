@@ -48,7 +48,7 @@ export default function ClassCard({
       <Card className="pt-0">
         <CardHeader className="flex flex-row items-center gap-2 p-0">
           {poster ? (
-            poster
+            <img src={poster} className="w-full h-[250px]" />
           ) : (
             <div className="bg-amber-300 w-full h-[250px] rounded-t-md" />
           )}

@@ -2065,7 +2065,8 @@ export type Database = {
       }
     }
     Enums: {
-      difficulty_type: "beginner" | "Intermediate" | "advanced"
+      difficulty_type: "beginner" | "intermediate" | "advanced"
+      difficulty_type_old: "beginner" | "Intermediate" | "advanced"
       job_type:
         | "full-time"
         | "part-time"
@@ -2204,7 +2205,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      difficulty_type: ["beginner", "Intermediate", "advanced"],
+      difficulty_type: ["beginner", "intermediate", "advanced"],
+      difficulty_type_old: ["beginner", "Intermediate", "advanced"],
       job_type: ["full-time", "part-time", "hybrid", "freelance", "internship"],
       location: ["remote", "in-person", "hybrid"],
       notification_type: ["follow", "review", "reply", "mention"],
