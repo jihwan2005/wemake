@@ -32,6 +32,9 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
               authorUsername={cls.author_username}
               startAt={cls.start_at}
               endAt={cls.end_at}
+              field={cls.field}
+              difficultyType={cls.difficulty_type}
+              hashtags={cls.hashtags}
             />
           ))}
         </div>

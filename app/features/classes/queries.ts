@@ -6,3 +6,4 @@ export const getClasses = async (client: SupabaseClient<Database>) => {
   if (error) throw error;
   return data;
 };
+

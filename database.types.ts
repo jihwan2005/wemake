@@ -39,7 +39,9 @@ export type Database = {
           class_poster: string | null
           created_at: string
           description: string
+          difficulty_type: Database["public"]["Enums"]["difficulty_type"]
           end_at: string
+          field: string
           profile_id: string
           start_at: string
           title: string
@@ -50,9 +52,11 @@ export type Database = {
           class_poster?: string | null
           created_at?: string
           description: string
-          end_at?: string
+          difficulty_type: Database["public"]["Enums"]["difficulty_type"]
+          end_at: string
+          field: string
           profile_id: string
-          start_at?: string
+          start_at: string
           title: string
           updated_at?: string
         }
@@ -61,7 +65,9 @@ export type Database = {
           class_poster?: string | null
           created_at?: string
           description?: string
+          difficulty_type?: Database["public"]["Enums"]["difficulty_type"]
           end_at?: string
+          field?: string
           profile_id?: string
           start_at?: string
           title?: string
@@ -95,6 +101,43 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      classPost_with_hashtags: {
+        Row: {
+          class_post_id: number
+          hashtag_id: string
+        }
+        Insert: {
+          class_post_id: number
+          hashtag_id: string
+        }
+        Update: {
+          class_post_id?: number
+          hashtag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classPost_with_hashtags_class_post_id_class_posts_class_post_id"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "classPost_with_hashtags_class_post_id_class_posts_class_post_id"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "classPost_with_hashtags_hashtag_id_hashtags_hashtag_id_fk"
+            columns: ["hashtag_id"]
+            isOneToOne: false
+            referencedRelation: "hashtags"
+            referencedColumns: ["hashtag_id"]
           },
         ]
       }
@@ -453,6 +496,21 @@ export type Database = {
             referencedColumns: ["author_id"]
           },
         ]
+      }
+      hashtags: {
+        Row: {
+          hashtag_id: string
+          tag: string
+        }
+        Insert: {
+          hashtag_id?: string
+          tag: string
+        }
+        Update: {
+          hashtag_id?: string
+          tag?: string
+        }
+        Relationships: []
       }
       jobs: {
         Row: {
@@ -1732,7 +1790,10 @@ export type Database = {
           class_poster: string | null
           created_at: string | null
           description: string | null
+          difficulty_type: Database["public"]["Enums"]["difficulty_type"] | null
           end_at: string | null
+          field: string | null
+          hashtags: string[] | null
           start_at: string | null
           title: string | null
         }
@@ -1827,13 +1888,6 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
-            isOneToOne: false
-            referencedRelation: "class_list_view"
-            referencedColumns: ["author_id"]
-          },
-          {
-            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "class_list_view"
@@ -1843,8 +1897,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -1857,8 +1911,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "video_list_view"
-            referencedColumns: ["author_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -1870,13 +1924,20 @@ export type Database = {
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
@@ -2004,6 +2065,7 @@ export type Database = {
       }
     }
     Enums: {
+      difficulty_type: "beginner" | "Intermediate" | "advanced"
       job_type:
         | "full-time"
         | "part-time"
@@ -2142,6 +2204,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      difficulty_type: ["beginner", "Intermediate", "advanced"],
       job_type: ["full-time", "part-time", "hybrid", "freelance", "internship"],
       location: ["remote", "in-person", "hybrid"],
       notification_type: ["follow", "review", "reply", "mention"],

@@ -1,5 +1,3 @@
-import { DotIcon } from "lucide-react";
-import { DateTime } from "luxon";
 import { Link } from "react-router";
 import {
   Avatar,
@@ -13,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
+import Countdown from "./countdown-page";
+import { Badge } from "~/common/components/ui/badge";
 
 interface ClassCardProps {
   id: number;
@@ -24,6 +24,9 @@ interface ClassCardProps {
   authorUsername: string;
   startAt: string;
   endAt: string;
+  field: string;
+  difficultyType: string;
+  hashtags: string[];
 }
 
 export default function ClassCard({
@@ -36,6 +39,9 @@ export default function ClassCard({
   authorUsername,
   startAt,
   endAt,
+  field,
+  difficultyType,
+  hashtags,
 }: ClassCardProps) {
   return (
     <Link to={`/classes/${id}`}>
@@ -44,14 +50,12 @@ export default function ClassCard({
           {poster ? (
             poster
           ) : (
-            <div className="bg-amber-300 w-[300px] h-[250px]" />
+            <div className="bg-amber-300 w-full h-[250px] rounded-t-md" />
           )}
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-1 text-sm mb-5">
             <CardTitle className="text-2xl">{title}</CardTitle>
-            <DotIcon className="w-4 h-4" />
-            <span>{DateTime.fromISO(createdAt).toRelative()}에 게시됨</span>
           </div>
           <div className="flex mb-5 items-center gap-2">
             <Avatar className="size-14">
@@ -64,14 +68,21 @@ export default function ClassCard({
             </div>
           </div>
           {description}
-          <div className="mt-5">
-            <div className="flex flex-col">
-              <span>기간</span>
-              <span>
-                {DateTime.fromISO(startAt).toFormat("yy년 M월 / d일")} -{" "}
-                {DateTime.fromISO(endAt).toFormat("yy년 M월 / d일")}
+          <div className="flex gap-1.5 mt-5">
+            <Badge>{field}</Badge>
+            <Badge>{difficultyType}</Badge>
+          </div>
+          <div className="flex gap-1.5 mt-2">
+            {hashtags.map((hashtag) => (
+              <span key={hashtag} className="text-sm text-blue-600 font-medium">
+                #{hashtag}
               </span>
-            </div>
+            ))}
+          </div>
+          <div className="mt-5">
+            <span className="text-sm text-gray-500 mt-1">
+              시작까지 <Countdown startAt={startAt} />
+            </span>
           </div>
         </CardContent>
       </Card>
