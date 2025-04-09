@@ -7,3 +7,4 @@ export const getClasses = async (client: SupabaseClient<Database>) => {
   return data;
 };
 
+export const getClassHashTags = async (client: SupabaseClient<Database>) => {};

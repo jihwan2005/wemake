@@ -339,6 +339,7 @@ export const createClass = async (
       field,
       difficulty_type,
     })
+    .select()
     .single();
   if (error) {
     console.log(error);
@@ -346,3 +347,41 @@ export const createClass = async (
   }
   return data;
 };
+
+export async function createHashtagIfNotExists(
+  client: SupabaseClient<Database>,
+  tag: string
+) {
+  const { data, error } = await client
+    .from("hashtags")
+    .select("*")
+    .eq("tag", tag)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (data) return data;
+
+  const { data: inserted, error: insertError } = await client
+    .from("hashtags")
+    .insert({ tag })
+    .select()
+    .single();
+
+  if (insertError) throw insertError;
+
+  return inserted;
+}
+
+export async function linkHashtagToClass(
+  client: SupabaseClient<Database>,
+  class_post_id: number,
+  hashtag_id: string
+) {
+  const { error } = await client.from("classPost_with_hashtags").insert({
+    class_post_id,
+    hashtag_id,
+  });
+
+  if (error) throw error;
+}

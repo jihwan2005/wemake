@@ -28,7 +28,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/common/components/ui/select";
-import { createClass } from "~/features/community/mutations";
+import {
+  createClass,
+  createHashtagIfNotExists,
+  linkHashtagToClass,
+} from "~/features/community/mutations";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/common/components/ui/dropdown-menu";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -54,7 +66,6 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const hashtags = parseHashtags(rawHashtags);
   const poster = formData.get("poster") as File;
   const filePath = `${userId}/${Date.now()}`;
-
   const { data, error } = await client.storage
     .from("poster")
     .upload(filePath, poster, {
@@ -66,7 +77,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const {
     data: { publicUrl },
   } = client.storage.from("poster").getPublicUrl(filePath);
-  await createClass(client, {
+  const { class_post_id } = await createClass(client, {
     title,
     description,
     poster: publicUrl,
@@ -76,6 +87,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
     start_at,
     end_at,
   });
+  for (const tag of hashtags) {
+    // (1) 해시태그가 존재하지 않으면 추가
+    const hashtag = await createHashtagIfNotExists(client, tag); // 반환: { hashtag_id }
+
+    // (2) classPost와 hashtag 연결
+    await linkHashtagToClass(client, class_post_id, hashtag.hashtag_id);
+  }
 };
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -122,7 +140,7 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
               Write information of your class
             </DialogDescription>
           </DialogHeader>
-          <Form method="post">
+          <Form method="post" encType="multipart/form-data">
             <div className="flex flex-col gap-3">
               <div>
                 <Label htmlFor="title" className="text-right mb-2">
@@ -215,7 +233,6 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
                   />
                 </div>
               </div>
-
               <div>
                 <Label htmlFor="hashtags" className="text-right mb-2">
                   Hashtags
@@ -226,24 +243,33 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
                 <Label htmlFor="poster" className="text-right mb-2">
                   poster
                 </Label>
-                <Input
-                  id="poster"
-                  className="col-span-3"
-                  name="poster"
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePosterChange}
-                />
-              </div>
-              {posterPreview && (
-                <div className="mt-4 flex justify-center">
-                  <img
-                    src={posterPreview}
-                    alt="Poster Preview"
-                    className="w-32 h-32 object-cover rounded-lg border"
+                <div className="flex gap-5">
+                  <Input
+                    id="poster"
+                    className="w-1/2"
+                    name="poster"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePosterChange}
                   />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button type="button">Preview</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        {posterPreview && (
+                          <img
+                            src={posterPreview}
+                            alt="Poster Preview"
+                            className="w-50 h-50 object-cover rounded-lg border"
+                          />
+                        )}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              )}
+              </div>
             </div>
             <Button
               className="w-full mt-5"
@@ -253,14 +279,14 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
               {isSubmitting ? (
                 <LoaderCircle className="animate-spin w-5 h-5" />
               ) : (
-                "Submit Vote"
+                "Make Class"
               )}
             </Button>
           </Form>
         </DialogContent>
       </Dialog>
       <div>
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-4 gap-5">
           {loaderData.classes.map((cls) => (
             <ClassCard
               key={cls.class_post_id}
@@ -275,7 +301,7 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
               endAt={cls.end_at}
               field={cls.field}
               difficultyType={cls.difficulty_type}
-              hashtags={cls.hashtags}
+              hashtags={cls.hashtags ?? []}
             />
           ))}
         </div>
