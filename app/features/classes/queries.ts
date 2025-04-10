@@ -37,3 +37,4 @@ export const getUserEmail = async ({ userId }: { userId: string }) => {
   if (error) throw error;
   return data?.user?.email;
 };
+

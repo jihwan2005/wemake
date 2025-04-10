@@ -385,3 +385,51 @@ export async function linkHashtagToClass(
 
   if (error) throw error;
 }
+
+export async function updateClassHashtags(
+  client: SupabaseClient<Database>,
+  classId: number,
+  newTags: string[]
+) {
+  const { data: existingLinks, error: fetchError } = await client
+    .from("classPost_with_hashtags")
+    .select("hashtag_id, hashtags(tag)")
+    .eq("class_post_id", classId);
+  if (fetchError) throw fetchError;
+
+  const existingTags = new Map(
+    (existingLinks ?? []).map((link) => [
+      link.hashtags.tag.toLowerCase(),
+      link.hashtag_id,
+    ])
+  );
+
+  const newTagSet = new Set(newTags.map((tag) => tag.toLowerCase()));
+
+  for (const tag of newTags) {
+    const lowerTag = tag.toLowerCase();
+    if (!existingTags.has(lowerTag)) {
+      const { data: tagData, error } = await client
+        .from("hashtags")
+        .upsert({ tag: lowerTag }, { onConflict: "tag" })
+        .select()
+        .single();
+      if (error) throw error;
+
+      await client.from("classPost_with_hashtags").insert({
+        class_post_id: classId,
+        hashtag_id: tagData.hashtag_id,
+      });
+    }
+  }
+
+  for (const [tagName, hashtagId] of existingTags.entries()) {
+    if (!newTagSet.has(tagName)) {
+      await client
+        .from("classPost_with_hashtags")
+        .delete()
+        .eq("class_post_id", classId)
+        .eq("hashtag_id", hashtagId);
+    }
+  }
+}

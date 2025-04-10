@@ -119,7 +119,6 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
   };
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
-
   return (
     <div className="space-y-20">
       <Hero
