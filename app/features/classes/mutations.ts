@@ -65,3 +65,45 @@ export const updateClass = async (
   }
   return data;
 };
+
+export const createChapter = async (
+  client: SupabaseClient<Database>,
+  { chapter, classId }: { chapter: string; classId: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter")
+    .insert({
+      title: chapter,
+      class_post_id: Number(classId),
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteChapter = async (
+  client: SupabaseClient<Database>,
+  { chapterId }: { chapterId: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter")
+    .delete()
+    .eq("chapter_id", chapterId)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateChapter = async (
+  client: SupabaseClient<Database>,
+  { chapterId, title }: { chapterId: string; title: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter")
+    .update({ title })
+    .eq("chapter_id", chapterId)
+    .single();
+  if (error) throw error;
+  return data;
+};
