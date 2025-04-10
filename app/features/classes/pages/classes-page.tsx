@@ -1,25 +1,3 @@
-import { Hero } from "~/common/components/hero";
-import type { Route } from "./+types/classes-page";
-import { makeSSRClient } from "~/supa-client";
-import { getClasses } from "../queries";
-import ClassCard from "../components/class-card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/common/components/ui/dialog";
-import { Button } from "~/common/components/ui/button";
-import { Form, useNavigation } from "react-router";
-import { Input } from "~/common/components/ui/input";
-import { Label } from "~/common/components/ui/label";
-import { LoaderCircle } from "lucide-react";
-import { Calendar } from "~/common/components/ui/calendar";
-import { useState } from "react";
-import { DIFFICULTY_TYPES } from "../constants";
-import { getLoggedInUserId } from "~/features/users/queries";
 import {
   Select,
   SelectContent,
@@ -37,10 +15,31 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/common/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/common/components/ui/dialog";
+import { Button } from "~/common/components/ui/button";
+import { Form, useNavigation } from "react-router";
+import { Label } from "~/common/components/ui/label";
+import { Input } from "~/common/components/ui/input";
+import { Calendar } from "~/common/components/ui/calendar";
+import { useState } from "react";
+import { DIFFICULTY_TYPES } from "../constants";
+import { LoaderCircle } from "lucide-react";
+import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
+import type { Route } from "./+types/classes-page";
+import { Hero } from "~/common/components/hero";
+import { getClasses } from "../queries";
+import ClassCard from "../components/class-card";
+import { Link } from "react-router";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -88,10 +87,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
     end_at,
   });
   for (const tag of hashtags) {
-    // (1) 해시태그가 존재하지 않으면 추가
-    const hashtag = await createHashtagIfNotExists(client, tag); // 반환: { hashtag_id }
-
-    // (2) classPost와 hashtag 연결
+    const hashtag = await createHashtagIfNotExists(client, tag); //
     await linkHashtagToClass(client, class_post_id, hashtag.hashtag_id);
   }
 };
@@ -111,8 +107,6 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
   >("");
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
   const navigation = useNavigation();
-  const isSubmitting =
-    navigation.state === "submitting" || navigation.state === "loading";
   const handlePosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -123,6 +117,9 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
       reader.readAsDataURL(file);
     }
   };
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
+
   return (
     <div className="space-y-20">
       <Hero
@@ -288,21 +285,23 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
       <div>
         <div className="grid grid-cols-4 gap-5">
           {loaderData.classes.map((cls) => (
-            <ClassCard
-              key={cls.class_post_id}
-              id={cls.class_post_id}
-              title={cls.title}
-              description={cls.description}
-              poster={cls.class_poster}
-              createdAt={cls.created_at}
-              authorAvatarUrl={cls.author_avatar}
-              authorUsername={cls.author_username}
-              startAt={cls.start_at}
-              endAt={cls.end_at}
-              field={cls.field}
-              difficultyType={cls.difficulty_type}
-              hashtags={cls.hashtags ?? []}
-            />
+            <Link key={cls.class_post_id} to={`/classes/${cls.class_post_id}`}>
+              <ClassCard
+                key={cls.class_post_id}
+                id={cls.class_post_id}
+                title={cls.title}
+                description={cls.description}
+                poster={cls.class_poster}
+                createdAt={cls.created_at}
+                authorAvatarUrl={cls.author_avatar}
+                authorUsername={cls.author_username}
+                startAt={cls.start_at}
+                endAt={cls.end_at}
+                field={cls.field}
+                difficultyType={cls.difficulty_type}
+                hashtags={cls.hashtags ?? []}
+              />
+            </Link>
           ))}
         </div>
       </div>

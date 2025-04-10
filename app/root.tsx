@@ -6,6 +6,8 @@ import {
   ScrollRestoration,
   useLocation,
   Outlet,
+  Routes,
+  Route as ModalRoute,
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -16,7 +18,8 @@ import { getUserById } from "./features/users/queries";
 import { countNotifications } from "./features/users/queries";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
-
+import ClassPage from "./features/classes/pages/class-page";
+import ClassesPage from "./features/classes/pages/classes-page";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -68,6 +71,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   const state = location.state as { backgroundLocation?: Location };
   const backgroundLocation = state?.backgroundLocation;
+  console.log(backgroundLocation);
   const isLoggedIn = loaderData.user !== null;
   return (
     <Provider store={store}>

@@ -33,6 +33,68 @@ export type Database = {
         }
         Relationships: []
       }
+      class_chapter: {
+        Row: {
+          chapter_id: string
+          class_post_id: number
+          title: string | null
+        }
+        Insert: {
+          chapter_id?: string
+          class_post_id: number
+          title?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          class_post_id?: number
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_chapter_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_chapter_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+        ]
+      }
+      class_chapter_lesson: {
+        Row: {
+          chapter_id: string
+          lesson_id: string
+          title: string | null
+          video_url: string | null
+        }
+        Insert: {
+          chapter_id: string
+          lesson_id?: string
+          title?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          lesson_id?: string
+          title?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_chapter_lesson_chapter_id_class_chapter_chapter_id_fk"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "class_chapter"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
       class_posts: {
         Row: {
           class_post_id: number

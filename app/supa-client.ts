@@ -8,6 +8,7 @@ import type { Database as SupabaseDatabase } from "database.types";
 import type { MergeDeep } from "type-fest/source/merge-deep.d.ts";
 import type { SetNonNullable } from "type-fest/source/set-non-nullable.d.ts";
 import type { SetFieldType } from "type-fest/source/set-field-type.d.ts";
+import { createClient } from "@supabase/supabase-js";
 
 export type Database = MergeDeep<
   SupabaseDatabase,
@@ -86,6 +87,11 @@ export type Database = MergeDeep<
 export const browserClient = createBrowserClient<Database>(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!
+);
+
+export const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export const makeSSRClient = (request: Request) => {

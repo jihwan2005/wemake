@@ -47,3 +47,20 @@ export const classPosts = pgTable("class_posts", {
   field: text().notNull(),
   difficulty_type: difficultyTypes().notNull(),
 });
+
+export const classChapter = pgTable("class_chapter", {
+  chapter_id: uuid().primaryKey().defaultRandom(),
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  title: text(),
+});
+
+export const classChapterLesson = pgTable("class_chapter_lesson", {
+  lesson_id: uuid().primaryKey().defaultRandom(),
+  chapter_id: uuid()
+    .references(() => classChapter.chapter_id, { onDelete: "cascade" })
+    .notNull(),
+  title: text(),
+  video_url: text(),
+});
