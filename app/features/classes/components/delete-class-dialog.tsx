@@ -25,7 +25,6 @@ export default function DeleteClassDialog() {
       <DialogTrigger asChild>
         <Button onClick={() => setIsDeleteClassDialogOpen(true)}>
           <Trash className="size-4" />
-          Class
         </Button>
       </DialogTrigger>
       <DialogContent>

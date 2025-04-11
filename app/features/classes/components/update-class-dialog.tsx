@@ -68,7 +68,6 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <Pencil className="size-4" />
-          Class
         </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-4xl">

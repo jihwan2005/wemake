@@ -106,3 +106,45 @@ export const updateChapter = async (
   if (error) throw error;
   return data;
 };
+
+export const createLesson = async (
+  client: SupabaseClient<Database>,
+  { lesson, chapterId }: { lesson: string; chapterId: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter_lesson")
+    .insert({
+      title: lesson,
+      chapter_id: chapterId,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteLesson = async (
+  client: SupabaseClient<Database>,
+  { lessonId }: { lessonId: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter_lesson")
+    .delete()
+    .eq("lesson_id", lessonId)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateLesson = async (
+  client: SupabaseClient<Database>,
+  { lessonId, title }: { lessonId: string; title: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter_lesson")
+    .update({ title })
+    .eq("lesson_id", lessonId)
+    .single();
+  if (error) throw error;
+  return data;
+};
