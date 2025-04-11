@@ -4,6 +4,7 @@ import { supabaseAdmin, type Database } from "~/supa-client";
 export const getClasses = async (client: SupabaseClient<Database>) => {
   const { data, error } = await client.from("class_list_view").select("*");
   if (error) throw error;
+  console.log(error);
   return data;
 };
 

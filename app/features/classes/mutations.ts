@@ -60,7 +60,6 @@ export const updateClass = async (
     })
     .eq("class_post_id", Number(classId));
   if (error) {
-    console.log(error);
     throw error;
   }
   return data;

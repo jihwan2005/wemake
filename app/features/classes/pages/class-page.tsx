@@ -1,40 +1,14 @@
 import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
 import { getClassById, getClassCourse, getUserEmail } from "../queries";
-import {
-  GraduationCap,
-  List,
-  Mail,
-  Upload,
-  Trash,
-  Pencil,
-  LoaderCircle,
-  Plus,
-} from "lucide-react";
+import { List, Upload, Pencil, Plus } from "lucide-react";
 import { Hero } from "~/common/components/hero";
 import { Button } from "~/common/components/ui/button";
-import { useEffect, useState } from "react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "~/common/components/ui/avatar";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "~/common/components/ui/hover-card";
-import { Form, Link, redirect, useFetcher, useNavigation } from "react-router";
+import { useState } from "react";
+
+import { Form, redirect } from "react-router";
 import { getLoggedInUserId } from "~/features/users/queries";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/common/components/ui/dialog";
+
 import {
   createChapter,
   deleteChapter,
@@ -42,25 +16,14 @@ import {
   updateChapter,
   updateClass,
 } from "../mutations";
-import { Label } from "~/common/components/ui/label";
+
 import { Input } from "~/common/components/ui/input";
-import { Calendar } from "~/common/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/common/components/ui/select";
-import { DIFFICULTY_TYPES } from "../constants";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/common/components/ui/dropdown-menu";
+
 import { updateClassHashtags } from "~/features/community/mutations";
+import DeleteClassDialog from "~/features/classes/components/delete-class-dialog";
+import UpdateClassDialog from "~/features/classes/components/update-class-dialog";
+import DeleteChapterDialog from "~/features/classes/components/delete-chapter-dialog";
+import AuthorInfoCard from "~/features/classes/components/author-info-card";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -170,47 +133,19 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 };
 
 export default function ClassPage({ loaderData }: Route.ComponentProps) {
-  const navigation = useNavigation();
   const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({});
   const [selectedChapter, setSelectedChapter] = useState<{
     id: string;
     title: string;
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [isDeleteClassDialogOpen, setIsDeleteClassDialogOpen] = useState(false);
-  const [isDeleteChapterDialogOpen, setIsDeleteChapterDialogOpen] =
-    useState(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    new Date(loaderData.cls.start_at)
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    new Date(loaderData.cls.end_at)
-  );
   const [openChapter, setOpenChapter] = useState(false);
   const [updateOpen, setUpdateOpen] = useState<string | null>(null);
-  const [difficulty, setDifficulty] = useState<
-    "beginner" | "intermediate" | "advanced" | ""
-  >(loaderData.cls.difficulty_type);
-  const [posterPreview, setPosterPreview] = useState<string | null>(
-    loaderData.cls.class_poster
-  );
-  const isSubmitting =
-    navigation.state === "submitting" || navigation.state === "loading";
   const toggleChapter = (chapterId: string) => {
     setOpenChapters((prev) => ({
       ...prev,
       [chapterId]: !prev[chapterId],
     }));
-  };
-  const handlePosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPosterPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
   };
   return (
     <div className="space-y-20">
@@ -218,37 +153,11 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         title={loaderData.cls.title}
         subtitle={`Welcome to my ${loaderData.cls.title} class`}
       />
-      <div className="flex mb-5 items-center gap-2">
-        <Avatar className="size-14">
-          <AvatarFallback>{loaderData.cls.author_username[0]}</AvatarFallback>
-          {loaderData.cls.author_avatar && (
-            <AvatarImage src={loaderData.cls.author_avatar} />
-          )}
-        </Avatar>
-        <div className="flex flex-col">
-          <div className="flex gap-2 items-center">
-            <GraduationCap className="size-5" />
-            <Link to={`/users/${loaderData.cls.author_username}`}>
-              <span>{loaderData.cls.author_username}</span>
-            </Link>
-          </div>
-          <div className="flex gap-2 items-center">
-            <Mail className="size-4" />
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <span className="underline cursor-pointer">
-                  {loaderData.email}
-                </span>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                <span>
-                  If you have any questions, feel free to reach out via email.
-                </span>
-              </HoverCardContent>
-            </HoverCard>
-          </div>
-        </div>
-      </div>
+      <AuthorInfoCard
+        username={loaderData.cls.author_username}
+        avatarUrl={loaderData.cls.author_avatar}
+        email={loaderData.email}
+      />
       <div className="flex flex-col gap-4 w-1/7">
         {loaderData.cls.author_id == loaderData.userId ? (
           <div className="flex gap-3">
@@ -256,224 +165,8 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
               <Upload className="size-4" />
               Chapter
             </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  <Pencil className="size-4" />
-                  Class
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-full max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>Update Class</DialogTitle>
-                  <DialogDescription>
-                    Update information of your class
-                  </DialogDescription>
-                </DialogHeader>
-                <Form method="post" encType="multipart/form-data">
-                  <input type="hidden" name="actionType" value="update" />
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <Label htmlFor="title" className="text-right mb-2">
-                        Title
-                      </Label>
-                      <Input
-                        id="title"
-                        className="col-span-3"
-                        name="title"
-                        defaultValue={loaderData.cls.title}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description" className="text-right mb-2">
-                        Description
-                      </Label>
-                      <Input
-                        id="description"
-                        className="col-span-3"
-                        name="description"
-                        defaultValue={loaderData.cls.description}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="start_at" className="text-right mb-2">
-                          Start Date
-                        </Label>
-                        <Calendar
-                          mode="single"
-                          selected={startDate}
-                          onSelect={setStartDate}
-                          initialFocus
-                        />
-                        <input
-                          id="start_at"
-                          type="hidden"
-                          name="start_at"
-                          value={startDate ? startDate.toISOString() : ""}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="end_at" className="text-right mb-2">
-                          End Date
-                        </Label>
-                        <Calendar
-                          mode="single"
-                          selected={endDate}
-                          onSelect={setEndDate}
-                          initialFocus
-                        />
-                        <input
-                          id="end_at"
-                          type="hidden"
-                          name="end_at"
-                          value={endDate ? endDate.toISOString() : ""}
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label htmlFor="field" className="text-right mb-2">
-                          Field
-                        </Label>
-                        <Input
-                          id="field"
-                          className="col-span-3"
-                          name="field"
-                          defaultValue={loaderData.cls.field}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="difficulty" className="text-right mb-2">
-                          Difficulty
-                        </Label>
-                        <Select
-                          value={difficulty}
-                          onValueChange={(value) =>
-                            setDifficulty(
-                              value as "beginner" | "intermediate" | "advanced"
-                            )
-                          }
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Difficulty" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {DIFFICULTY_TYPES.map((diff) => (
-                                <SelectItem value={diff.value} key={diff.value}>
-                                  {diff.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        <input
-                          type="hidden"
-                          name="difficulty_type"
-                          value={difficulty}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="hashtags" className="text-right mb-2">
-                        Hashtags
-                      </Label>
-                      <Input
-                        id="hashtags"
-                        className="col-span-3"
-                        name="hashtags"
-                        defaultValue={loaderData.cls.hashtags}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="poster" className="text-right mb-2">
-                        poster
-                      </Label>
-                      <div className="flex gap-5">
-                        <Input
-                          id="poster"
-                          className="w-1/2"
-                          name="poster"
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePosterChange}
-                        />
-                        <DropdownMenu>
-                          <DropdownMenuTrigger>
-                            <Button type="button">Preview</Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem>
-                              {posterPreview && (
-                                <img
-                                  src={posterPreview}
-                                  alt="Poster Preview"
-                                  className="w-50 h-50 object-cover rounded-lg border"
-                                />
-                              )}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    className="w-full mt-5"
-                    type="submit"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <LoaderCircle className="animate-spin w-5 h-5" />
-                    ) : (
-                      "Update Class"
-                    )}
-                  </Button>
-                </Form>
-              </DialogContent>
-            </Dialog>
-            <Dialog
-              open={isDeleteClassDialogOpen}
-              onOpenChange={setIsDeleteClassDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button onClick={() => setIsDeleteClassDialogOpen(true)}>
-                  <Trash className="size-4" />
-                  Class
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle>Class 삭제하기</DialogTitle>
-                <DialogDescription>
-                  Class를 정말 삭제하시겠습니까?
-                </DialogDescription>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    onClick={() => setIsDeleteClassDialogOpen(false)}
-                  >
-                    취소하기
-                  </Button>
-                  <Form method="post">
-                    <input type="hidden" name="actionType" value="delete" />
-                    <Button
-                      id="delete"
-                      className="bg-primary"
-                      type="submit"
-                      name="delete"
-                      value="delete"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <LoaderCircle className="animate-spin" />
-                      ) : (
-                        "영상 삭제"
-                      )}
-                    </Button>
-                  </Form>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <UpdateClassDialog cls={loaderData.cls} />
+            <DeleteClassDialog />
           </div>
         ) : null}
         <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
@@ -529,65 +222,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
                   ) : null}
                 </Form>
 
-                <Dialog
-                  open={isDeleteChapterDialogOpen}
-                  onOpenChange={setIsDeleteChapterDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={() => {
-                        setSelectedChapter({
-                          id: course.chapter_id,
-                          title: course.title + "",
-                        });
-                        setIsDeleteChapterDialogOpen(true);
-                      }}
-                    >
-                      <Trash className="size-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogTitle>챕터 삭제하기</DialogTitle>
-                    <DialogDescription>
-                      정말 <span>{selectedChapter?.title}</span> 챕터
-                      삭제하시겠습니까?
-                    </DialogDescription>
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        onClick={() => setIsDeleteChapterDialogOpen(false)}
-                      >
-                        취소하기
-                      </Button>
-                      <Form method="post">
-                        <input
-                          type="hidden"
-                          name="actionType"
-                          value="delete-chapter"
-                        />
-                        <input
-                          type="hidden"
-                          name="chapterId"
-                          value={course.chapter_id}
-                        />
-                        <Button
-                          id="delete-chapter"
-                          className="bg-primary"
-                          type="submit"
-                          name="delete-chapter"
-                          value="delete-chapter"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? (
-                            <LoaderCircle className="animate-spin" />
-                          ) : (
-                            "영상 삭제"
-                          )}
-                        </Button>
-                      </Form>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <DeleteChapterDialog course={course} />
                 <Button
                   onClick={() => {
                     setSelectedChapter({
@@ -601,16 +236,13 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
                 >
                   <Pencil className="size-4" />
                 </Button>
-                <button
-                  onClick={() => toggleChapter(course.chapter_id)}
-                  className="text-sm text-blue-500 underline"
-                >
+                <Button onClick={() => toggleChapter(course.chapter_id)}>
                   {openChapters[course.chapter_id] ? (
                     "숨기기"
                   ) : (
                     <List className="size-6" />
                   )}
-                </button>
+                </Button>
               </div>
 
               {openChapters[course.chapter_id] && (
