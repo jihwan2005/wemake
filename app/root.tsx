@@ -68,7 +68,6 @@ export default function App({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   const state = location.state as { backgroundLocation?: Location };
   const backgroundLocation = state?.backgroundLocation;
-  console.log(backgroundLocation);
   const isLoggedIn = loaderData.user !== null;
   return (
     <Provider store={store}>

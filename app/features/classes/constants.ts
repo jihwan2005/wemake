@@ -12,3 +12,10 @@ export const DIFFICULTY_TYPES = [
     value: "advanced",
   },
 ] as const;
+
+export const SearchOptions = [
+  "title",
+  "description",
+  "teacher",
+  "hashtag",
+] as const;

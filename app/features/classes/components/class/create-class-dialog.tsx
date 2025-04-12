@@ -1,11 +1,9 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/common/components/ui/dialog";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/common/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -14,47 +12,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/common/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/common/components/ui/dialog";
 import { Label } from "~/common/components/ui/label";
 import { Input } from "~/common/components/ui/input";
 import { Calendar } from "~/common/components/ui/calendar";
 import { Button } from "~/common/components/ui/button";
-import { Pencil, LoaderCircle } from "lucide-react";
+import { Form, useNavigation } from "react-router";
 import { useState } from "react";
-import { DIFFICULTY_TYPES } from "../constants";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/common/components/ui/dropdown-menu";
-import { Form } from "react-router";
+import { DIFFICULTY_TYPES } from "../../constants";
+import { LoaderCircle } from "lucide-react";
 
-interface UpdateClassDialogProps {
-  cls: {
-    title: string;
-    description: string;
-    start_at: string;
-    end_at: string;
-    field: string;
-    difficulty_type: "beginner" | "intermediate" | "advanced";
-    hashtags: string[];
-  };
-}
-
-export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    new Date(cls.start_at)
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    new Date(cls.end_at)
-  );
+export default function CreateClassDialog() {
+  const navigation = useNavigation();
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
   const [difficulty, setDifficulty] = useState<
-    "beginner" | "intermediate" | "advanced"
-  >(cls.difficulty_type);
+    "beginner" | "intermediate" | "advanced" | ""
+  >("");
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handlePosterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -63,33 +47,25 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
       reader.readAsDataURL(file);
     }
   };
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <Pencil className="size-4" />
-        </Button>
+        <Button>Make Class</Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-4xl">
         <DialogHeader>
-          <DialogTitle>Update Class</DialogTitle>
-          <DialogDescription>
-            Update information of your class
-          </DialogDescription>
+          <DialogTitle>Make Class</DialogTitle>
+          <DialogDescription>Write information of your class</DialogDescription>
         </DialogHeader>
         <Form method="post" encType="multipart/form-data">
-          <input type="hidden" name="actionType" value="update" />
           <div className="flex flex-col gap-3">
             <div>
               <Label htmlFor="title" className="text-right mb-2">
                 Title
               </Label>
-              <Input
-                id="title"
-                className="col-span-3"
-                name="title"
-                defaultValue={cls.title}
-              />
+              <Input id="title" className="col-span-3" name="title" />
             </div>
             <div>
               <Label htmlFor="description" className="text-right mb-2">
@@ -99,7 +75,6 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
                 id="description"
                 className="col-span-3"
                 name="description"
-                defaultValue={cls.description}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -143,12 +118,7 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
                 <Label htmlFor="field" className="text-right mb-2">
                   Field
                 </Label>
-                <Input
-                  id="field"
-                  className="col-span-3"
-                  name="field"
-                  defaultValue={cls.field}
-                />
+                <Input id="field" className="col-span-3" name="field" />
               </div>
               <div>
                 <Label htmlFor="difficulty" className="text-right mb-2">
@@ -186,12 +156,7 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
               <Label htmlFor="hashtags" className="text-right mb-2">
                 Hashtags
               </Label>
-              <Input
-                id="hashtags"
-                className="col-span-3"
-                name="hashtags"
-                defaultValue={cls.hashtags}
-              />
+              <Input id="hashtags" className="col-span-3" name="hashtags" />
             </div>
             <div>
               <Label htmlFor="poster" className="text-right mb-2">
@@ -229,7 +194,7 @@ export default function UpdateClassDialog({ cls }: UpdateClassDialogProps) {
             {isSubmitting ? (
               <LoaderCircle className="animate-spin w-5 h-5" />
             ) : (
-              "Update Class"
+              "Make Class"
             )}
           </Button>
         </Form>

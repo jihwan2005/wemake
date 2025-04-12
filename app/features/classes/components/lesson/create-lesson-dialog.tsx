@@ -41,7 +41,18 @@ export default function CreateCLessonDialog({
         <Form method="post" encType="multipart/form-data">
           <input type="hidden" name="actionType" value="create-lesson" />
           <input type="hidden" name="chapterId" value={chapterId} />
-          <Input id="lesson" name="lesson" />
+          <Input
+            id="lesson"
+            name="lesson"
+            placeholder="Lesson Title"
+            className="mb-3"
+          />
+          <Input
+            id="lessonVideo"
+            name="lessonVideo"
+            placeholder="Lessson Video"
+            type="file"
+          />
           <DialogFooter className="mt-5">
             <Button
               type="button"

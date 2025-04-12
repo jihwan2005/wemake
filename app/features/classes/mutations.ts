@@ -109,13 +109,18 @@ export const updateChapter = async (
 
 export const createLesson = async (
   client: SupabaseClient<Database>,
-  { lesson, chapterId }: { lesson: string; chapterId: string }
+  {
+    lesson,
+    chapterId,
+    video,
+  }: { lesson: string; chapterId: string; video: string }
 ) => {
   const { data, error } = await client
     .from("class_chapter_lesson")
     .insert({
       title: lesson,
       chapter_id: chapterId,
+      video_url: video,
     })
     .select()
     .single();

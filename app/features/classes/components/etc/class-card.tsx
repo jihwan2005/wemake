@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import {
   Avatar,
   AvatarFallback,
@@ -21,6 +20,7 @@ import {
   Layers,
   GraduationCap,
 } from "lucide-react";
+import { useSearchParams } from "react-router";
 
 interface ClassCardProps {
   id: number;
@@ -37,6 +37,21 @@ interface ClassCardProps {
   hashtags: string[];
 }
 
+function highlightKeyword(text: string, keyword: string) {
+  if (!keyword) return text;
+
+  const parts = text.split(new RegExp(`(${keyword})`, "gi"));
+  return parts.map((part, index) =>
+    part.toLowerCase() === keyword.toLowerCase() ? (
+      <span key={index} className="text-red-500 font-semibold">
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function ClassCard({
   id,
   poster,
@@ -51,6 +66,8 @@ export default function ClassCard({
   difficultyType,
   hashtags,
 }: ClassCardProps) {
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword") || "";
   const start = new Date(startAt);
   const end = new Date(endAt);
   const diffInMs = end.getTime() - start.getTime();
@@ -66,7 +83,10 @@ export default function ClassCard({
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-1 text-sm mb-5">
-          <CardTitle className="text-2xl">{title}</CardTitle>
+          <CardTitle className="text-2xl">
+            {" "}
+            {highlightKeyword(title, keyword)}
+          </CardTitle>
         </div>
         <div className="flex gap-1.5 mt-5 mb-5">
           <Badge className="bg-gradient-to-r from-pink-500  to-blue-500 text-white">
@@ -101,16 +121,18 @@ export default function ClassCard({
             <span>Taught by</span>
             <Badge className="bg-green-700">
               <GraduationCap className="w-5 h-5" />
-              <span>{authorUsername}</span>
+              <span>{highlightKeyword(authorUsername, keyword)}</span>
             </Badge>
           </div>
         </div>
-        {description}
+        {highlightKeyword(description, keyword)}
 
         <div className="flex flex-wrap gap-1.5 mt-2">
           {hashtags.map((hashtag) => (
             <span key={hashtag}>
-              <Badge className="bg-gray-400">#{hashtag}</Badge>
+              <Badge className="bg-gray-400">
+                #{highlightKeyword(hashtag, keyword)}
+              </Badge>
             </span>
           ))}
         </div>

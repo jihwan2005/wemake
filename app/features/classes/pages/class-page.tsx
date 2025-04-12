@@ -1,9 +1,7 @@
 import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
 import { getClassById, getClassCourse, getUserEmail } from "../queries";
-import { List, MoreVertical, EyeOff } from "lucide-react";
 import { Hero } from "~/common/components/hero";
-import { Button } from "~/common/components/ui/button";
 import { useState } from "react";
 import { redirect } from "react-router";
 import { getLoggedInUserId } from "~/features/users/queries";
@@ -17,21 +15,10 @@ import {
   updateClass,
   updateLesson,
 } from "../mutations";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/common/components/ui/popover";
 import { updateClassHashtags } from "~/features/community/mutations";
-import DeleteClassDialog from "~/features/classes/components/delete-class-dialog";
-import UpdateClassDialog from "~/features/classes/components/update-class-dialog";
-import DeleteChapterDialog from "~/features/classes/components/delete-chapter-dialog";
-import UpdateChapterDialog from "~/features/classes/components/update-chapter-dialog";
-import CreateChapterDialog from "~/features/classes/components/create-chapter-dialog";
-import CreateLessonDialog from "~/features/classes/components/create-lesson-dialog";
-import DeleteLessonDialog from "~/features/classes/components/delete-lesson-dialog";
-import UpdateLessonDialog from "~/features/classes/components/update-lesson-dialog";
-import AuthorInfoCard from "~/features/classes/components/author-info-card";
+import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
+import ClassCourse from "../components/etc/class-course";
+import ClassActionButtons from "../components/etc/class-action-buttons";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -45,7 +32,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const classId = params.classId;
   const formData = await request.formData();
-  console.log(formData);
   const actionType = formData.get("actionType");
   if (String(actionType) === "delete") {
     try {
@@ -133,9 +119,20 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   } else if (String(actionType) === "create-lesson") {
     const chapterId = formData.get("chapterId") as string;
     const lesson = formData.get("lesson") as string;
+    const video = formData.get("lessonVideo") as File;
+    const filePath = `${userId}/${Date.now()}`;
+    const { data, error } = await client.storage
+      .from("lesson-video")
+      .upload(filePath, video, {
+        contentType: "video/mp4",
+      });
+    const {
+      data: { publicUrl },
+    } = client.storage.from("lesson-video").getPublicUrl(filePath);
     await createLesson(client, {
       chapterId,
       lesson,
+      video: publicUrl,
     });
   } else if (String(actionType) === "delete-lesson") {
     const lessonId = formData.get("lessonId") as string;
@@ -162,14 +159,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 };
 
 export default function ClassPage({ loaderData }: Route.ComponentProps) {
-  const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({});
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleChapter = (chapterId: string) => {
-    setOpenChapters((prev) => ({
-      ...prev,
-      [chapterId]: !prev[chapterId],
-    }));
-  };
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="space-y-20">
       <Hero
@@ -181,90 +171,20 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         avatarUrl={loaderData.cls.author_avatar}
         email={loaderData.email}
       />
-      <div className="flex flex-col gap-4 w-1/7">
-        {loaderData.cls.author_id == loaderData.userId ? (
-          <div className="flex gap-3 items-center">
-            <UpdateClassDialog cls={loaderData.cls} />
-            <DeleteClassDialog />
-          </div>
-        ) : null}
-        <div className="flex gap-4">
-          <CreateChapterDialog />
-          <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <List className="size-4" />
-            )}
-          </Button>
-        </div>
-      </div>
+      <ClassActionButtons
+        authorId={loaderData.cls.author_id}
+        userId={loaderData.userId}
+        cls={loaderData.cls}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       {isOpen && (
-        <div className="flex flex-col gap-5">
-          {loaderData.clsCourse.map((course) => (
-            <div key={course.chapter_id} className="space-y-4 w-1/2">
-              <div className="flex items-center justify-between bg-gray-300 rounded-2xl p-3">
-                <h2 className="text-xl font-semibold">{course.title}</h2>
-                <div className="flex items-center gap-2">
-                  <Button onClick={() => toggleChapter(course.chapter_id)}>
-                    {openChapters[course.chapter_id] ? (
-                      <EyeOff className="size-4" />
-                    ) : (
-                      <List className="size-6" />
-                    )}
-                  </Button>
-                  {loaderData.cls.author_id == loaderData.userId ? (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <MoreVertical className="size-6" />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-45 h-25 flex flex-col gap-2 items-center justify-center">
-                        <div className="flex gap-3 items-center">
-                          <span>삭제하기</span>
-                          <DeleteChapterDialog course={course} />
-                        </div>
-                        <div className="flex gap-3 items-center">
-                          <span>수정하기</span>
-                          <UpdateChapterDialog course={course} />
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  ) : null}
-                </div>
-              </div>
-              {openChapters[course.chapter_id] && (
-                <ul className="pl-4 space-y-2">
-                  <CreateLessonDialog chapterId={course.chapter_id} />
-                  {course.class_chapter_lesson.map((lesson) => (
-                    <li
-                      key={lesson.lesson_id}
-                      className="border p-2 rounded-md flex justify-between"
-                    >
-                      <div className="font-medium">{lesson.title}</div>
-                      {loaderData.cls.author_id == loaderData.userId ? (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <MoreVertical className="size-6" />
-                          </PopoverTrigger>
-                          <PopoverContent className="w-45 h-25 flex flex-col gap-2 items-center justify-center">
-                            <div className="flex gap-3 items-center">
-                              <span>삭제하기</span>
-                              <DeleteLessonDialog lesson={lesson} />
-                            </div>
-                            <div className="flex gap-3 items-center">
-                              <span>수정하기</span>
-                              <UpdateLessonDialog lesson={lesson} />
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
-        </div>
+        <ClassCourse
+          courses={loaderData.clsCourse}
+          authorId={loaderData.cls.author_id}
+          userId={loaderData.userId}
+          classId={loaderData.cls.class_post_id}
+        />
       )}
     </div>
   );
