@@ -17,10 +17,12 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
 export default function LessonPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-20">
-      <video className="w-full h-full">
-        <source src={loaderData.lesson.video_url} type="video/mp4" />
-        <div>{loaderData.lesson.title}</div>
-      </video>
+      {loaderData.lesson.video_url && (
+        <video className="w-full">
+          <source src={loaderData.lesson.video_url} type="video/mp4" />
+        </video>
+      )}
+      <span>{loaderData.lesson.title}</span>
     </div>
   );
 }

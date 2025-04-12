@@ -2,6 +2,7 @@ import {
   bigint,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uuid,
@@ -46,6 +47,8 @@ export const classPosts = pgTable("class_posts", {
   end_at: timestamp().defaultNow(),
   field: text().notNull(),
   difficulty_type: difficultyTypes().notNull(),
+  upvotes: bigint({ mode: "number" }).default(0),
+  learners: bigint({ mode: "number" }).default(0),
 });
 
 export const classChapter = pgTable("class_chapter", {
@@ -63,4 +66,55 @@ export const classChapterLesson = pgTable("class_chapter_lesson", {
     .notNull(),
   title: text(),
   video_url: text(),
+});
+
+export const classUpvotes = pgTable(
+  "class_upvotes",
+  {
+    class_post_id: bigint({ mode: "number" }).references(
+      () => classPosts.class_post_id,
+      {
+        onDelete: "cascade",
+      }
+    ),
+    profile_id: uuid().references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [primaryKey({ columns: [table.class_post_id, table.profile_id] })]
+);
+
+export const classReviews = pgTable("class_reviews", {
+  class_reply_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" }).references(
+    () => classPosts.class_post_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  reply: text().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+  updated_at: timestamp().notNull().defaultNow(),
+});
+
+export const classEnrollments = pgTable("class_enrollments", {
+  enrollment_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  enrolled_at: timestamp().notNull().defaultNow(),
 });

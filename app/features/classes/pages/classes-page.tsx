@@ -125,6 +125,8 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
                 field={cls.field}
                 difficultyType={cls.difficulty_type}
                 hashtags={cls.hashtags ?? []}
+                upvotes={cls.upvotes}
+                learners={cls.learners}
               />
             </Link>
           ))}

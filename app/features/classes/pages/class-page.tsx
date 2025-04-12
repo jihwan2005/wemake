@@ -177,6 +177,8 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         cls={loaderData.cls}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        IsEnrolled={loaderData.cls.is_enrolled}
+        IsUpvoted={loaderData.cls.is_upvoted}
       />
       {isOpen && (
         <ClassCourse
@@ -184,6 +186,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           authorId={loaderData.cls.author_id}
           userId={loaderData.userId}
           classId={loaderData.cls.class_post_id}
+          IsEnrolled={loaderData.cls.is_enrolled}
         />
       )}
     </div>

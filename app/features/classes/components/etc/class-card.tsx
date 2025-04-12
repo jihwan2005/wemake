@@ -19,6 +19,8 @@ import {
   Calendar,
   Layers,
   GraduationCap,
+  ThumbsUp,
+  User,
 } from "lucide-react";
 import { useSearchParams } from "react-router";
 
@@ -35,6 +37,8 @@ interface ClassCardProps {
   field: string;
   difficultyType: string;
   hashtags: string[];
+  upvotes: number;
+  learners: number;
 }
 
 function highlightKeyword(text: string, keyword: string) {
@@ -65,6 +69,8 @@ export default function ClassCard({
   field,
   difficultyType,
   hashtags,
+  upvotes,
+  learners,
 }: ClassCardProps) {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
@@ -112,6 +118,14 @@ export default function ClassCard({
             {diffInWeeks}weeks
           </Badge>
         </div>
+        <Badge className="mb-5 bg-pink-600 mr-2">
+          <ThumbsUp className="size-5" />
+          {upvotes}
+        </Badge>
+        <Badge className="mb-5 bg-violet-500">
+          <User className="size-5" />
+          {learners >= 1000 ? `${(learners / 1000).toFixed(1)}k` : learners}
+        </Badge>
         <div className="flex mb-5 items-center gap-2">
           <Avatar className="size-14">
             <AvatarFallback>{authorUsername[0]}</AvatarFallback>

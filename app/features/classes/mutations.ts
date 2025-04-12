@@ -153,3 +153,49 @@ export const updateLesson = async (
   if (error) throw error;
   return data;
 };
+
+export const toggleEnrollment = async (
+  client: SupabaseClient<Database>,
+  { classId, userId }: { classId: string; userId: string }
+) => {
+  const { count } = await client
+    .from("class_enrollments")
+    .select("*", { count: "exact", head: true })
+    .eq("class_post_id", Number(classId))
+    .eq("profile_id", userId);
+  if (count === 0) {
+    await client.from("class_enrollments").insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+    });
+  } else {
+    await client
+      .from("class_enrollments")
+      .delete()
+      .eq("class_post_id", Number(classId))
+      .eq("profile_id", userId);
+  }
+};
+
+export const toggleUpvote = async (
+  client: SupabaseClient<Database>,
+  { classId, userId }: { classId: string; userId: string }
+) => {
+  const { count } = await client
+    .from("class_upvotes")
+    .select("*", { count: "exact", head: true })
+    .eq("class_post_id", Number(classId))
+    .eq("profile_id", userId);
+  if (count === 0) {
+    await client.from("class_upvotes").insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+    });
+  } else {
+    await client
+      .from("class_upvotes")
+      .delete()
+      .eq("class_post_id", Number(classId))
+      .eq("profile_id", userId);
+  }
+};

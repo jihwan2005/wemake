@@ -29,6 +29,7 @@ interface ClassCourseProps {
   authorId: string;
   userId: string;
   classId: number;
+  IsEnrolled: boolean;
 }
 
 export default function ClassCourse({
@@ -36,6 +37,7 @@ export default function ClassCourse({
   authorId,
   userId,
   classId,
+  IsEnrolled,
 }: ClassCourseProps) {
   const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({});
 
@@ -81,15 +83,28 @@ export default function ClassCourse({
           </div>
           {openChapters[course.chapter_id] && (
             <ul className="pl-4 space-y-2">
-              <CreateCLessonDialog chapterId={course.chapter_id} />
+              {authorId == userId ? (
+                <CreateCLessonDialog chapterId={course.chapter_id} />
+              ) : null}
               {course.class_chapter_lesson.map((lesson) => (
                 <li
                   key={lesson.lesson_id}
                   className="border p-2 rounded-md flex justify-between items-center"
                 >
                   <Link
-                    to={`/classes/${classId}/${lesson.lesson_id}`}
-                    className="font-medium flex-1"
+                    to={
+                      IsEnrolled
+                        ? `/classes/${classId}/${lesson.lesson_id}`
+                        : "#"
+                    }
+                    onClick={(e) => {
+                      if (!IsEnrolled) e.preventDefault();
+                    }}
+                    className={`font-medium flex-1 ${
+                      IsEnrolled
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed text-gray-400"
+                    }`}
                   >
                     {lesson.title}
                   </Link>

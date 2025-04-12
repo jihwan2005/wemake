@@ -1,0 +1,1 @@
+ALTER TABLE "class_posts" ADD COLUMN "learners" bigint DEFAULT 0;

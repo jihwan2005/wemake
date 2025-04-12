@@ -95,6 +95,70 @@ export type Database = {
           },
         ]
       }
+      class_enrollments: {
+        Row: {
+          class_post_id: number
+          enrolled_at: string
+          enrollment_id: number
+          profile_id: string
+        }
+        Insert: {
+          class_post_id: number
+          enrolled_at?: string
+          enrollment_id?: never
+          profile_id: string
+        }
+        Update: {
+          class_post_id?: number
+          enrolled_at?: string
+          enrollment_id?: never
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_posts: {
         Row: {
           class_post_id: number
@@ -104,10 +168,12 @@ export type Database = {
           difficulty_type: Database["public"]["Enums"]["difficulty_type"]
           end_at: string
           field: string
+          learners: number | null
           profile_id: string
           start_at: string
           title: string
           updated_at: string
+          upvotes: number | null
         }
         Insert: {
           class_post_id?: never
@@ -117,10 +183,12 @@ export type Database = {
           difficulty_type: Database["public"]["Enums"]["difficulty_type"]
           end_at: string
           field: string
+          learners?: number | null
           profile_id: string
           start_at: string
           title: string
           updated_at?: string
+          upvotes?: number | null
         }
         Update: {
           class_post_id?: never
@@ -130,10 +198,12 @@ export type Database = {
           difficulty_type?: Database["public"]["Enums"]["difficulty_type"]
           end_at?: string
           field?: string
+          learners?: number | null
           profile_id?: string
           start_at?: string
           title?: string
           updated_at?: string
+          upvotes?: number | null
         }
         Relationships: [
           {
@@ -159,6 +229,134 @@ export type Database = {
           },
           {
             foreignKeyName: "class_posts_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      class_reviews: {
+        Row: {
+          class_post_id: number | null
+          class_reply_id: number
+          created_at: string
+          profile_id: string
+          reply: string
+          updated_at: string
+        }
+        Insert: {
+          class_post_id?: number | null
+          class_reply_id?: never
+          created_at?: string
+          profile_id: string
+          reply: string
+          updated_at?: string
+        }
+        Update: {
+          class_post_id?: number | null
+          class_reply_id?: never
+          created_at?: string
+          profile_id?: string
+          reply?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_reviews_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_reviews_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_reviews_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      class_upvotes: {
+        Row: {
+          class_post_id: number
+          profile_id: string
+        }
+        Insert: {
+          class_post_id: number
+          profile_id: string
+        }
+        Update: {
+          class_post_id?: number
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_upvotes_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_upvotes_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_upvotes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_upvotes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
@@ -1856,8 +2054,12 @@ export type Database = {
           end_at: string | null
           field: string | null
           hashtags: string[] | null
+          is_enrolled: boolean | null
+          is_upvoted: boolean | null
+          learners: number | null
           start_at: string | null
           title: string | null
+          upvotes: number | null
         }
         Relationships: []
       }
