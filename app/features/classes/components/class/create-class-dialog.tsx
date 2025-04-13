@@ -27,7 +27,7 @@ import { Button } from "~/common/components/ui/button";
 import { Form, useNavigation } from "react-router";
 import { useState } from "react";
 import { DIFFICULTY_TYPES } from "../../constants";
-import { LoaderCircle } from "lucide-react";
+import { BookPlus, LoaderCircle } from "lucide-react";
 
 export default function CreateClassDialog() {
   const navigation = useNavigation();
@@ -52,7 +52,10 @@ export default function CreateClassDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Make Class</Button>
+        <Button>
+          <BookPlus className="size-4" />
+          Make Class
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-4xl">
         <DialogHeader>

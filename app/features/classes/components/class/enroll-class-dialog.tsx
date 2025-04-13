@@ -1,6 +1,6 @@
 import { BookmarkPlus, LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Form, useFetcher, useNavigation } from "react-router";
+import { useFetcher, useNavigation } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import {
   Dialog,
@@ -55,7 +55,7 @@ export default function EnrollClassDialog({
         <DialogContent>
           <DialogHeader>Unenroll Class</DialogHeader>
           <DialogDescription>
-            {title} Class를 취소하시겠습니까?
+            {title} Class를 취소하시겠습니까? 기존의 추천과 리뷰는 삭제됩니다
           </DialogDescription>
           <DialogFooter>
             <Button

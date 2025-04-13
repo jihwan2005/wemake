@@ -1,9 +1,9 @@
-import { List, EyeOff, ThumbsUp } from "lucide-react";
+import { List, EyeOff, ThumbsUp, Bell } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import UpdateClassDialog from "~/features/classes/components/class/update-class-dialog";
 import DeleteClassDialog from "~/features/classes/components/class/delete-class-dialog";
 import CreateChapterDialog from "~/features/classes/components/chapter/create-chapter-dialog";
-import { useFetcher } from "react-router";
+import { Link, useFetcher } from "react-router";
 import EnrollClassDialog from "./enroll-class-dialog";
 import CLassReviewsDialog from "./class-reviews-dialog";
 import CLassReviewDialog from "./class-review-dialog";
@@ -102,6 +102,11 @@ export default function ClassActionButtons({
         <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <EyeOff className="size-4" /> : <List className="size-4" />}
         </Button>
+        <Link to={`/classes/${cls.class_post_id}/notice`}>
+          <Button variant="outline">
+            <Bell className="size-4" />
+          </Button>
+        </Link>
       </div>
     </div>
   );

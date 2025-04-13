@@ -59,6 +59,8 @@ export default [
   ...prefix("/classes", [
     index("features/classes/pages/classes-page.tsx"),
     route(":classId", "features/classes/pages/class-page.tsx"),
+    route("/my", "features/classes/pages/class-my-page.tsx"),
+    route(":classId/notice", "features/classes/pages/class-notice-page.tsx"),
     route(":classId/:lessonId", "features/classes/pages/lesson-page.tsx"),
     route(
       "/:classId/enroll",

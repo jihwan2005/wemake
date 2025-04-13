@@ -70,7 +70,7 @@ export default function CLassReviewDialog({
           >
             <Input name="review" defaultValue={userReview} />
             <input type="hidden" name="reviewId" value={reviewId} />
-            <DialogFooter>
+            <DialogFooter className="mt-5">
               <Button
                 className="bg-primary"
                 type="submit"
@@ -82,20 +82,20 @@ export default function CLassReviewDialog({
                   "수정하기"
                 )}
               </Button>
+              <Button
+                className="bg-primary"
+                onClick={handleDelete}
+                disabled={isSubmitting}
+                type="button"
+              >
+                {isSubmitting ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "삭제하기"
+                )}
+              </Button>
             </DialogFooter>
           </fetcher.Form>
-
-          <Button
-            className="bg-primary"
-            onClick={handleDelete}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              "삭제하기"
-            )}
-          </Button>
         </DialogContent>
       ) : (
         <DialogContent>

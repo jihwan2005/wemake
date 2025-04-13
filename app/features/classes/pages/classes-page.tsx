@@ -17,6 +17,8 @@ import SortKeywordDropdownMenu from "../components/keyword/sort-keyword-dropdown
 import KeyWordSearch from "../components/keyword/keword-search";
 import OrderClassDropdownMenu from "../components/class/order-class-dropdownmenu";
 import UrlResetButton from "../components/etc/url-reset-button";
+import { Button } from "~/common/components/ui/button";
+import { Folder } from "lucide-react";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -119,7 +121,16 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
         <KeyWordSearch />
         <UrlResetButton />
       </div>
-      <CreateClassDialog />
+      <div className="flex gap-3">
+        <CreateClassDialog />
+        <Link to="/classes/my">
+          <Button>
+            <Folder className="size-4" />
+            My Class
+          </Button>
+        </Link>
+      </div>
+
       <div>
         <div className="grid grid-cols-4 gap-5">
           {loaderData.classes.map((cls) => (

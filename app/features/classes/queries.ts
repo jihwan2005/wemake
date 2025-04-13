@@ -154,3 +154,45 @@ export const getReviewsById = async (
   if (error) throw error;
   return data;
 };
+
+export const getMyClasses = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_enrollments")
+    .select("*")
+    .eq("profile_id", userId);
+  const classPostIds = data?.map((item) => item.class_post_id) ?? [];
+  const { data: classes, error: postsError } = await client
+    .from("class_list_view")
+    .select("*")
+    .in("class_post_id", classPostIds);
+
+  if (postsError) throw postsError;
+  return classes;
+};
+
+export const getAuthorIdByClassId = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: number }
+) => {
+  const { data, error } = await client
+    .from("class_list_view")
+    .select("author_id")
+    .eq("class_post_id", classId);
+  if (error) throw error;
+  return data[0];
+};
+
+export const getMyMakingClasses = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_list_view")
+    .select("*")
+    .eq("author_id", userId);
+  if (error) throw error;
+  return data;
+};
