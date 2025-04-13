@@ -196,3 +196,27 @@ export const getMyMakingClasses = async (
   if (error) throw error;
   return data;
 };
+
+export const getCourseList = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: number }
+) => {
+  const { data, error } = await client
+    .from("class_chapter")
+    .select(
+      `
+    chapter_id,
+    class_post_id,
+    title,
+    class_chapter_lesson (
+      lesson_id,
+      title,
+      video_url
+    )
+  `
+    )
+    .eq("class_post_id", classId);
+  if (error) throw error;
+  return data;
+};
+

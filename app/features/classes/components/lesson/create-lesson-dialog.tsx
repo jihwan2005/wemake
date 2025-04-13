@@ -13,7 +13,7 @@ import {
 } from "~/common/components/ui/dialog";
 import { Input } from "~/common/components/ui/input";
 
-export default function CreateCLessonDialog({
+export default function CreateLessonDialog({
   chapterId,
 }: {
   chapterId: string;

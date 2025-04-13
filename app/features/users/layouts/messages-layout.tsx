@@ -10,6 +10,7 @@ import MessageRoomCard from "../components/message-room-card";
 import type { Route } from "./+types/messages-layout";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId, getMessages } from "../queries";
+import { getClassById } from "~/features/classes/queries";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);

@@ -39,6 +39,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const classId = params.classId;
   const formData = await request.formData();
+  console.log(formData);
   const actionType = formData.get("actionType");
   if (String(actionType) === "delete") {
     try {
@@ -127,19 +128,30 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     const chapterId = formData.get("chapterId") as string;
     const lesson = formData.get("lesson") as string;
     const video = formData.get("lessonVideo") as File;
-    const filePath = `${userId}/${Date.now()}`;
-    const { data, error } = await client.storage
-      .from("lesson-video")
-      .upload(filePath, video, {
-        contentType: "video/mp4",
-      });
-    const {
-      data: { publicUrl },
-    } = client.storage.from("lesson-video").getPublicUrl(filePath);
+    let videoUrl: string | null = null;
+    if (video && video.size > 0 && video.name) {
+      const filePath = `${userId}/${Date.now()}`;
+      const { data, error } = await client.storage
+        .from("lesson-video")
+        .upload(filePath, video, {
+          contentType: "video/mp4",
+        });
+
+      if (error) {
+        console.error("영상 업로드 실패:", error.message);
+        throw new Error("영상 업로드 실패");
+      }
+
+      const {
+        data: { publicUrl },
+      } = client.storage.from("lesson-video").getPublicUrl(filePath);
+
+      videoUrl = publicUrl;
+    }
     await createLesson(client, {
       chapterId,
       lesson,
-      video: publicUrl,
+      video: videoUrl,
     });
   } else if (String(actionType) === "delete-lesson") {
     const lessonId = formData.get("lessonId") as string;

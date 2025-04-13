@@ -8,7 +8,7 @@ import {
 } from "~/common/components/ui/popover";
 import DeleteChapterDialog from "../chapter/delete-chapter-dialog";
 import UpdateChapterDialog from "../chapter/update-chapter-dialog";
-import CreateCLessonDialog from "../lesson/create-lesson-dialog";
+import CreateLessonDialog from "../lesson/create-lesson-dialog";
 import DeleteLessonDialog from "../lesson/delete-lesson-dialog";
 import UpdateLessonDialog from "../lesson/update-lesson-dialog";
 import { Link } from "react-router";
@@ -84,7 +84,7 @@ export default function ClassCourse({
           {openChapters[course.chapter_id] && (
             <ul className="pl-4 space-y-2">
               {authorId == userId ? (
-                <CreateCLessonDialog chapterId={course.chapter_id} />
+                <CreateLessonDialog chapterId={course.chapter_id} />
               ) : null}
               {course.class_chapter_lesson.map((lesson) => (
                 <li
@@ -93,15 +93,16 @@ export default function ClassCourse({
                 >
                   <Link
                     to={
-                      IsEnrolled
+                      IsEnrolled || authorId === userId
                         ? `/classes/${classId}/${lesson.lesson_id}`
                         : "#"
                     }
                     onClick={(e) => {
-                      if (!IsEnrolled) e.preventDefault();
+                      if (!IsEnrolled && authorId !== userId)
+                        e.preventDefault();
                     }}
                     className={`font-medium flex-1 ${
-                      IsEnrolled
+                      IsEnrolled || authorId === userId
                         ? "cursor-pointer"
                         : "cursor-not-allowed text-gray-400"
                     }`}

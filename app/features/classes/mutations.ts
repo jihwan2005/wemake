@@ -113,7 +113,7 @@ export const createLesson = async (
     lesson,
     chapterId,
     video,
-  }: { lesson: string; chapterId: string; video: string }
+  }: { lesson: string; chapterId: string; video: string | null }
 ) => {
   const { data, error } = await client
     .from("class_chapter_lesson")
