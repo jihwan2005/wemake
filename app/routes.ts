@@ -60,8 +60,26 @@ export default [
     index("features/classes/pages/classes-page.tsx"),
     route(":classId", "features/classes/pages/class-page.tsx"),
     route(":classId/:lessonId", "features/classes/pages/lesson-page.tsx"),
-    route("/:classId/enroll", "features/classes/pages/class-enroll-page.tsx"),
-    route("/:classId/upvote", "features/classes/pages/class-upvote-page.tsx"),
+    route(
+      "/:classId/enroll",
+      "features/classes/pages/action/class-enroll-page.tsx"
+    ),
+    route(
+      "/:classId/upvote",
+      "features/classes/pages/action/class-upvote-page.tsx"
+    ),
+    route(
+      "/:classId/review",
+      "features/classes/pages/action/class-review-page.tsx"
+    ),
+    route(
+      "/:classId/review/update",
+      "features/classes/pages/action/class-review-update-page.tsx"
+    ),
+    route(
+      "/:classId/review/delete",
+      "features/classes/pages/action/class-review-delete-page.tsx"
+    ),
   ]),
   ...prefix("/feedback", [
     index("features/feedback/pages/feedback-page.tsx"),

@@ -9,12 +9,14 @@ import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/classes-page";
 import { Hero } from "~/common/components/hero";
 import { getClasses } from "../queries";
-import ClassCard from "../components/etc/class-card";
+import ClassCard from "../components/class/class-card";
 import { Link } from "react-router";
 import { z } from "zod";
 import CreateClassDialog from "../components/class/create-class-dialog";
 import SortKeywordDropdownMenu from "../components/keyword/sort-keyword-dropdownmenu";
 import KeyWordSearch from "../components/keyword/keword-search";
+import OrderClassDropdownMenu from "../components/class/order-class-dropdownmenu";
+import UrlResetButton from "../components/etc/url-reset-button";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -73,6 +75,10 @@ const searchParamsSchema = z.object({
     .enum(["title", "description", "teacher", "hashtag"])
     .optional()
     .default("title"),
+  order: z
+    .enum(["upvotes", "learners", "reviews"])
+    .optional()
+    .default("upvotes"),
 });
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
@@ -93,6 +99,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const classes = await getClasses(client, {
     keyword: parsedData.keyword,
     sorting: parsedData.sorting,
+    order: parsedData.order,
   });
   return { classes };
 };
@@ -104,8 +111,14 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
         title="Class"
         subtitle="Make a class and show your talent to the world"
       />
-      <SortKeywordDropdownMenu />
-      <KeyWordSearch />
+      <div className="flex gap-3 mb-1 items-center">
+        <SortKeywordDropdownMenu />
+        <OrderClassDropdownMenu />
+      </div>
+      <div className="flex gap-3">
+        <KeyWordSearch />
+        <UrlResetButton />
+      </div>
       <CreateClassDialog />
       <div>
         <div className="grid grid-cols-4 gap-5">
@@ -127,6 +140,7 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
                 hashtags={cls.hashtags ?? []}
                 upvotes={cls.upvotes}
                 learners={cls.learners}
+                reviews={cls.reviews}
               />
             </Link>
           ))}

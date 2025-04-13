@@ -19,3 +19,5 @@ export const SearchOptions = [
   "teacher",
   "hashtag",
 ] as const;
+
+export const SortOptions = ["upvotes", "learners", "reviews"] as const;

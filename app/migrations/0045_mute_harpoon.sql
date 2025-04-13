@@ -1,0 +1,1 @@
+ALTER TABLE "class_posts" ADD COLUMN "reviews" bigint DEFAULT 0;

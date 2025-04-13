@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
-import Countdown from "./countdown-page";
+import Countdown from "../etc/countdown-page";
 import { Badge } from "~/common/components/ui/badge";
 import { cn } from "~/lib/utils";
 import {
@@ -21,6 +21,7 @@ import {
   GraduationCap,
   ThumbsUp,
   User,
+  MessageSquare,
 } from "lucide-react";
 import { useSearchParams } from "react-router";
 
@@ -39,6 +40,7 @@ interface ClassCardProps {
   hashtags: string[];
   upvotes: number;
   learners: number;
+  reviews: number;
 }
 
 function highlightKeyword(text: string, keyword: string) {
@@ -71,6 +73,7 @@ export default function ClassCard({
   hashtags,
   upvotes,
   learners,
+  reviews,
 }: ClassCardProps) {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
@@ -122,9 +125,13 @@ export default function ClassCard({
           <ThumbsUp className="size-5" />
           {upvotes}
         </Badge>
-        <Badge className="mb-5 bg-violet-500">
+        <Badge className="mb-5 bg-violet-500 mr-2">
           <User className="size-5" />
           {learners >= 1000 ? `${(learners / 1000).toFixed(1)}k` : learners}
+        </Badge>
+        <Badge className="mb-5 bg-purple-700">
+          <MessageSquare className="size-5" />
+          {reviews >= 1000 ? `${(reviews / 1000).toFixed(1)}k` : reviews}
         </Badge>
         <div className="flex mb-5 items-center gap-2">
           <Avatar className="size-14">

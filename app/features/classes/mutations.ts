@@ -199,3 +199,50 @@ export const toggleUpvote = async (
       .eq("profile_id", userId);
   }
 };
+
+export const createReview = async (
+  client: SupabaseClient<Database>,
+  {
+    classId,
+    userId,
+    review,
+  }: { classId: number; userId: string; review: string }
+) => {
+  const { data, error } = await client
+    .from("class_reviews")
+    .insert({
+      class_post_id: classId,
+      profile_id: userId,
+      review: review,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteReview = async (
+  client: SupabaseClient<Database>,
+  { reviewId }: { reviewId: string }
+) => {
+  const { data, error } = await client
+    .from("class_reviews")
+    .delete()
+    .eq("class_review_id", Number(reviewId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateReview = async (
+  client: SupabaseClient<Database>,
+  { reviewId, review }: { reviewId: string; review: string }
+) => {
+  const { data, error } = await client
+    .from("class_reviews")
+    .update({ review })
+    .eq("class_review_id", Number(reviewId))
+    .single();
+  if (error) throw error;
+  return data;
+};

@@ -39,7 +39,7 @@ export default function KeyWordSearch() {
   };
   return (
     <div className="space-y-4">
-      <Form className="w-1/2 mb-5" onSubmit={handleSearch} method="post">
+      <Form className="w-full mb-5" onSubmit={handleSearch} method="post">
         <Input type="text" name="keyword" placeholder="Search for Class" />
       </Form>
       {keywords.length > 0 && (

@@ -5,6 +5,20 @@ import DeleteClassDialog from "~/features/classes/components/class/delete-class-
 import CreateChapterDialog from "~/features/classes/components/chapter/create-chapter-dialog";
 import { useFetcher } from "react-router";
 import EnrollClassDialog from "./enroll-class-dialog";
+import CLassReviewsDialog from "./class-reviews-dialog";
+import CLassReviewDialog from "./class-review-dialog";
+export interface Review {
+  class_post_id: number | null;
+  class_review_id: number;
+  created_at: string;
+  profile_id: string;
+  review: string;
+  updated_at: string;
+  profiles?: {
+    username: string;
+    avatar: string | null;
+  };
+}
 
 interface Props {
   authorId: string;
@@ -24,6 +38,9 @@ interface Props {
   setIsOpen: (value: boolean) => void;
   IsEnrolled: boolean;
   IsUpvoted: boolean;
+  IsReviewed: boolean;
+  userReview: Review | null;
+  classReviews?: Review[];
 }
 
 export default function ClassActionButtons({
@@ -34,6 +51,9 @@ export default function ClassActionButtons({
   setIsOpen,
   IsEnrolled,
   IsUpvoted,
+  IsReviewed,
+  userReview,
+  classReviews,
 }: Props) {
   const fetcher = useFetcher();
   const absordclick = () => {
@@ -57,20 +77,28 @@ export default function ClassActionButtons({
           IsEnrolled={IsEnrolled}
         />
       ) : null}
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         <div className="flex gap-2">
           {authorId === userId && <CreateChapterDialog />}
           {IsEnrolled ? (
-            <Button variant="outline" onClick={absordclick}>
-              <ThumbsUp
-                className={`size-4 ${
-                  IsUpvoted ? "text-red-600 fill-current" : ""
-                }`}
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={absordclick}>
+                <ThumbsUp
+                  className={`size-4 ${
+                    IsUpvoted ? "text-red-600 fill-current" : ""
+                  }`}
+                />
+              </Button>
+              <CLassReviewDialog
+                classId={cls.class_post_id}
+                IsReviewed={IsReviewed}
+                userReview={userReview?.review}
+                reviewId={userReview?.class_review_id}
               />
-              추천하기
-            </Button>
+            </div>
           ) : null}
         </div>
+        <CLassReviewsDialog classReviews={classReviews} />
         <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <EyeOff className="size-4" /> : <List className="size-4" />}
         </Button>

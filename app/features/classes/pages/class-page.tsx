@@ -1,6 +1,12 @@
 import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
-import { getClassById, getClassCourse, getUserEmail } from "../queries";
+import {
+  getClassById,
+  getClassCourse,
+  getReviewsById,
+  getUserEmail,
+  getUserReview,
+} from "../queries";
 import { Hero } from "~/common/components/hero";
 import { useState } from "react";
 import { redirect } from "react-router";
@@ -17,8 +23,9 @@ import {
 } from "../mutations";
 import { updateClassHashtags } from "~/features/community/mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
-import ClassCourse from "../components/etc/class-course";
-import ClassActionButtons from "../components/etc/class-action-buttons";
+import ClassCourse from "../components/class/class-course";
+import ClassActionButtons from "../components/class/class-action-buttons";
+import { getReviews } from "~/features/products/queries";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -155,7 +162,14 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const cls = await getClassById(client, { classId: params.classId });
   const clsCourse = await getClassCourse(client, { classId: params.classId });
   const email = await getUserEmail({ userId: cls.author_id });
-  return { cls, clsCourse, email, userId };
+  const review = await getUserReview(client, {
+    userId,
+    classId: Number(params.classId),
+  });
+  const classReviews = await getReviewsById(client, {
+    classId: Number(params.classId),
+  });
+  return { cls, clsCourse, email, userId, review, classReviews };
 };
 
 export default function ClassPage({ loaderData }: Route.ComponentProps) {
@@ -179,6 +193,9 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         setIsOpen={setIsOpen}
         IsEnrolled={loaderData.cls.is_enrolled}
         IsUpvoted={loaderData.cls.is_upvoted}
+        IsReviewed={loaderData.cls.is_reviewed}
+        userReview={loaderData.review}
+        classReviews={loaderData.classReviews}
       />
       {isOpen && (
         <ClassCourse

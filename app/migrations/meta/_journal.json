@@ -309,6 +309,20 @@
       "when": 1744474598411,
       "tag": "0043_striped_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1744514335678,
+      "tag": "0044_sad_lilith",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1744517712709,
+      "tag": "0045_mute_harpoon",
+      "breakpoints": true
     }
   ]
 }

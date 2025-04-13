@@ -49,6 +49,7 @@ export const classPosts = pgTable("class_posts", {
   difficulty_type: difficultyTypes().notNull(),
   upvotes: bigint({ mode: "number" }).default(0),
   learners: bigint({ mode: "number" }).default(0),
+  reviews: bigint({ mode: "number" }).default(0),
 });
 
 export const classChapter = pgTable("class_chapter", {
@@ -85,7 +86,7 @@ export const classUpvotes = pgTable(
 );
 
 export const classReviews = pgTable("class_reviews", {
-  class_reply_id: bigint({ mode: "number" })
+  class_review_id: bigint({ mode: "number" })
     .primaryKey()
     .generatedAlwaysAsIdentity(),
   class_post_id: bigint({ mode: "number" }).references(
@@ -99,7 +100,7 @@ export const classReviews = pgTable("class_reviews", {
       onDelete: "cascade",
     })
     .notNull(),
-  reply: text().notNull(),
+  review: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
   updated_at: timestamp().notNull().defaultNow(),
 });

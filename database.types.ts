@@ -170,6 +170,7 @@ export type Database = {
           field: string
           learners: number | null
           profile_id: string
+          reviews: number | null
           start_at: string
           title: string
           updated_at: string
@@ -185,6 +186,7 @@ export type Database = {
           field: string
           learners?: number | null
           profile_id: string
+          reviews?: number | null
           start_at: string
           title: string
           updated_at?: string
@@ -200,6 +202,7 @@ export type Database = {
           field?: string
           learners?: number | null
           profile_id?: string
+          reviews?: number | null
           start_at?: string
           title?: string
           updated_at?: string
@@ -239,26 +242,26 @@ export type Database = {
       class_reviews: {
         Row: {
           class_post_id: number | null
-          class_reply_id: number
+          class_review_id: number
           created_at: string
           profile_id: string
-          reply: string
+          review: string
           updated_at: string
         }
         Insert: {
           class_post_id?: number | null
-          class_reply_id?: never
+          class_review_id?: never
           created_at?: string
           profile_id: string
-          reply: string
+          review: string
           updated_at?: string
         }
         Update: {
           class_post_id?: number | null
-          class_reply_id?: never
+          class_review_id?: never
           created_at?: string
           profile_id?: string
-          reply?: string
+          review?: string
           updated_at?: string
         }
         Relationships: [
@@ -2055,8 +2058,10 @@ export type Database = {
           field: string | null
           hashtags: string[] | null
           is_enrolled: boolean | null
+          is_reviewed: boolean | null
           is_upvoted: boolean | null
           learners: number | null
+          reviews: number | null
           start_at: string | null
           title: string | null
           upvotes: number | null
@@ -2152,13 +2157,6 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "class_list_view"
-            referencedColumns: ["author_id"]
-          },
-          {
-            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "class_list_view"
@@ -2168,8 +2166,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -2182,8 +2180,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "video_list_view"
-            referencedColumns: ["author_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -2195,13 +2193,20 @@ export type Database = {
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["other_profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
