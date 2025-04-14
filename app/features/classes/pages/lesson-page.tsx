@@ -6,9 +6,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "~/common/components/ui/sidebar";
-import { useState } from "react";
 
 import LessonSidebar from "./components/course-sidebar";
+import { Separator } from "~/common/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "~/common/components/ui/breadcrumb";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
@@ -37,15 +45,25 @@ export default function LessonPage({ loaderData }: Route.ComponentProps) {
         classTitle={loaderData.classTitle.title}
       />
       <SidebarInset>
-        <SidebarTrigger />
-        <span>{loaderData.lesson.title}</span>
-        <div>
-          {loaderData.lesson.video_url && (
-            <video className="w-full">
-              <source src={loaderData.lesson.video_url} type="video/mp4" />
-            </video>
-          )}
-        </div>
+        <header className="flex h-16">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    {loaderData.classTitle.title}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{loaderData.lesson.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+        <div className="bg-amber-300 w-full h-full"></div>
       </SidebarInset>
     </SidebarProvider>
   );

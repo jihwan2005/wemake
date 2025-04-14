@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <main className="px-20">{children}</main>
+        <main>{children}</main>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -66,10 +66,19 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 export default function App({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const isLoggedIn = loaderData.user !== null;
+  const isLessonPage = /^\/classes\/[^/]+\/[^/]+$/.test(pathname);
+  const hideNavigation =
+    pathname.includes("/auth") || /^\/classes\/[^/]+\/[^/]+$/.test(pathname);
   return (
     <Provider store={store}>
-      <div className={pathname.includes("/auth/") ? "" : "py-28 px-5 md:px-20"}>
-        {pathname.includes("/auth") ? null : (
+      <div
+        className={
+          pathname.includes("/auth/") || isLessonPage
+            ? ""
+            : "py-28 px-5 md:px-20"
+        }
+      >
+        {hideNavigation ? null : (
           <Navigation
             isLoggedIn={isLoggedIn}
             username={loaderData.profile?.username}
