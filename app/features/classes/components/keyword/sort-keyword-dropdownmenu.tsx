@@ -13,7 +13,7 @@ export default function SortKeywordDropdownMenu() {
   const sorting = searchParams.get("sorting") || "title";
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-1 mb-5">
+      <DropdownMenuTrigger className="flex items-center gap-1">
         <span className="text-sm capitalize">{sorting}</span>
         <ChevronDownIcon className="size-5" />
       </DropdownMenuTrigger>

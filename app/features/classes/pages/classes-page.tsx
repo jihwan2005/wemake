@@ -2,13 +2,13 @@ import {
   createClass,
   createHashtagIfNotExists,
   linkHashtagToClass,
-} from "~/features/community/mutations";
+} from "../mutations";
 import { data } from "react-router";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/classes-page";
 import { Hero } from "~/common/components/hero";
-import { getClasses } from "../queries";
+import { getClasses, getKeywordRanking } from "../queries";
 import ClassCard from "../components/class/class-card";
 import { Link } from "react-router";
 import { z } from "zod";
@@ -103,7 +103,8 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     sorting: parsedData.sorting,
     order: parsedData.order,
   });
-  return { classes };
+  const keyword = await getKeywordRanking(client);
+  return { classes, keyword };
 };
 
 export default function ClassesPage({ loaderData }: Route.ComponentProps) {
@@ -113,13 +114,12 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
         title="Class"
         subtitle="Make a class and show your talent to the world"
       />
-      <div className="flex gap-3 mb-1 items-center">
-        <SortKeywordDropdownMenu />
-        <OrderClassDropdownMenu />
-      </div>
-      <div className="flex gap-3">
-        <KeyWordSearch />
-        <UrlResetButton />
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex gap-3 w-full justify-center">
+          <div className="w-full max-w-2xl">
+            <KeyWordSearch keyword={loaderData.keyword} />
+          </div>
+        </div>
       </div>
       <div className="flex gap-3">
         <CreateClassDialog />
@@ -130,7 +130,6 @@ export default function ClassesPage({ loaderData }: Route.ComponentProps) {
           </Button>
         </Link>
       </div>
-
       <div>
         <div className="grid grid-cols-4 gap-5">
           {loaderData.classes.map((cls) => (

@@ -21,11 +21,10 @@ import {
   updateClass,
   updateLesson,
 } from "../mutations";
-import { updateClassHashtags } from "~/features/community/mutations";
+import { updateClassHashtags } from "../mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
 import ClassCourse from "../components/class/class-course";
 import ClassActionButtons from "../components/class/class-action-buttons";
-import { getReviews } from "~/features/products/queries";
 
 function parseHashtags(input: string): string[] {
   return input

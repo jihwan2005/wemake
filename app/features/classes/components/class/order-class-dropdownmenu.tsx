@@ -13,7 +13,7 @@ export default function OrderClassDropdownMenu() {
   const order = searchParams.get("order") || "upvotes";
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-1 mb-5">
+      <DropdownMenuTrigger className="flex items-center gap-1">
         <span className="text-sm capitalize">{order}</span>
         <ChevronDownIcon className="size-5" />
       </DropdownMenuTrigger>

@@ -832,6 +832,24 @@ export type Database = {
         }
         Relationships: []
       }
+      keyword_ranking: {
+        Row: {
+          keyword_frequency: number | null
+          keyword_id: number
+          keyword_text: string
+        }
+        Insert: {
+          keyword_frequency?: number | null
+          keyword_id?: never
+          keyword_text: string
+        }
+        Update: {
+          keyword_frequency?: number | null
+          keyword_id?: never
+          keyword_text?: string
+        }
+        Relationships: []
+      }
       message_room_members: {
         Row: {
           created_at: string

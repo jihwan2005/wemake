@@ -2,6 +2,49 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "database.types";
 type DifficultyType = Database["public"]["Enums"]["difficulty_type"];
 
+export const createClass = async (
+  client: SupabaseClient<Database>,
+  {
+    title,
+    description,
+    start_at,
+    end_at,
+    field,
+    difficulty_type,
+    poster,
+    userId,
+  }: {
+    title: string;
+    description: string;
+    start_at: string;
+    end_at: string;
+    userId: string;
+    field: string;
+    difficulty_type: DifficultyType;
+    poster: string;
+  }
+) => {
+  const { data, error } = await client
+    .from("class_posts")
+    .insert({
+      title,
+      description,
+      class_poster: poster,
+      profile_id: userId,
+      start_at,
+      end_at,
+      field,
+      difficulty_type,
+    })
+    .select()
+    .single();
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
+};
+
 export const deleteClass = async (
   client: SupabaseClient<Database>,
   { classId, posterUrl }: { classId: string; posterUrl: string }
@@ -245,4 +288,129 @@ export const updateReview = async (
     .single();
   if (error) throw error;
   return data;
+};
+
+export async function createHashtagIfNotExists(
+  client: SupabaseClient<Database>,
+  tag: string
+) {
+  const { data, error } = await client
+    .from("hashtags")
+    .select("*")
+    .eq("tag", tag)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (data) return data;
+
+  const { data: inserted, error: insertError } = await client
+    .from("hashtags")
+    .insert({ tag })
+    .select()
+    .single();
+
+  if (insertError) throw insertError;
+
+  return inserted;
+}
+
+export async function linkHashtagToClass(
+  client: SupabaseClient<Database>,
+  class_post_id: number,
+  hashtag_id: string
+) {
+  const { error } = await client.from("classPost_with_hashtags").insert({
+    class_post_id,
+    hashtag_id,
+  });
+
+  if (error) throw error;
+}
+
+export async function updateClassHashtags(
+  client: SupabaseClient<Database>,
+  classId: number,
+  newTags: string[]
+) {
+  const { data: existingLinks, error: fetchError } = await client
+    .from("classPost_with_hashtags")
+    .select("hashtag_id, hashtags(tag)")
+    .eq("class_post_id", classId);
+  if (fetchError) throw fetchError;
+
+  const existingTags = new Map(
+    (existingLinks ?? []).map((link) => [
+      link.hashtags.tag.toLowerCase(),
+      link.hashtag_id,
+    ])
+  );
+
+  const newTagSet = new Set(newTags.map((tag) => tag.toLowerCase()));
+
+  for (const tag of newTags) {
+    const lowerTag = tag.toLowerCase();
+    if (!existingTags.has(lowerTag)) {
+      const { data: tagData, error } = await client
+        .from("hashtags")
+        .upsert({ tag: lowerTag }, { onConflict: "tag" })
+        .select()
+        .single();
+      if (error) throw error;
+
+      await client.from("classPost_with_hashtags").insert({
+        class_post_id: classId,
+        hashtag_id: tagData.hashtag_id,
+      });
+    }
+  }
+
+  for (const [tagName, hashtagId] of existingTags.entries()) {
+    if (!newTagSet.has(tagName)) {
+      await client
+        .from("classPost_with_hashtags")
+        .delete()
+        .eq("class_post_id", classId)
+        .eq("hashtag_id", hashtagId);
+    }
+  }
+}
+
+export const createKeyword = async (
+  client: SupabaseClient<Database>,
+  { keyword }: { keyword: string }
+) => {
+  const normalizedKeyword = keyword.trim().replace(/\s+/g, "").toLowerCase();
+
+  const { data: existing, error: fetchError } = await client
+    .from("keyword_ranking")
+    .select("*")
+    .eq("keyword_text", normalizedKeyword)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+
+  if (existing) {
+    const { data: updated, error: updateError } = await client
+      .from("keyword_ranking")
+      .update({ keyword_frequency: (existing.keyword_frequency ?? 0) + 1 })
+      .eq("keyword_id", existing.keyword_id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+    return updated;
+  } else {
+    const { data: inserted, error: insertError } = await client
+      .from("keyword_ranking")
+      .insert({
+        keyword_text: normalizedKeyword,
+        keyword_frequency: 1,
+      })
+      .select()
+      .single();
+
+    if (insertError) throw insertError;
+    return inserted;
+  }
 };

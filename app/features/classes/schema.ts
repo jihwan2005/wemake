@@ -119,3 +119,12 @@ export const classEnrollments = pgTable("class_enrollments", {
     .notNull(),
   enrolled_at: timestamp().notNull().defaultNow(),
 });
+
+export const keywordRanking = pgTable("keyword_ranking", {
+  keyword_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  keyword_text: text().notNull(),
+  keyword_frequency: bigint({ mode: "number" }).default(0),
+});
+

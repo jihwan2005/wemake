@@ -220,3 +220,13 @@ export const getCourseList = async (
   return data;
 };
 
+export const getKeywordRanking = async (client: SupabaseClient<Database>) => {
+  const { data, error } = await client
+    .from("keyword_ranking")
+    .select("*")
+    .order("keyword_frequency", { ascending: false })
+    .limit(5);
+  if (error) throw error;
+  return data;
+};
+
