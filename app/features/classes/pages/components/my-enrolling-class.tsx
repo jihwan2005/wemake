@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import ClassCard from "../../components/class/class-card";
 
 type MyEnrollingClassProps = {
   classes: {
@@ -18,6 +17,7 @@ type MyEnrollingClassProps = {
     upvotes: number;
     learners: number;
     reviews: number;
+    progress: number;
   }[];
 };
 
@@ -26,24 +26,20 @@ export default function MyEnrollingClass({ classes }: MyEnrollingClassProps) {
     <div className="grid grid-cols-4 gap-5 mt-5">
       {classes.map((cls) => (
         <Link key={cls.class_post_id} to={`/classes/${cls.class_post_id}`}>
-          <ClassCard
-            key={cls.class_post_id}
-            id={cls.class_post_id}
-            title={cls.title}
-            description={cls.description}
-            poster={cls.class_poster}
-            createdAt={cls.created_at}
-            authorAvatarUrl={cls.author_avatar}
-            authorUsername={cls.author_username}
-            startAt={cls.start_at}
-            endAt={cls.end_at}
-            field={cls.field}
-            difficultyType={cls.difficulty_type}
-            hashtags={cls.hashtags ?? []}
-            upvotes={cls.upvotes}
-            learners={cls.learners}
-            reviews={cls.reviews}
-          />
+          <div className="relative">
+            <img src={cls.class_poster} className="w-full h-[250px]" />
+            <div className="flex justify-center w-8/9 h-[100px] bg-white rounded-2xl absolute bottom-[-50px] left-1/2 -translate-x-1/2 shadow-md">
+              <div className="flex flex-col w-5/6">
+                <span className="text-2xl mt-3 text-center">{cls.title}</span>
+                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div
+                    className="bg-green-400 h-2 rounded-full"
+                    style={{ width: `${cls.progress}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </Link>
       ))}
     </div>

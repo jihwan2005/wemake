@@ -26,6 +26,8 @@ import { updateClassHashtags } from "../mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
 import ClassCourse from "../components/class/class-course";
 import ClassActionButtons from "../components/class/class-action-buttons";
+import { ListCheck } from "lucide-react";
+import ClassCheckList from "../components/class/class-check-list";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -204,37 +206,46 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         title={loaderData.cls.title}
         subtitle={`Welcome to my ${loaderData.cls.title} class`}
       />
-      <AuthorInfoCard
-        username={loaderData.cls.author_username}
-        avatarUrl={loaderData.cls.author_avatar}
-        email={loaderData.email}
-      />
-      <ClassActionButtons
-        authorId={loaderData.cls.author_id}
-        userId={loaderData.userId}
-        cls={loaderData.cls}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        IsEnrolled={loaderData.cls.is_enrolled}
-        IsUpvoted={loaderData.cls.is_upvoted}
-        IsReviewed={loaderData.cls.is_reviewed}
-        userReview={loaderData.review}
-        classReviews={loaderData.classReviews}
-        myLessons={loaderData.myLessons}
-      />
-      {isOpen && (
-        <div className="flex justify-center">
-          <div className="w-full max-w-3xl">
-            <ClassCourse
-              courses={loaderData.clsCourse}
-              authorId={loaderData.cls.author_id}
-              userId={loaderData.userId}
-              classId={loaderData.cls.class_post_id}
-              IsEnrolled={loaderData.cls.is_enrolled}
-            />
-          </div>
+      <div className="grid grid-cols-4 gap-4 w-full items-start">
+        <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
+          <AuthorInfoCard
+            username={loaderData.cls.author_username}
+            avatarUrl={loaderData.cls.author_avatar}
+            email={loaderData.email}
+          />
+          <ClassActionButtons
+            authorId={loaderData.cls.author_id}
+            userId={loaderData.userId}
+            cls={loaderData.cls}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            IsEnrolled={loaderData.cls.is_enrolled}
+            IsUpvoted={loaderData.cls.is_upvoted}
+            IsReviewed={loaderData.cls.is_reviewed}
+            userReview={loaderData.review}
+            classReviews={loaderData.classReviews}
+            myLessons={loaderData.myLessons}
+          />
         </div>
-      )}
+
+        <div className="col-span-1 sticky top-0 self-start">
+          <ClassCheckList />
+        </div>
+
+        <div className="col-span-2">
+          {isOpen && (
+            <div className="w-full max-w-3xl mx-auto">
+              <ClassCourse
+                courses={loaderData.clsCourse}
+                authorId={loaderData.cls.author_id}
+                userId={loaderData.userId}
+                classId={loaderData.cls.class_post_id}
+                IsEnrolled={loaderData.cls.is_enrolled}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { SidebarInset, SidebarProvider } from "~/common/components/ui/sidebar";
 import LessonSidebar from "./components/course-sidebar";
 import { useFetcher } from "react-router";
 import Header from "./components/header";
+import { calculateProgress } from "../utils/progress";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
@@ -65,11 +66,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
       }[];
     }[]
   );
-  const allLessons = grouped.flatMap((chapter) => chapter.class_chapter_lesson);
-  const completedLessons = allLessons.filter((lesson) => lesson.is_completed);
-  const total = allLessons.length;
-  const completed = completedLessons.length;
-  const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
+  const progress = calculateProgress(grouped);
   return {
     lesson,
     course: grouped,

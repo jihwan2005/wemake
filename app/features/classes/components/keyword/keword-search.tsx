@@ -4,7 +4,7 @@ import { Form, useFetcher, useSearchParams } from "react-router";
 import { Input } from "~/common/components/ui/input";
 import SortKeywordDropdownMenu from "./sort-keyword-dropdownmenu";
 import OrderClassDropdownMenu from "../class/order-class-dropdownmenu";
-import UrlResetButton from "../etc/url-reset-button";
+import UrlResetButton from "../../utils/url-reset-button";
 
 interface Keyword {
   keyword_frequency: number | null;

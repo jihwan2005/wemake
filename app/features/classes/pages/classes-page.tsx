@@ -13,10 +13,7 @@ import ClassCard from "../components/class/class-card";
 import { Link } from "react-router";
 import { z } from "zod";
 import CreateClassDialog from "../components/class/create-class-dialog";
-import SortKeywordDropdownMenu from "../components/keyword/sort-keyword-dropdownmenu";
 import KeyWordSearch from "../components/keyword/keword-search";
-import OrderClassDropdownMenu from "../components/class/order-class-dropdownmenu";
-import UrlResetButton from "../components/etc/url-reset-button";
 import { Button } from "~/common/components/ui/button";
 import { Folder } from "lucide-react";
 

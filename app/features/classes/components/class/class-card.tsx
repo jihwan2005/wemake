@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
-import Countdown from "../etc/countdown-page";
+import Countdown from "../../utils/countdown-page";
 import { Badge } from "~/common/components/ui/badge";
 import { cn } from "~/lib/utils";
 import {

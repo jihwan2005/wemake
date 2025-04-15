@@ -26,7 +26,9 @@ export default function BookMarkedLessonsDropdownMenu({
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Button variant="outline">
-          <BookmarkCheck className="size-4" />
+          <BookmarkCheck
+            className={`size-4 ${myLessons.length > 0 ? "text-red-600" : ""}`}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[300px]">
