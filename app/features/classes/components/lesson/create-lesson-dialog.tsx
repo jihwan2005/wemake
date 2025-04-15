@@ -60,7 +60,11 @@ export default function CreateLessonDialog({
             >
               취소하기
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              onClick={() => setCreateLessonDialogOpen(false)}
+            >
               {isSubmitting ? (
                 <LoaderCircle className="animate-spin w-5 h-5" />
               ) : (

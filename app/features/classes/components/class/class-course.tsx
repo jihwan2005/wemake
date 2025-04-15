@@ -49,9 +49,9 @@ export default function ClassCourse({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 w-full">
       {courses.map((course) => (
-        <div key={course.chapter_id} className="space-y-4 w-1/2">
+        <div key={course.chapter_id} className="space-y-4 w-full">
           <div className="flex items-center justify-between bg-gray-300 rounded-2xl p-3">
             <h2 className="text-xl font-semibold">{course.title}</h2>
             <div className="flex items-center gap-2">

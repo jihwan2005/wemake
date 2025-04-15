@@ -209,13 +209,17 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         classReviews={loaderData.classReviews}
       />
       {isOpen && (
-        <ClassCourse
-          courses={loaderData.clsCourse}
-          authorId={loaderData.cls.author_id}
-          userId={loaderData.userId}
-          classId={loaderData.cls.class_post_id}
-          IsEnrolled={loaderData.cls.is_enrolled}
-        />
+        <div className="flex justify-center">
+          <div className="w-full max-w-3xl">
+            <ClassCourse
+              courses={loaderData.clsCourse}
+              authorId={loaderData.cls.author_id}
+              userId={loaderData.userId}
+              classId={loaderData.cls.class_post_id}
+              IsEnrolled={loaderData.cls.is_enrolled}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

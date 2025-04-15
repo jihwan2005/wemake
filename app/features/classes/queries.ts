@@ -230,3 +230,22 @@ export const getKeywordRanking = async (client: SupabaseClient<Database>) => {
   return data;
 };
 
+export const getChapterTitleByLessonId = async (
+  client: SupabaseClient<Database>,
+  { lessonId }: { lessonId: string }
+) => {
+  const { data, error } = await client
+    .from("class_chapter_lesson")
+    .select("chapter_id")
+    .eq("lesson_id", lessonId)
+    .single();
+  if (error) throw error;
+  const chapterId = data?.chapter_id;
+  const { data: chapter, error: chapterError } = await client
+    .from("class_chapter")
+    .select("title")
+    .eq("chapter_id", chapterId)
+    .single();
+  if (chapterError) throw chapterError;
+  return chapter;
+};

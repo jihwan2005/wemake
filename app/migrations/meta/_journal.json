@@ -330,6 +330,34 @@
       "when": 1744622500532,
       "tag": "0046_salty_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1744690925475,
+      "tag": "0047_fair_firelord",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1744690973456,
+      "tag": "0048_purple_morph",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1744691609836,
+      "tag": "0049_glossy_exodus",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1744691707105,
+      "tag": "0050_gigantic_raider",
+      "breakpoints": true
     }
   ]
 }

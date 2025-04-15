@@ -414,3 +414,26 @@ export const createKeyword = async (
     return inserted;
   }
 };
+
+export const toggleBookMark = async (
+  client: SupabaseClient<Database>,
+  { lessonId, userId }: { lessonId: string; userId: string }
+) => {
+  const { count } = await client
+    .from("bookmarked_lesson")
+    .select("*", { count: "exact", head: true })
+    .eq("lesson_id", lessonId)
+    .eq("profile_id", userId);
+  if (count === 0) {
+    await client.from("bookmarked_lesson").insert({
+      lesson_id: lessonId,
+      profile_id: userId,
+    });
+  } else {
+    await client
+      .from("bookmarked_lesson")
+      .delete()
+      .eq("lesson_id", lessonId)
+      .eq("profile_id", userId);
+  }
+};

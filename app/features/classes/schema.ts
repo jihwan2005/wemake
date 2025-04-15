@@ -128,3 +128,17 @@ export const keywordRanking = pgTable("keyword_ranking", {
   keyword_frequency: bigint({ mode: "number" }).default(0),
 });
 
+export const bookmarkedLesson = pgTable(
+  "bookmarked_lesson",
+  {
+    profile_id: uuid()
+      .references(() => profiles.profile_id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    lesson_id: uuid()
+      .references(() => classChapterLesson.lesson_id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.lesson_id, table.profile_id] })]
+);

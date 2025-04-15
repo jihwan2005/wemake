@@ -1,22 +1,15 @@
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/lesson-page";
-import { getClassById, getCourseList, getLessonById } from "../queries";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "~/common/components/ui/sidebar";
-
+  getChapterTitleByLessonId,
+  getClassById,
+  getCourseList,
+  getLessonById,
+} from "../queries";
+import { SidebarInset, SidebarProvider } from "~/common/components/ui/sidebar";
 import LessonSidebar from "./components/course-sidebar";
-import { Separator } from "~/common/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "~/common/components/ui/breadcrumb";
+import { useFetcher } from "react-router";
+import Header from "./components/header";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
@@ -34,10 +27,27 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const course = await getCourseList(client, {
     classId,
   });
-  return { lesson, course, classTitle };
+  const chapterTitle = await getChapterTitleByLessonId(client, {
+    lessonId,
+  });
+  return {
+    lesson,
+    course,
+    classTitle,
+    chapterTitle,
+    classId,
+    lessonId,
+  };
 };
 
 export default function LessonPage({ loaderData }: Route.ComponentProps) {
+  const fetcher = useFetcher();
+  const absordclick = () => {
+    fetcher.submit(null, {
+      method: "POST",
+      action: `/classes/${loaderData.classId}/${loaderData.lessonId}/bookmark`,
+    });
+  };
   return (
     <SidebarProvider defaultOpen={false}>
       <LessonSidebar
@@ -45,25 +55,16 @@ export default function LessonPage({ loaderData }: Route.ComponentProps) {
         classTitle={loaderData.classTitle.title}
       />
       <SidebarInset>
-        <header className="flex h-16">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    {loaderData.classTitle.title}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{loaderData.lesson.title}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="bg-amber-300 w-full h-full"></div>
+        <Header
+          classId={loaderData.classId}
+          classTitle={loaderData.classTitle.title}
+          chapterTitle={loaderData.chapterTitle.title}
+          lessonTitle={loaderData.lesson.title}
+          onBookmarkClick={absordclick}
+        />
+        <div className="bg-amber-300 w-full h-full">
+          {loaderData.lesson.title}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

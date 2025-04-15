@@ -83,6 +83,10 @@ export default [
       "/:classId/review/delete",
       "features/classes/pages/action/class-review-delete-page.tsx"
     ),
+    route(
+      ":classId/:lessonId/bookmark",
+      "features/classes/pages/action/lesson-bookmark-page.tsx"
+    ),
   ]),
   ...prefix("/feedback", [
     index("features/feedback/pages/feedback-page.tsx"),
