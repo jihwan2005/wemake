@@ -2,6 +2,7 @@ import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/lesson-page";
 import {
   getChapterTitleByLessonId,
+  getChapterWithLessons,
   getClassById,
   getCourseList,
   getLessonById,
@@ -30,13 +31,54 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const chapterTitle = await getChapterTitleByLessonId(client, {
     lessonId,
   });
+  const chapterWithLesson = await getChapterWithLessons(client, {
+    classId,
+  });
+  const grouped = chapterWithLesson.reduce(
+    (acc, item) => {
+      const existing = acc.find((g) => g.chapter_id === item.chapter_id);
+      const lesson = {
+        lesson_id: item.lesson_id!,
+        title: item.lesson_title,
+        is_completed: item.is_completed,
+      };
+      if (existing) {
+        existing.class_chapter_lesson.push(lesson);
+      } else {
+        acc.push({
+          chapter_id: item.chapter_id!,
+          title: item.chapter_title,
+          class_post_id: item.class_post_id!,
+          class_chapter_lesson: [lesson],
+        });
+      }
+      return acc;
+    },
+    [] as {
+      chapter_id: string;
+      title: string | null;
+      class_post_id: number;
+      class_chapter_lesson: {
+        lesson_id: string;
+        title: string | null;
+        is_completed: boolean | null;
+      }[];
+    }[]
+  );
+  const allLessons = grouped.flatMap((chapter) => chapter.class_chapter_lesson);
+  const completedLessons = allLessons.filter((lesson) => lesson.is_completed);
+  const total = allLessons.length;
+  const completed = completedLessons.length;
+  const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
   return {
     lesson,
-    course,
+    course: grouped,
     classTitle,
     chapterTitle,
     classId,
     lessonId,
+    chapterWithLesson,
+    progress,
   };
 };
 
@@ -48,11 +90,18 @@ export default function LessonPage({ loaderData }: Route.ComponentProps) {
       action: `/classes/${loaderData.classId}/${loaderData.lessonId}/bookmark`,
     });
   };
+  const complete = () => {
+    fetcher.submit(null, {
+      method: "POST",
+      action: `/classes/${loaderData.classId}/${loaderData.lessonId}/complete`,
+    });
+  };
   return (
     <SidebarProvider defaultOpen={false}>
       <LessonSidebar
         course={loaderData.course}
         classTitle={loaderData.classTitle.title}
+        progress={loaderData.progress}
       />
       <SidebarInset>
         <Header
@@ -60,7 +109,10 @@ export default function LessonPage({ loaderData }: Route.ComponentProps) {
           classTitle={loaderData.classTitle.title}
           chapterTitle={loaderData.chapterTitle.title}
           lessonTitle={loaderData.lesson.title}
+          IsBookmarked={loaderData.lesson.is_bookmarked}
+          IsCompleted={loaderData.lesson.is_completed}
           onBookmarkClick={absordclick}
+          onCompleteClick={complete}
         />
         <div className="bg-amber-300 w-full h-full">
           {loaderData.lesson.title}

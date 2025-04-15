@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
 } from "~/common/components/ui/breadcrumb";
 import { Button } from "~/common/components/ui/button";
-import { Bookmark } from "lucide-react";
+import { Bookmark, CheckCircle } from "lucide-react";
 import { SidebarTrigger } from "~/common/components/ui/sidebar";
 
 interface HeaderProps {
@@ -16,6 +16,9 @@ interface HeaderProps {
   chapterTitle: string | null;
   lessonTitle: string | null;
   onBookmarkClick: () => void;
+  IsBookmarked: boolean | null;
+  onCompleteClick: () => void;
+  IsCompleted: boolean | null;
 }
 
 export default function Header({
@@ -24,6 +27,9 @@ export default function Header({
   chapterTitle,
   lessonTitle,
   onBookmarkClick,
+  onCompleteClick,
+  IsBookmarked,
+  IsCompleted,
 }: HeaderProps) {
   return (
     <header className="flex h-16">
@@ -48,9 +54,21 @@ export default function Header({
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="mr-4">
+        <div className="flex gap-4 mr-4">
+          <Button
+            variant="outline"
+            onClick={onCompleteClick}
+            className={`${IsCompleted ? "text-green-500 fill-current" : ""}`}
+          >
+            <CheckCircle className="size-4" />
+            {IsCompleted ? "수강 완료" : "완료하기"}
+          </Button>
           <Button variant="outline" onClick={onBookmarkClick}>
-            <Bookmark className="size-5" />
+            <Bookmark
+              className={`size-4 ${
+                IsBookmarked ? "text-red-600 fill-current" : ""
+              }`}
+            />
           </Button>
         </div>
       </div>

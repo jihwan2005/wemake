@@ -7,6 +7,8 @@ import { Link, useFetcher } from "react-router";
 import EnrollClassDialog from "./enroll-class-dialog";
 import CLassReviewsDialog from "./class-reviews-dialog";
 import CLassReviewDialog from "./class-review-dialog";
+import BookMarkedLessonsDropdownMenu from "../lesson/bookmarked-lessons-dropdownmenu";
+
 export interface Review {
   class_post_id: number | null;
   class_review_id: number;
@@ -18,6 +20,12 @@ export interface Review {
     username: string;
     avatar: string | null;
   };
+}
+
+export interface Lesson {
+  title: string | null;
+  class_post_id: number | null;
+  lesson_id: string | null;
 }
 
 interface Props {
@@ -41,6 +49,7 @@ interface Props {
   IsReviewed: boolean;
   userReview: Review | null;
   classReviews?: Review[];
+  myLessons: Lesson[];
 }
 
 export default function ClassActionButtons({
@@ -54,6 +63,7 @@ export default function ClassActionButtons({
   IsReviewed,
   userReview,
   classReviews,
+  myLessons,
 }: Props) {
   const fetcher = useFetcher();
   const absordclick = () => {
@@ -77,7 +87,7 @@ export default function ClassActionButtons({
           IsEnrolled={IsEnrolled}
         />
       ) : null}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <div className="flex gap-2">
           {authorId === userId && <CreateChapterDialog />}
           {IsEnrolled ? (
@@ -98,15 +108,22 @@ export default function ClassActionButtons({
             </div>
           ) : null}
         </div>
-        <CLassReviewsDialog classReviews={classReviews} />
-        <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <EyeOff className="size-4" /> : <List className="size-4" />}
-        </Button>
-        <Link to={`/classes/${cls.class_post_id}/notice`}>
-          <Button variant="outline">
-            <Bell className="size-4" />
+        <div className="flex gap-2">
+          <CLassReviewsDialog classReviews={classReviews} />
+          <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <List className="size-4" />
+            )}
           </Button>
-        </Link>
+          <Link to={`/classes/${cls.class_post_id}/notice`}>
+            <Button variant="outline">
+              <Bell className="size-4" />
+            </Button>
+          </Link>
+          <BookMarkedLessonsDropdownMenu myLessons={myLessons} />
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -16,6 +16,8 @@ import {
   CollapsibleTrigger,
 } from "~/common/components/ui/collapsible";
 import { Link } from "react-router";
+import { Check } from "lucide-react";
+import ProgressBar from "./progress";
 
 type LessonSidebarProps = {
   course: {
@@ -24,22 +26,27 @@ type LessonSidebarProps = {
     class_chapter_lesson: {
       lesson_id: string;
       title: string | null;
+      is_completed: boolean | null;
     }[];
   }[];
   classTitle: string;
+  progress: number;
 };
 
 export default function LessonSidebar({
   course,
   classTitle,
+  progress,
 }: LessonSidebarProps) {
   return (
     <Sidebar className="z-50" variant="inset">
+      <SidebarHeader>
+        <div className="flex justify-center text-2xl">{classTitle}</div>
+        <ProgressBar progress={progress} />
+        <div className="flex justify-center">{progress}% 완료</div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-2xl mb-5">
-            {classTitle}
-          </SidebarGroupLabel>
           <SidebarMenu>
             {course.map((cls) => (
               <Collapsible
@@ -60,6 +67,9 @@ export default function LessonSidebar({
                           >
                             <SidebarMenuSubButton>
                               {lesson.title}
+                              {lesson.is_completed ? (
+                                <Check className="size-4" />
+                              ) : null}
                             </SidebarMenuSubButton>
                           </Link>
                         </SidebarMenuSubItem>

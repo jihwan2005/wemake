@@ -114,7 +114,7 @@ export const getLessonById = async (
   { lessonId }: { lessonId: string }
 ) => {
   const { data, error } = await client
-    .from("class_chapter_lesson")
+    .from("lesson_list_view")
     .select("*")
     .eq("lesson_id", lessonId)
     .single();
@@ -248,4 +248,34 @@ export const getChapterTitleByLessonId = async (
     .single();
   if (chapterError) throw chapterError;
   return chapter;
+};
+
+export const getMyBookMarkLessons = async (
+  client: SupabaseClient<Database>,
+  { userId, classId }: { userId: string; classId: string }
+) => {
+  const { data, error } = await client
+    .from("bookmarked_lesson")
+    .select("*")
+    .eq("profile_id", userId);
+  const LessonsIds = data?.map((item) => item.lesson_id) ?? [];
+  const { data: lessons, error: lessonsError } = await client
+    .from("lesson_list_view")
+    .select("title,class_post_id,lesson_id")
+    .in("lesson_id", LessonsIds)
+    .eq("class_post_id", Number(classId));
+  if (lessonsError) throw lessonsError;
+  return lessons;
+};
+
+export const getChapterWithLessons = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: number }
+) => {
+  const { data, error } = await client
+    .from("chapter_with_lessons_view")
+    .select("*")
+    .eq("class_post_id", classId);
+  if (error) throw error;
+  return data;
 };

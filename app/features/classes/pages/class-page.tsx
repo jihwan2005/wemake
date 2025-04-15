@@ -3,6 +3,7 @@ import { makeSSRClient } from "~/supa-client";
 import {
   getClassById,
   getClassCourse,
+  getMyBookMarkLessons,
   getReviewsById,
   getUserEmail,
   getUserReview,
@@ -180,7 +181,19 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const classReviews = await getReviewsById(client, {
     classId: Number(params.classId),
   });
-  return { cls, clsCourse, email, userId, review, classReviews };
+  const myLessons = await getMyBookMarkLessons(client, {
+    userId,
+    classId: params.classId,
+  });
+  return {
+    cls,
+    clsCourse,
+    email,
+    userId,
+    review,
+    classReviews,
+    myLessons,
+  };
 };
 
 export default function ClassPage({ loaderData }: Route.ComponentProps) {
@@ -207,6 +220,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         IsReviewed={loaderData.cls.is_reviewed}
         userReview={loaderData.review}
         classReviews={loaderData.classReviews}
+        myLessons={loaderData.myLessons}
       />
       {isOpen && (
         <div className="flex justify-center">
