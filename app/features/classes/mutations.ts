@@ -460,3 +460,48 @@ export const toggleComplete = async (
       .eq("profile_id", userId);
   }
 };
+
+export const createGoal = async (
+  client: SupabaseClient<Database>,
+  { classId, text, userId }: { classId: string; text: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_goals")
+    .insert({
+      class_post_id: Number(classId),
+      goal_text: text,
+      profile_id: userId,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteGoal = async (
+  client: SupabaseClient<Database>,
+  { goalId }: { goalId: string }
+) => {
+  const { data, error } = await client
+    .from("class_goals")
+    .delete()
+    .eq("goal_id", goalId)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateGoal = async (
+  client: SupabaseClient<Database>,
+  { goalId, text }: { goalId: string; text: string }
+) => {
+  const { data, error } = await client
+    .from("class_goals")
+    .update({
+      goal_text: text,
+    })
+    .eq("goal_id", goalId)
+    .single();
+  if (error) throw error;
+  return data;
+};

@@ -231,6 +231,73 @@ export type Database = {
           },
         ]
       }
+      class_goals: {
+        Row: {
+          class_post_id: number
+          created_at: string
+          goal_id: string
+          goal_text: string
+          profile_id: string
+        }
+        Insert: {
+          class_post_id: number
+          created_at?: string
+          goal_id?: string
+          goal_text: string
+          profile_id: string
+        }
+        Update: {
+          class_post_id?: number
+          created_at?: string
+          goal_id?: string
+          goal_text?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_goals_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_goals_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_goals_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_goals_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_goals_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_goals_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_posts: {
         Row: {
           class_post_id: number

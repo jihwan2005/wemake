@@ -3,6 +3,7 @@ import { makeSSRClient } from "~/supa-client";
 import {
   getClassById,
   getClassCourse,
+  getClassGoal,
   getMyBookMarkLessons,
   getReviewsById,
   getUserEmail,
@@ -14,19 +15,21 @@ import { redirect } from "react-router";
 import { getLoggedInUserId } from "~/features/users/queries";
 import {
   createChapter,
+  createGoal,
   createLesson,
   deleteChapter,
   deleteClass,
+  deleteGoal,
   deleteLesson,
   updateChapter,
   updateClass,
+  updateGoal,
   updateLesson,
 } from "../mutations";
 import { updateClassHashtags } from "../mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
 import ClassCourse from "../components/class/class-course";
 import ClassActionButtons from "../components/class/class-action-buttons";
-import { ListCheck } from "lucide-react";
 import ClassCheckList from "../components/class/class-check-list";
 
 function parseHashtags(input: string): string[] {
@@ -167,12 +170,32 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       lessonId,
       title,
     });
+  } else if (String(actionType) === "create-goal") {
+    const text = formData.get("goal") as string;
+    await createGoal(client, {
+      userId,
+      text,
+      classId,
+    });
+  } else if (String(actionType) === "delete-goal") {
+    const goalId = formData.get("goalId") as string;
+    await deleteGoal(client, {
+      goalId,
+    });
+  } else if (String(actionType) === "update-goal") {
+    const goalId = formData.get("goalId") as string;
+    const text = formData.get("text") as string;
+    await updateGoal(client, {
+      goalId,
+      text,
+    });
   }
 };
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
+  const classId = params.classId;
   const cls = await getClassById(client, { classId: params.classId });
   const clsCourse = await getClassCourse(client, { classId: params.classId });
   const email = await getUserEmail({ userId: cls.author_id });
@@ -187,6 +210,10 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     userId,
     classId: params.classId,
   });
+  const goals = await getClassGoal(client, {
+    classId,
+    userId,
+  });
   return {
     cls,
     clsCourse,
@@ -195,6 +222,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     review,
     classReviews,
     myLessons,
+    classId,
+    goals,
   };
 };
 
@@ -229,7 +258,10 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         </div>
 
         <div className="col-span-1 sticky top-0 self-start">
-          <ClassCheckList />
+          <ClassCheckList
+            classId={loaderData.classId}
+            goals={loaderData.goals}
+          />
         </div>
 
         <div className="col-span-2">

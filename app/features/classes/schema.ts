@@ -157,3 +157,17 @@ export const completedLesson = pgTable(
   },
   (table) => [primaryKey({ columns: [table.lesson_id, table.profile_id] })]
 );
+
+export const classGoals = pgTable("class_goals", {
+  goal_id: uuid().primaryKey().defaultRandom(),
+  goal_text: text().notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+});
