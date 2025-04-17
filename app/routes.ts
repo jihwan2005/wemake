@@ -76,6 +76,10 @@ export default [
       "features/classes/pages/action/class-review-page.tsx"
     ),
     route(
+      "/:classId/attendance",
+      "features/classes/pages/action/class-attendance-page.tsx"
+    ),
+    route(
       "/:classId/review/update",
       "features/classes/pages/action/class-review-update-page.tsx"
     ),

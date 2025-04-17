@@ -79,6 +79,16 @@ export type Database = MergeDeep<
             SupabaseDatabase["public"]["Views"]["class_list_view"]["Row"]
           >;
         };
+        checked_goal_list_view: {
+          Row: SetNonNullable<
+            SupabaseDatabase["public"]["Views"]["checked_goal_list_view"]["Row"]
+          >;
+        };
+        class_attendance_with_status: {
+          Row: SetNonNullable<
+            SupabaseDatabase["public"]["Views"]["class_attendance_with_status"]["Row"]
+          >;
+        };
       };
     };
   }

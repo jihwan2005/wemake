@@ -1,10 +1,6 @@
 import { List, EyeOff, ThumbsUp, Bell } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
-import UpdateClassDialog from "~/features/classes/components/class/update-class-dialog";
-import DeleteClassDialog from "~/features/classes/components/class/delete-class-dialog";
-import CreateChapterDialog from "~/features/classes/components/chapter/create-chapter-dialog";
 import { Link, useFetcher } from "react-router";
-import EnrollClassDialog from "./enroll-class-dialog";
 import CLassReviewsDialog from "./class-reviews-dialog";
 import CLassReviewDialog from "./class-review-dialog";
 import BookMarkedLessonsDropdownMenu from "../lesson/bookmarked-lessons-dropdownmenu";
@@ -74,22 +70,8 @@ export default function ClassActionButtons({
   };
   return (
     <div className="flex flex-col gap-4 w-1/7">
-      {authorId === userId && (
-        <div className="flex gap-3 items-center">
-          <UpdateClassDialog cls={cls} />
-          <DeleteClassDialog />
-        </div>
-      )}
-      {authorId !== userId ? (
-        <EnrollClassDialog
-          title={cls.title}
-          classId={cls.class_post_id}
-          IsEnrolled={IsEnrolled}
-        />
-      ) : null}
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
-          {authorId === userId && <CreateChapterDialog />}
           {IsEnrolled ? (
             <div className="flex gap-2">
               <Button variant="outline" onClick={absordclick}>

@@ -190,6 +190,7 @@ html, body {
   min-height: 800px; /* 최소 높이 (선택) */
   overflow: auto; /* 스크롤 가능하게 */
 }
+
 /*
 ---break---
 */
@@ -269,3 +270,21 @@ html, body {
     display: none; /* Chrome, Safari */
   }
 }
+
+.custom-event {
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  border: 2px solid #388E3C;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  transform: rotate(-8deg);
+  margin: 0 auto;
+}
+

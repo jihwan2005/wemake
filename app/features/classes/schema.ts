@@ -1,5 +1,6 @@
 import {
   bigint,
+  date,
   pgEnum,
   pgTable,
   primaryKey,
@@ -171,3 +172,40 @@ export const classGoals = pgTable("class_goals", {
     .notNull(),
   created_at: timestamp().notNull().defaultNow(),
 });
+
+export const checkedGoal = pgTable(
+  "checked_goal",
+  {
+    goal_id: uuid()
+      .references(() => classGoals.goal_id, { onDelete: "cascade" })
+      .notNull(),
+    profile_id: uuid()
+      .references(() => profiles.profile_id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.goal_id, table.profile_id] })]
+);
+
+export const classAttendance = pgTable(
+  "class_Attendance",
+  {
+    profile_id: uuid("profile_id")
+      .references(() => profiles.profile_id, { onDelete: "cascade" })
+      .notNull(),
+
+    class_post_id: bigint({ mode: "number" })
+      .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+      .notNull(),
+
+    date: date("date").notNull(),
+
+    created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.profile_id, table.class_post_id, table.date],
+    }),
+  ]
+);

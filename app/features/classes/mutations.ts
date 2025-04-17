@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "database.types";
+import { useRevalidator } from "react-router";
 type DifficultyType = Database["public"]["Enums"]["difficulty_type"];
 
 export const createClass = async (
@@ -501,6 +502,46 @@ export const updateGoal = async (
       goal_text: text,
     })
     .eq("goal_id", goalId)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const toggleCheck = async (
+  client: SupabaseClient<Database>,
+  { goalId, userId }: { goalId: string; userId: string }
+) => {
+  const { count } = await client
+    .from("checked_goal")
+    .select("*", { count: "exact", head: true })
+    .eq("goal_id", goalId)
+    .eq("profile_id", userId);
+  if (count === 0) {
+    await client.from("checked_goal").insert({
+      goal_id: goalId,
+      profile_id: userId,
+    });
+  } else {
+    await client
+      .from("checked_goal")
+      .delete()
+      .eq("goal_id", goalId)
+      .eq("profile_id", userId);
+  }
+};
+
+export const toggleAttendance = async (
+  client: SupabaseClient<Database>,
+  { classId, userId, date }: { classId: string; userId: string; date: string }
+) => {
+  const { data, error } = await client
+    .from("class_Attendance")
+    .insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+      date: date,
+    })
+    .select()
     .single();
   if (error) throw error;
   return data;

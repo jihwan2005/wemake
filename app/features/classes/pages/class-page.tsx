@@ -1,11 +1,13 @@
 import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
 import {
+  getCheckedGoals,
   getClassById,
   getClassCourse,
   getClassGoal,
   getMyBookMarkLessons,
   getReviewsById,
+  getUserAttendance,
   getUserEmail,
   getUserReview,
 } from "../queries";
@@ -21,6 +23,7 @@ import {
   deleteClass,
   deleteGoal,
   deleteLesson,
+  toggleCheck,
   updateChapter,
   updateClass,
   updateGoal,
@@ -31,6 +34,11 @@ import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
 import ClassCourse from "../components/class/class-course";
 import ClassActionButtons from "../components/class/class-action-buttons";
 import ClassCheckList from "../components/class/class-check-list";
+import EnrollClassDialog from "../components/class/enroll-class-dialog";
+import UpdateClassDialog from "../components/class/update-class-dialog";
+import DeleteClassDialog from "../components/class/delete-class-dialog";
+import CreateChapterDialog from "../components/chapter/create-chapter-dialog";
+import ClassAttendanceDialog from "../components/class/class-attendance-dialog";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -44,7 +52,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const classId = params.classId;
   const formData = await request.formData();
-  console.log(formData);
   const actionType = formData.get("actionType");
   if (String(actionType) === "delete") {
     try {
@@ -189,6 +196,12 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       goalId,
       text,
     });
+  } else if (String(actionType) === "check-goal") {
+    const goalId = formData.get("goalId") as string;
+    await toggleCheck(client, {
+      goalId,
+      userId,
+    });
   }
 };
 
@@ -214,6 +227,14 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     classId,
     userId,
   });
+  const checkedGoals = await getCheckedGoals(client, {
+    classId: Number(classId),
+    userId,
+  });
+  const userAttendance = await getUserAttendance(client, {
+    classId,
+    userId,
+  });
   return {
     cls,
     clsCourse,
@@ -224,6 +245,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     myLessons,
     classId,
     goals,
+    checkedGoals,
+    userAttendance,
   };
 };
 
@@ -231,10 +254,26 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="space-y-20">
-      <Hero
-        title={loaderData.cls.title}
-        subtitle={`Welcome to my ${loaderData.cls.title} class`}
-      />
+      <div className="relative">
+        {loaderData.cls.author_id !== loaderData.userId && (
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-4">
+            <EnrollClassDialog
+              title={loaderData.cls.title}
+              classId={loaderData.cls.class_post_id}
+              IsEnrolled={loaderData.cls.is_enrolled}
+            />
+            <ClassAttendanceDialog
+              classId={loaderData.classId}
+              attendance={loaderData.userAttendance}
+            />
+          </div>
+        )}
+        <Hero
+          title={loaderData.cls.title}
+          subtitle={`Welcome to my ${loaderData.cls.title} class`}
+        />
+      </div>
+
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard
@@ -256,17 +295,16 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
             myLessons={loaderData.myLessons}
           />
         </div>
-
-        <div className="col-span-1 sticky top-0 self-start">
-          <ClassCheckList
-            classId={loaderData.classId}
-            goals={loaderData.goals}
-          />
-        </div>
-
         <div className="col-span-2">
           {isOpen && (
             <div className="w-full max-w-3xl mx-auto">
+              {loaderData.cls.author_id === loaderData.userId && (
+                <div className="flex gap-3 items-center mb-5">
+                  <CreateChapterDialog />
+                  <UpdateClassDialog cls={loaderData.cls} />
+                  <DeleteClassDialog />
+                </div>
+              )}
               <ClassCourse
                 courses={loaderData.clsCourse}
                 authorId={loaderData.cls.author_id}
@@ -276,6 +314,17 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
               />
             </div>
           )}
+        </div>
+        <div className="col-span-1">
+          {loaderData.cls.is_enrolled ||
+          loaderData.cls.author_id === loaderData.userId ? (
+            <div>
+              <ClassCheckList
+                classId={loaderData.classId}
+                checkedGoals={loaderData.checkedGoals}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

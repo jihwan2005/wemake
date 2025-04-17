@@ -293,3 +293,29 @@ export const getClassGoal = async (
   if (error) throw error;
   return data;
 };
+
+export const getCheckedGoals = async (
+  client: SupabaseClient<Database>,
+  { classId, userId }: { classId: number; userId: string }
+) => {
+  const { data, error } = await client
+    .from("checked_goal_list_view")
+    .select("*")
+    .eq("class_post_id", classId)
+    .eq("profile_id", userId);
+  if (error) throw error;
+  return data;
+};
+
+export const getUserAttendance = async (
+  client: SupabaseClient<Database>,
+  { userId, classId }: { userId: string; classId: string }
+) => {
+  const { data, error } = await client
+    .from("class_attendance_with_status")
+    .select("*")
+    .eq("profile_id", userId)
+    .eq("class_post_id", Number(classId));
+  if (error) throw error;
+  return data;
+};

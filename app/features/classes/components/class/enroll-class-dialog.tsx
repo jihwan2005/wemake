@@ -43,9 +43,9 @@ export default function EnrollClassDialog({
     >
       <DialogTrigger asChild>
         {IsEnrolled ? (
-          <Button>등록됨!</Button>
+          <Button className="w-full">등록됨!</Button>
         ) : (
-          <Button>
+          <Button className="w-full">
             <BookmarkPlus className="size-5" />
             <span className="text-lg">Enroll</span>
           </Button>
@@ -55,7 +55,7 @@ export default function EnrollClassDialog({
         <DialogContent>
           <DialogHeader>Unenroll Class</DialogHeader>
           <DialogDescription>
-            {title} Class를 취소하시겠습니까? 기존의 추천과 리뷰는 삭제됩니다
+            {title} Class를 취소하시겠습니까? 기존의 모든 데이터가 삭제됩니다
           </DialogDescription>
           <DialogFooter>
             <Button
