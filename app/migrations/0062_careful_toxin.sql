@@ -1,0 +1,3 @@
+ALTER TYPE "public"."class_notification_type" ADD VALUE 'upload-notify';--> statement-breakpoint
+ALTER TABLE "class_notifications" ADD COLUMN "notify_id" bigint;--> statement-breakpoint
+ALTER TABLE "class_notifications" ADD CONSTRAINT "class_notifications_notify_id_class_notify_notify_id_fk" FOREIGN KEY ("notify_id") REFERENCES "public"."class_notify"("notify_id") ON DELETE cascade ON UPDATE no action;

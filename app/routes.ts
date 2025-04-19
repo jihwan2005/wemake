@@ -61,7 +61,14 @@ export default [
     route(":classId", "features/classes/pages/class-page.tsx"),
     route("/my", "features/classes/pages/class-my-page.tsx"),
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),
-    route(":classId/notice", "features/classes/pages/class-notice-page.tsx"),
+    route(
+      "/:notificationId/see",
+      "features/classes/pages/action/see-class-notification-page.tsx"
+    ),
+    route(
+      "/:notificationId/delete",
+      "features/classes/pages/action/delete-class-notification-page.tsx"
+    ),
     route(":classId/:lessonId", "features/classes/pages/lesson-page.tsx"),
     route(
       "/:classId/enroll",

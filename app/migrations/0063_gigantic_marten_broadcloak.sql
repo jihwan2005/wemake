@@ -1,0 +1,1 @@
+ALTER TABLE "class_notifications" ALTER COLUMN "notify_id" SET DATA TYPE bigint;

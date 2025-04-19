@@ -1,0 +1,1 @@
+ALTER TABLE "class_notifications" ALTER COLUMN "lesson_id" SET DATA TYPE uuid;

@@ -16,6 +16,7 @@ import { Input } from "~/common/components/ui/input";
 type Lesson = {
   lesson_id: string;
   title: string | null;
+  order: number | null;
 };
 
 export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
@@ -26,6 +27,7 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
   const [selectedLesson, setSelectedLesson] = useState<{
     id: string;
     title: string;
+    order: number;
   } | null>(null);
   return (
     <Dialog
@@ -38,6 +40,7 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
             setSelectedLesson({
               id: lesson.lesson_id,
               title: lesson.title + "",
+              order: lesson.order ?? 0,
             });
             setUpdateLessonDialogOpen(true);
           }}
@@ -59,7 +62,25 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
             name="lesson_id"
             value={selectedLesson?.id ?? ""}
           />
-          <Input defaultValue={selectedLesson?.title} id="title" name="title" />
+          <div className="flex flex-col gap-2 mb-5">
+            <span>제목 바꾸기</span>
+            <Input
+              defaultValue={selectedLesson?.title}
+              id="title"
+              name="title"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <span>순서 바꾸기</span>
+            <span className="text-sm text-gray-500">
+              숫자 크기 순으로 정렬됩니다
+            </span>
+            <Input
+              defaultValue={selectedLesson?.order}
+              id="order"
+              name="order"
+            />
+          </div>
           <DialogFooter className="mt-5">
             <Button
               type="button"
@@ -67,7 +88,11 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
             >
               취소하기
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              onClick={() => setUpdateLessonDialogOpen(false)}
+            >
               {isSubmitting ? (
                 <LoaderCircle className="animate-spin w-5 h-5" />
               ) : (

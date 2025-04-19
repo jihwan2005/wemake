@@ -89,6 +89,11 @@ export type Database = MergeDeep<
             SupabaseDatabase["public"]["Views"]["class_attendance_with_status"]["Row"]
           >;
         };
+        notifies_with_notifications: {
+          Row: SetNonNullable<
+            SupabaseDatabase["public"]["Views"]["notifies_with_notifications"]["Row"]
+          >;
+        };
       };
     };
   }

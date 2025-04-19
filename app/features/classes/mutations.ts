@@ -140,11 +140,15 @@ export const deleteChapter = async (
 
 export const updateChapter = async (
   client: SupabaseClient<Database>,
-  { chapterId, title }: { chapterId: string; title: string }
+  {
+    chapterId,
+    title,
+    order,
+  }: { chapterId: string; title: string; order: string }
 ) => {
   const { data, error } = await client
     .from("class_chapter")
-    .update({ title })
+    .update({ title, order: Number(order) })
     .eq("chapter_id", chapterId)
     .single();
   if (error) throw error;
@@ -187,11 +191,11 @@ export const deleteLesson = async (
 
 export const updateLesson = async (
   client: SupabaseClient<Database>,
-  { lessonId, title }: { lessonId: string; title: string }
+  { lessonId, title, order }: { lessonId: string; title: string; order: string }
 ) => {
   const { data, error } = await client
     .from("class_chapter_lesson")
-    .update({ title })
+    .update({ title, order: Number(order) })
     .eq("lesson_id", lessonId)
     .single();
   if (error) throw error;
@@ -540,6 +544,51 @@ export const toggleAttendance = async (
       class_post_id: Number(classId),
       profile_id: userId,
       date: date,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const seeClassNotification = async (
+  client: SupabaseClient<Database>,
+  { userId, notificationId }: { userId: string; notificationId: string }
+) => {
+  const { error } = await client
+    .from("class_notifications")
+    .update({ seen: true })
+    .eq("notification_id", Number(notificationId))
+    .eq("target_id", userId);
+  if (error) {
+    throw error;
+  }
+};
+
+export const deleteClassNotification = async (
+  client: SupabaseClient<Database>,
+  { userId, notificationId }: { userId: string; notificationId: string }
+) => {
+  const { error } = await client
+    .from("class_notifications")
+    .delete()
+    .eq("notification_id", Number(notificationId))
+    .eq("target_id", userId);
+  if (error) {
+    throw error;
+  }
+};
+
+export const createClassNotify = async (
+  client: SupabaseClient<Database>,
+  { userId, text, classId }: { userId: string; text: string; classId: string }
+) => {
+  const { data, error } = await client
+    .from("class_notify")
+    .insert({
+      profile_id: userId,
+      notify_text: text,
+      class_post_id: Number(classId),
     })
     .select()
     .single();

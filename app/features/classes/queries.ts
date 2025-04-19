@@ -98,8 +98,12 @@ export const getClassCourse = async (
   const { data, error } = await client
     .from("class_chapter")
     .select("*,class_chapter_lesson(*)")
-    .eq("class_post_id", Number(classId));
+    .eq("class_post_id", Number(classId))
+    .order("order", { ascending: false });
   if (error) throw error;
+  data?.forEach((chapter) => {
+    chapter.class_chapter_lesson.sort((a, b) => b.order - a.order);
+  });
   return data;
 };
 
@@ -316,6 +320,55 @@ export const getUserAttendance = async (
     .select("*")
     .eq("profile_id", userId)
     .eq("class_post_id", Number(classId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassNotifications = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("notification_class_view")
+    .select(
+      `
+      notification_id,
+      type,
+      source:profiles!source_id(
+        profile_id,
+        name,
+        avatar
+      ),
+      lesson:lesson_list_view!lesson_id(
+        lesson_id,
+        title
+      ),
+      notify:class_notify!notify_id(
+        notify_id,
+        notify_text
+      ),
+      class_title,
+      seen,
+      created_at
+      `
+    )
+    .eq("target_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const getClassNotifyById = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: string }
+) => {
+  const { data, error } = await client
+    .from("notifies_with_notifications")
+    .select("*")
+    .eq("class_post_id", Number(classId))
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };

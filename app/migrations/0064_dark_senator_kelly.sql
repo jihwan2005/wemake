@@ -1,0 +1,3 @@
+ALTER TYPE "public"."class_notification_type" ADD VALUE 'enrollment';--> statement-breakpoint
+ALTER TABLE "class_notifications" ADD COLUMN "enrollment_id" bigint;--> statement-breakpoint
+ALTER TABLE "class_notifications" ADD CONSTRAINT "class_notifications_enrollment_id_class_enrollments_enrollment_id_fk" FOREIGN KEY ("enrollment_id") REFERENCES "public"."class_enrollments"("enrollment_id") ON DELETE cascade ON UPDATE no action;

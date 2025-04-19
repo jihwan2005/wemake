@@ -16,11 +16,13 @@ import { Link } from "react-router";
 interface Lesson {
   lesson_id: string;
   title: string | null;
+  order: number | null;
 }
 
 interface Chapter {
   chapter_id: string;
   title: string | null;
+  order: number | null;
   class_chapter_lesson: Lesson[];
 }
 
@@ -53,7 +55,12 @@ export default function ClassCourse({
       {courses.map((course) => (
         <div key={course.chapter_id} className="space-y-4 w-full">
           <div className="flex items-center justify-between bg-gray-300 rounded-2xl p-3">
-            <h2 className="text-xl font-semibold">{course.title}</h2>
+            <h2 className="text-xl font-semibold">
+              {authorId === userId && (
+                <span className="mr-3">{course.order}</span>
+              )}
+              {course.title}
+            </h2>
             <div className="flex items-center gap-2">
               <Button onClick={() => toggleChapter(course.chapter_id)}>
                 {openChapters[course.chapter_id] ? (
@@ -107,6 +114,7 @@ export default function ClassCourse({
                         : "cursor-not-allowed text-gray-400"
                     }`}
                   >
+                    <span className="mr-3">{lesson.order}</span>
                     {lesson.title}
                   </Link>
 

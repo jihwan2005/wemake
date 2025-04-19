@@ -245,16 +245,19 @@ export type Database = {
         Row: {
           chapter_id: string
           class_post_id: number
+          order: number
           title: string | null
         }
         Insert: {
           chapter_id?: string
           class_post_id: number
+          order?: number
           title?: string | null
         }
         Update: {
           chapter_id?: string
           class_post_id?: number
+          order?: number
           title?: string | null
         }
         Relationships: [
@@ -278,18 +281,21 @@ export type Database = {
         Row: {
           chapter_id: string
           lesson_id: string
+          order: number
           title: string | null
           video_url: string | null
         }
         Insert: {
           chapter_id: string
           lesson_id?: string
+          order?: number
           title?: string | null
           video_url?: string | null
         }
         Update: {
           chapter_id?: string
           lesson_id?: string
+          order?: number
           title?: string | null
           video_url?: string | null
         }
@@ -478,6 +484,229 @@ export type Database = {
           },
           {
             foreignKeyName: "class_goals_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      class_notifications: {
+        Row: {
+          created_at: string
+          enrollment_id: number | null
+          lesson_id: string | null
+          notification_id: number
+          notify_id: number | null
+          seen: boolean
+          source_id: string | null
+          target_id: string
+          type: Database["public"]["Enums"]["class_notification_type"]
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id?: number | null
+          lesson_id?: string | null
+          notification_id?: never
+          notify_id?: number | null
+          seen?: boolean
+          source_id?: string | null
+          target_id: string
+          type: Database["public"]["Enums"]["class_notification_type"]
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: number | null
+          lesson_id?: string | null
+          notification_id?: never
+          notify_id?: number | null
+          seen?: boolean
+          source_id?: string | null
+          target_id?: string
+          type?: Database["public"]["Enums"]["class_notification_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_notifications_enrollment_id_class_enrollments_enrollment_"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "class_enrollments"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_with_lessons_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "class_chapter_lesson"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_list_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
+            columns: ["notify_id"]
+            isOneToOne: false
+            referencedRelation: "class_notify"
+            referencedColumns: ["notify_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
+            columns: ["notify_id"]
+            isOneToOne: false
+            referencedRelation: "notifies_with_notifications"
+            referencedColumns: ["notify_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      class_notify: {
+        Row: {
+          class_post_id: number
+          created_at: string
+          notify_id: number
+          notify_text: string
+          profile_id: string
+        }
+        Insert: {
+          class_post_id: number
+          created_at?: string
+          notify_id?: never
+          notify_text: string
+          profile_id: string
+        }
+        Update: {
+          class_post_id?: number
+          created_at?: string
+          notify_id?: never
+          notify_text?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
@@ -2916,13 +3145,6 @@ export type Database = {
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
-            columns: ["other_profile_id"]
-            isOneToOne: false
-            referencedRelation: "checked_goal_list_view"
-            referencedColumns: ["profile_id"]
-          },
-          {
-            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "checked_goal_list_view"
@@ -2932,8 +3154,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "class_list_view"
-            referencedColumns: ["author_id"]
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -2946,8 +3168,8 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
           },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
@@ -2960,6 +3182,20 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["other_profile_id"]
             isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            columns: ["other_profile_id"]
+            isOneToOne: false
             referencedRelation: "video_list_view"
             referencedColumns: ["author_id"]
           },
@@ -2967,7 +3203,7 @@ export type Database = {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "video_list_view"
+            referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
           {
@@ -2977,8 +3213,206 @@ export type Database = {
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]
           },
+        ]
+      }
+      notification_class_view: {
+        Row: {
+          class_post_id: number | null
+          class_title: string | null
+          created_at: string | null
+          enrollment_id: number | null
+          lesson_id: string | null
+          notification_id: number | null
+          notify_id: number | null
+          seen: boolean | null
+          source_id: string | null
+          target_id: string | null
+          type: Database["public"]["Enums"]["class_notification_type"] | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
+            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_enrollment_id_class_enrollments_enrollment_"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "class_enrollments"
+            referencedColumns: ["enrollment_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_with_lessons_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "class_chapter_lesson"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_list_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
+            columns: ["notify_id"]
+            isOneToOne: false
+            referencedRelation: "class_notify"
+            referencedColumns: ["notify_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
+            columns: ["notify_id"]
+            isOneToOne: false
+            referencedRelation: "notifies_with_notifications"
+            referencedColumns: ["notify_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
+      notifies_with_notifications: {
+        Row: {
+          class_post_id: number | null
+          created_at: string | null
+          notification_id: number | null
+          notify_id: number | null
+          notify_text: string | null
+          profile_id: string | null
+          seen: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
@@ -3107,6 +3541,7 @@ export type Database = {
       }
     }
     Enums: {
+      class_notification_type: "upload" | "upload-notify" | "enrollment"
       difficulty_type: "beginner" | "intermediate" | "advanced"
       difficulty_type_old: "beginner" | "Intermediate" | "advanced"
       job_type:
@@ -3247,6 +3682,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      class_notification_type: ["upload", "upload-notify", "enrollment"],
       difficulty_type: ["beginner", "intermediate", "advanced"],
       difficulty_type_old: ["beginner", "Intermediate", "advanced"],
       job_type: ["full-time", "part-time", "hybrid", "freelance", "internship"],

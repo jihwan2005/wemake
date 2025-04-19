@@ -1,5 +1,6 @@
 import {
   bigint,
+  boolean,
   date,
   pgEnum,
   pgTable,
@@ -59,6 +60,7 @@ export const classChapter = pgTable("class_chapter", {
     .references(() => classPosts.class_post_id, { onDelete: "cascade" })
     .notNull(),
   title: text(),
+  order: bigint({ mode: "number" }).default(0).notNull(),
 });
 
 export const classChapterLesson = pgTable("class_chapter_lesson", {
@@ -68,6 +70,7 @@ export const classChapterLesson = pgTable("class_chapter_lesson", {
     .notNull(),
   title: text(),
   video_url: text(),
+  order: bigint({ mode: "number" }).default(0).notNull(),
 });
 
 export const classUpvotes = pgTable(
@@ -209,3 +212,57 @@ export const classAttendance = pgTable(
     }),
   ]
 );
+
+export const notificationType = pgEnum("class_notification_type", [
+  "upload",
+  "upload-notify",
+  "enrollment",
+]);
+
+export const classNotifications = pgTable("class_notifications", {
+  notification_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  source_id: uuid().references(() => profiles.profile_id, {
+    onDelete: "cascade",
+  }),
+  lesson_id: uuid().references(() => classChapterLesson.lesson_id, {
+    onDelete: "cascade",
+  }),
+  enrollment_id: bigint({ mode: "number" }).references(
+    () => classEnrollments.enrollment_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  notify_id: bigint({ mode: "number" }).references(
+    () => classNotify.notify_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  target_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  seen: boolean().default(false).notNull(),
+  type: notificationType().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+});
+
+export const classNotify = pgTable("class_notify", {
+  notify_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  notify_text: text().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+});

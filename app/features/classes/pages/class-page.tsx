@@ -5,6 +5,8 @@ import {
   getClassById,
   getClassCourse,
   getClassGoal,
+  getClassNotifications,
+  getClassNotifyById,
   getMyBookMarkLessons,
   getReviewsById,
   getUserAttendance,
@@ -17,6 +19,7 @@ import { redirect } from "react-router";
 import { getLoggedInUserId } from "~/features/users/queries";
 import {
   createChapter,
+  createClassNotify,
   createGoal,
   createLesson,
   deleteChapter,
@@ -39,6 +42,8 @@ import UpdateClassDialog from "../components/class/update-class-dialog";
 import DeleteClassDialog from "../components/class/delete-class-dialog";
 import CreateChapterDialog from "../components/chapter/create-chapter-dialog";
 import ClassAttendanceDialog from "../components/class/class-attendance-dialog";
+import ClassNotificationDialog from "../components/class/class-notification-dialog";
+import BookMarkedLessonsDropdownMenu from "../components/lesson/bookmarked-lessons-dropdownmenu";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -132,9 +137,11 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   } else if (String(actionType) === "update-chapter") {
     const chapterId = formData.get("chapter_id") as string;
     const title = formData.get("title") as string;
+    const order = formData.get("order") as string;
     await updateChapter(client, {
       chapterId,
       title,
+      order,
     });
   } else if (String(actionType) === "create-lesson") {
     const chapterId = formData.get("chapterId") as string;
@@ -173,9 +180,11 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   } else if (String(actionType) === "update-lesson") {
     const lessonId = formData.get("lesson_id") as string;
     const title = formData.get("title") as string;
+    const order = formData.get("order") as string;
     await updateLesson(client, {
       lessonId,
       title,
+      order,
     });
   } else if (String(actionType) === "create-goal") {
     const text = formData.get("goal") as string;
@@ -202,9 +211,15 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       goalId,
       userId,
     });
+  } else if (String(actionType) === "create-notification") {
+    const text = formData.get("notification") as string;
+    await createClassNotify(client, {
+      userId,
+      classId,
+      text,
+    });
   }
 };
-
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
@@ -235,6 +250,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     classId,
     userId,
   });
+  const notifications = await getClassNotifications(client, { userId });
+  const notifies = await getClassNotifyById(client, { classId });
   return {
     cls,
     clsCourse,
@@ -247,6 +264,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     goals,
     checkedGoals,
     userAttendance,
+    notifications,
+    notifies,
   };
 };
 
@@ -262,18 +281,36 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
               classId={loaderData.cls.class_post_id}
               IsEnrolled={loaderData.cls.is_enrolled}
             />
-            <ClassAttendanceDialog
-              classId={loaderData.classId}
-              attendance={loaderData.userAttendance}
-            />
+            {loaderData.cls.is_enrolled && (
+              <div>
+                <ClassAttendanceDialog
+                  classId={loaderData.classId}
+                  attendance={loaderData.userAttendance}
+                  startAt={loaderData.cls.start_at}
+                  endAt={loaderData.cls.end_at}
+                />
+                <BookMarkedLessonsDropdownMenu
+                  myLessons={loaderData.myLessons}
+                />
+              </div>
+            )}
           </div>
         )}
         <Hero
           title={loaderData.cls.title}
           subtitle={`Welcome to my ${loaderData.cls.title} class`}
         />
+        {loaderData.cls.is_enrolled ||
+        loaderData.cls.author_id === loaderData.userId ? (
+          <ClassNotificationDialog
+            authorId={loaderData.cls.author_id}
+            userId={loaderData.userId}
+            classId={loaderData.classId}
+            notifications={loaderData.notifications}
+            notifies={loaderData.notifies}
+          />
+        ) : null}
       </div>
-
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

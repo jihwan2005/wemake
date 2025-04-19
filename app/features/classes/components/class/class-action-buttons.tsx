@@ -1,9 +1,8 @@
 import { List, EyeOff, ThumbsUp, Bell } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
-import { Link, useFetcher } from "react-router";
+import { useFetcher } from "react-router";
 import CLassReviewsDialog from "./class-reviews-dialog";
 import CLassReviewDialog from "./class-review-dialog";
-import BookMarkedLessonsDropdownMenu from "../lesson/bookmarked-lessons-dropdownmenu";
 
 export interface Review {
   class_post_id: number | null;
@@ -49,8 +48,6 @@ interface Props {
 }
 
 export default function ClassActionButtons({
-  authorId,
-  userId,
   cls,
   isOpen,
   setIsOpen,
@@ -59,7 +56,6 @@ export default function ClassActionButtons({
   IsReviewed,
   userReview,
   classReviews,
-  myLessons,
 }: Props) {
   const fetcher = useFetcher();
   const absordclick = () => {
@@ -99,12 +95,6 @@ export default function ClassActionButtons({
               <List className="size-4" />
             )}
           </Button>
-          <Link to={`/classes/${cls.class_post_id}/notice`}>
-            <Button variant="outline">
-              <Bell className="size-4" />
-            </Button>
-          </Link>
-          <BookMarkedLessonsDropdownMenu myLessons={myLessons} />
         </div>
       </div>
     </div>
