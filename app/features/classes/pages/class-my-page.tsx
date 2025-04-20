@@ -2,6 +2,7 @@ import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-my-page";
 import { getLoggedInUserId } from "~/features/users/queries";
 import {
+  getCertificateByUserId,
   getChapterWithLessons,
   getMyClasses,
   getMyMakingClasses,
@@ -10,6 +11,7 @@ import { Hero } from "~/common/components/hero";
 import MyEnrollingClass from "./components/my-enrolling-class";
 import MyMakingClass from "./components/my-making-class";
 import { calculateProgress } from "../utils/progress";
+import MyInventoryDialog from "./components/my-inventory-dialog";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
@@ -27,7 +29,9 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       });
       const grouped = chapterWithLesson.reduce(
         (acc, item) => {
-          const existing = acc.find((g) => g.chapter_id === item.chapter_id);
+          const existing = acc.find(
+            (g: any) => g.chapter_id === item.chapter_id
+          );
           const lesson = {
             lesson_id: item.lesson_id!,
             title: item.lesson_title,
@@ -60,7 +64,10 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
       return { ...cls, progress };
     })
   );
-  return { myMakeClasses, classesWithProgress };
+  const myCertificates = await getCertificateByUserId(client, {
+    userId,
+  });
+  return { myMakeClasses, classesWithProgress, myCertificates };
 };
 
 export default function MyClassPage({ loaderData }: Route.ComponentProps) {
@@ -70,11 +77,15 @@ export default function MyClassPage({ loaderData }: Route.ComponentProps) {
         title=" My Class"
         subtitle="No limit on you. Just creativity matters"
       />
-      <span className="text-3xl">내가 등록한 강의</span>
-      <MyEnrollingClass classes={loaderData.classesWithProgress} />
-
-      <span className="text-3xl">내가 만든 강의</span>
-      <MyMakingClass classes={loaderData.myMakeClasses} />
+      <MyInventoryDialog certificates={loaderData.myCertificates} />
+      <div className="flex flex-col gap-3">
+        <span className="text-3xl">내가 등록한 강의</span>
+        <MyEnrollingClass classes={loaderData.classesWithProgress} />
+      </div>
+      <div className="flex flex-col gap-3">
+        <span className="text-3xl">내가 만든 강의</span>
+        <MyMakingClass classes={loaderData.myMakeClasses} />
+      </div>
     </div>
   );
 }

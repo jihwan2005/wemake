@@ -373,3 +373,16 @@ export const getClassNotify = async (
   if (error) throw error;
   return data;
 };
+
+export const getCertificateByUserId = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("certificate_view")
+    .select("*")
+    .eq("profile_id", userId)
+    .order("issued_at", { ascending: false });
+  if (error) throw error;
+  return data;
+};

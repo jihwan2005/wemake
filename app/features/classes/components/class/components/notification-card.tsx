@@ -4,7 +4,13 @@ import { useFetcher } from "react-router";
 
 type Notification = {
   notification_id: number | null;
-  type: "upload" | "upload-notify" | "enrollment" | "complete" | null;
+  type:
+    | "upload"
+    | "upload-notify"
+    | "enrollment"
+    | "complete"
+    | "complete-goal"
+    | null;
   source: {
     profile_id: string;
     name: string;
@@ -37,6 +43,8 @@ export function NotificationCard({ notification }: NotificationCardProps) {
       return `🎉 ${notification.class_title} 강의에 오신 걸 환영합니다!`;
     } else if (notification.type === "complete") {
       return `🎉 ${notification.class_title} 레슨을 완료했어요!`;
+    } else if (notification.type === "complete-goal") {
+      return `🎉 모든 목표를 완수했어요! 부라보!!`;
     }
     return null;
   };

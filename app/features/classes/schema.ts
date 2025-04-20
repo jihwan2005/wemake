@@ -219,6 +219,7 @@ export const notificationType = pgEnum("class_notification_type", [
   "upload-notify",
   "enrollment",
   "complete",
+  "complete-goal",
 ]);
 
 export const classNotifications = pgTable("class_notifications", {
@@ -269,3 +270,17 @@ export const classNotify = pgTable("class_notify", {
   notify_content: text(),
   created_at: timestamp().notNull().defaultNow(),
 });
+
+export const classCertificate = pgTable(
+  "class_certificate",
+  {
+    profile_id: uuid()
+      .references(() => profiles.profile_id, { onDelete: "cascade" })
+      .notNull(),
+    class_post_id: bigint({ mode: "number" })
+      .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+      .notNull(),
+    issued_at: timestamp().defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.profile_id, table.class_post_id] })]
+);

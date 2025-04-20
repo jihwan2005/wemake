@@ -17,7 +17,13 @@ import { NotifyModal } from "./components/notify-modal";
 
 type Notification = {
   notification_id: number | null;
-  type: "upload" | "upload-notify" | "enrollment" | "complete" | null;
+  type:
+    | "upload"
+    | "upload-notify"
+    | "enrollment"
+    | "complete"
+    | "complete-goal"
+    | null;
   source: {
     profile_id: string;
     name: string;

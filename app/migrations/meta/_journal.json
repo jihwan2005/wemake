@@ -477,6 +477,20 @@
       "when": 1745150407845,
       "tag": "0067_wide_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1745157192808,
+      "tag": "0068_slim_toro",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1745159294003,
+      "tag": "0069_living_proudstar",
+      "breakpoints": true
     }
   ]
 }
