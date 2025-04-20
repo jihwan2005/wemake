@@ -1,12 +1,13 @@
 import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
 import {
+  getChapterWithLessons,
   getCheckedGoals,
   getClassById,
   getClassCourse,
   getClassGoal,
   getClassNotifications,
-  getClassNotifyById,
+  getClassNotify,
   getMyBookMarkLessons,
   getReviewsById,
   getUserAttendance,
@@ -24,11 +25,13 @@ import {
   createLesson,
   deleteChapter,
   deleteClass,
+  deleteClassNotify,
   deleteGoal,
   deleteLesson,
   toggleCheck,
   updateChapter,
   updateClass,
+  updateClassNotify,
   updateGoal,
   updateLesson,
 } from "../mutations";
@@ -57,6 +60,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const classId = params.classId;
   const formData = await request.formData();
+  console.log(formData);
   const actionType = formData.get("actionType");
   if (String(actionType) === "delete") {
     try {
@@ -218,6 +222,20 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       classId,
       text,
     });
+  } else if (String(actionType) === "update-notify") {
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const notifyId = formData.get("notify_id") as string;
+    await updateClassNotify(client, {
+      title,
+      content,
+      notifyId,
+    });
+  } else if (String(actionType) === "delete-notify") {
+    const notifyId = formData.get("notify_id") as string;
+    await deleteClassNotify(client, {
+      notifyId,
+    });
   }
 };
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
@@ -250,8 +268,24 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     classId,
     userId,
   });
-  const notifications = await getClassNotifications(client, { userId });
-  const notifies = await getClassNotifyById(client, { classId });
+  const notifications = await getClassNotifications(client, {
+    userId,
+    classId,
+  });
+  const notify = await getClassNotify(client, { classId });
+  const myCompletedClasses = await getChapterWithLessons(client, {
+    classId: Number(classId),
+  });
+  const completedMap = new Map(
+    myCompletedClasses.map((item) => [item.lesson_id, item.is_completed])
+  );
+  const clsCourseWithCompleted = clsCourse.map((chapter) => ({
+    ...chapter,
+    class_chapter_lesson: chapter.class_chapter_lesson.map((lesson: any) => ({
+      ...lesson,
+      is_completed: completedMap.get(lesson.lesson_id) ?? false,
+    })),
+  }));
   return {
     cls,
     clsCourse,
@@ -265,7 +299,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     checkedGoals,
     userAttendance,
     notifications,
-    notifies,
+    clsCourseWithCompleted,
+    notify,
   };
 };
 
@@ -307,7 +342,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
             userId={loaderData.userId}
             classId={loaderData.classId}
             notifications={loaderData.notifications}
-            notifies={loaderData.notifies}
+            notify={loaderData.notify}
           />
         ) : null}
       </div>
@@ -343,7 +378,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
                 </div>
               )}
               <ClassCourse
-                courses={loaderData.clsCourse}
+                courses={loaderData.clsCourseWithCompleted}
                 authorId={loaderData.cls.author_id}
                 userId={loaderData.userId}
                 classId={loaderData.cls.class_post_id}

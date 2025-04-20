@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "database.types";
-import { useRevalidator } from "react-router";
 type DifficultyType = Database["public"]["Enums"]["difficulty_type"];
 
 export const createClass = async (
@@ -587,10 +586,43 @@ export const createClassNotify = async (
     .from("class_notify")
     .insert({
       profile_id: userId,
-      notify_text: text,
+      notify_title: text,
       class_post_id: Number(classId),
     })
     .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateClassNotify = async (
+  client: SupabaseClient<Database>,
+  {
+    title,
+    content,
+    notifyId,
+  }: { title: string; content: string | null; notifyId: string }
+) => {
+  const { data, error } = await client
+    .from("class_notify")
+    .update({
+      notify_title: title,
+      notify_content: content,
+    })
+    .eq("notify_id", Number(notifyId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteClassNotify = async (
+  client: SupabaseClient<Database>,
+  { notifyId }: { notifyId: string }
+) => {
+  const { data, error } = await client
+    .from("class_notify")
+    .delete()
+    .eq("notify_id", Number(notifyId))
     .single();
   if (error) throw error;
   return data;

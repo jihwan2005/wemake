@@ -493,6 +493,7 @@ export type Database = {
       }
       class_notifications: {
         Row: {
+          class_post_id: number | null
           created_at: string
           enrollment_id: number | null
           lesson_id: string | null
@@ -504,6 +505,7 @@ export type Database = {
           type: Database["public"]["Enums"]["class_notification_type"]
         }
         Insert: {
+          class_post_id?: number | null
           created_at?: string
           enrollment_id?: number | null
           lesson_id?: string | null
@@ -515,6 +517,7 @@ export type Database = {
           type: Database["public"]["Enums"]["class_notification_type"]
         }
         Update: {
+          class_post_id?: number | null
           created_at?: string
           enrollment_id?: number | null
           lesson_id?: string | null
@@ -526,6 +529,20 @@ export type Database = {
           type?: Database["public"]["Enums"]["class_notification_type"]
         }
         Relationships: [
+          {
+            foreignKeyName: "class_notifications_class_post_id_fkey"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_class_post_id_fkey"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
           {
             foreignKeyName: "class_notifications_enrollment_id_class_enrollments_enrollment_"
             columns: ["enrollment_id"]
@@ -559,13 +576,6 @@ export type Database = {
             columns: ["notify_id"]
             isOneToOne: false
             referencedRelation: "class_notify"
-            referencedColumns: ["notify_id"]
-          },
-          {
-            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
-            columns: ["notify_id"]
-            isOneToOne: false
-            referencedRelation: "notifies_with_notifications"
             referencedColumns: ["notify_id"]
           },
           {
@@ -644,22 +654,25 @@ export type Database = {
         Row: {
           class_post_id: number
           created_at: string
+          notify_content: string | null
           notify_id: number
-          notify_text: string
+          notify_title: string
           profile_id: string
         }
         Insert: {
           class_post_id: number
           created_at?: string
+          notify_content?: string | null
           notify_id?: never
-          notify_text: string
+          notify_title: string
           profile_id: string
         }
         Update: {
           class_post_id?: number
           created_at?: string
+          notify_content?: string | null
           notify_id?: never
-          notify_text?: string
+          notify_title?: string
           profile_id?: string
         }
         Relationships: [
@@ -2878,6 +2891,85 @@ export type Database = {
       }
     }
     Views: {
+      bookmarked_lesson_list_view: {
+        Row: {
+          class_post_id: number | null
+          lesson_id: string | null
+          profile_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarked_lesson_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_with_lessons_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "class_chapter_lesson"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_lesson_id_class_chapter_lesson_lesson_id_fk"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_list_view"
+            referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "bookmarked_lesson_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_chapter_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_chapter_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+        ]
+      }
       chapter_with_lessons_view: {
         Row: {
           chapter_id: string | null
@@ -3231,14 +3323,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            foreignKeyName: "class_notifications_class_post_id_fkey"
             columns: ["class_post_id"]
             isOneToOne: false
             referencedRelation: "class_list_view"
             referencedColumns: ["class_post_id"]
           },
           {
-            foreignKeyName: "class_enrollments_class_post_id_class_posts_class_post_id_fk"
+            foreignKeyName: "class_notifications_class_post_id_fkey"
             columns: ["class_post_id"]
             isOneToOne: false
             referencedRelation: "class_posts"
@@ -3280,13 +3372,6 @@ export type Database = {
             referencedColumns: ["notify_id"]
           },
           {
-            foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
-            columns: ["notify_id"]
-            isOneToOne: false
-            referencedRelation: "notifies_with_notifications"
-            referencedColumns: ["notify_id"]
-          },
-          {
             foreignKeyName: "class_notifications_source_id_profiles_profile_id_fk"
             columns: ["source_id"]
             isOneToOne: false
@@ -3352,68 +3437,6 @@ export type Database = {
           {
             foreignKeyName: "class_notifications_target_id_profiles_profile_id_fk"
             columns: ["target_id"]
-            isOneToOne: false
-            referencedRelation: "video_replies_list_view"
-            referencedColumns: ["author_id"]
-          },
-        ]
-      }
-      notifies_with_notifications: {
-        Row: {
-          class_post_id: number | null
-          created_at: string | null
-          notification_id: number | null
-          notify_id: number | null
-          notify_text: string | null
-          profile_id: string | null
-          seen: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
-            columns: ["class_post_id"]
-            isOneToOne: false
-            referencedRelation: "class_list_view"
-            referencedColumns: ["class_post_id"]
-          },
-          {
-            foreignKeyName: "class_notify_class_post_id_class_posts_class_post_id_fk"
-            columns: ["class_post_id"]
-            isOneToOne: false
-            referencedRelation: "class_posts"
-            referencedColumns: ["class_post_id"]
-          },
-          {
-            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "checked_goal_list_view"
-            referencedColumns: ["profile_id"]
-          },
-          {
-            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "class_list_view"
-            referencedColumns: ["author_id"]
-          },
-          {
-            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["profile_id"]
-          },
-          {
-            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "video_list_view"
-            referencedColumns: ["author_id"]
-          },
-          {
-            foreignKeyName: "class_notify_profile_id_profiles_profile_id_fk"
-            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "video_replies_list_view"
             referencedColumns: ["author_id"]

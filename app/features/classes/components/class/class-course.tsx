@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { List, EyeOff, MoreVertical } from "lucide-react";
+import { List, EyeOff, MoreVertical, CheckCircleIcon } from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import {
   Popover,
@@ -17,6 +17,7 @@ interface Lesson {
   lesson_id: string;
   title: string | null;
   order: number | null;
+  is_completed?: boolean;
 }
 
 interface Chapter {
@@ -114,8 +115,19 @@ export default function ClassCourse({
                         : "cursor-not-allowed text-gray-400"
                     }`}
                   >
-                    <span className="mr-3">{lesson.order}</span>
-                    {lesson.title}
+                    <div className="flex items-center">
+                      {authorId === userId && (
+                        <span className="mr-2">{lesson.order}</span>
+                      )}
+                      <div className="flex items-center gap-2">
+                        {lesson.is_completed ? (
+                          <CheckCircleIcon className="text-green-400" />
+                        ) : (
+                          <CheckCircleIcon />
+                        )}
+                        {lesson.title}
+                      </div>
+                    </div>
                   </Link>
 
                   {authorId === userId && (

@@ -102,7 +102,7 @@ export const getClassCourse = async (
     .order("order", { ascending: false });
   if (error) throw error;
   data?.forEach((chapter) => {
-    chapter.class_chapter_lesson.sort((a, b) => b.order - a.order);
+    chapter.class_chapter_lesson.sort((a: any, b: any) => b.order - a.order);
   });
   return data;
 };
@@ -259,7 +259,7 @@ export const getMyBookMarkLessons = async (
   { userId, classId }: { userId: string; classId: string }
 ) => {
   const { data, error } = await client
-    .from("bookmarked_lesson")
+    .from("bookmarked_lesson_list_view")
     .select("*")
     .eq("profile_id", userId);
   const LessonsIds = data?.map((item) => item.lesson_id) ?? [];
@@ -326,7 +326,7 @@ export const getUserAttendance = async (
 
 export const getClassNotifications = async (
   client: SupabaseClient<Database>,
-  { userId }: { userId: string }
+  { userId, classId }: { userId: string; classId: string }
 ) => {
   const { data, error } = await client
     .from("notification_class_view")
@@ -345,7 +345,7 @@ export const getClassNotifications = async (
       ),
       notify:class_notify!notify_id(
         notify_id,
-        notify_text
+        notify_title
       ),
       class_title,
       seen,
@@ -353,6 +353,7 @@ export const getClassNotifications = async (
       `
     )
     .eq("target_id", userId)
+    .eq("class_post_id", Number(classId))
     .order("created_at", { ascending: false });
   if (error) {
     throw error;
@@ -360,12 +361,12 @@ export const getClassNotifications = async (
   return data;
 };
 
-export const getClassNotifyById = async (
+export const getClassNotify = async (
   client: SupabaseClient<Database>,
   { classId }: { classId: string }
 ) => {
   const { data, error } = await client
-    .from("notifies_with_notifications")
+    .from("class_notify")
     .select("*")
     .eq("class_post_id", Number(classId))
     .order("created_at", { ascending: false });

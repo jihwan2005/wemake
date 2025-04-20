@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { profiles } from "../users/schema";
 import { DIFFICULTY_TYPES } from "./constants";
+import { not } from "drizzle-orm";
 
 export const difficultyTypes = pgEnum(
   "difficulty_type",
@@ -217,6 +218,7 @@ export const notificationType = pgEnum("class_notification_type", [
   "upload",
   "upload-notify",
   "enrollment",
+  "complete",
 ]);
 
 export const classNotifications = pgTable("class_notifications", {
@@ -263,6 +265,7 @@ export const classNotify = pgTable("class_notify", {
       onDelete: "cascade",
     })
     .notNull(),
-  notify_text: text().notNull(),
+  notify_title: text().notNull(),
+  notify_content: text(),
   created_at: timestamp().notNull().defaultNow(),
 });

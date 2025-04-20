@@ -37,7 +37,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   });
   const grouped = chapterWithLesson.reduce(
     (acc, item) => {
-      const existing = acc.find((g) => g.chapter_id === item.chapter_id);
+      const existing = acc.find((g: any) => g.chapter_id === item.chapter_id);
       const lesson = {
         lesson_id: item.lesson_id!,
         title: item.lesson_title,

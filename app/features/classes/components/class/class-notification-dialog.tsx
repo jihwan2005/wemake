@@ -1,6 +1,5 @@
-import { Bell, Check, XCircle } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useState } from "react";
-import { useFetcher } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import {
   Dialog,
@@ -9,12 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/common/components/ui/dialog";
-import { Input } from "~/common/components/ui/input";
-import { DateTime } from "luxon";
+import { AnimatePresence } from "motion/react";
+import { NotificationCard } from "./components/notification-card";
+import { NotifyCard } from "./components/notify-card";
+import { NotificationInput } from "./components/notification-input";
+import { NotificationButtons } from "./components/notification-buttons";
+import { NotifyModal } from "./components/notify-modal";
 
 type Notification = {
   notification_id: number | null;
-  type: "upload" | "upload-notify" | "enrollment" | null;
+  type: "upload" | "upload-notify" | "enrollment" | "complete" | null;
   source: {
     profile_id: string;
     name: string;
@@ -29,14 +32,13 @@ type Notification = {
   created_at: string | null;
 };
 
-type notify = {
+type myNotify = {
   class_post_id: number;
   created_at: string;
   notify_id: number;
-  notify_text: string;
+  notify_title: string;
+  notify_content: string | null;
   profile_id: string;
-  notification_id: number;
-  seen: boolean;
 };
 
 interface ClassNotificationDialogProps {
@@ -44,7 +46,7 @@ interface ClassNotificationDialogProps {
   userId: string;
   classId: string;
   notifications: Notification[];
-  notifies: notify[];
+  notify: myNotify[];
 }
 
 export default function ClassNotificationDialog({
@@ -52,11 +54,11 @@ export default function ClassNotificationDialog({
   userId,
   notifications,
   classId,
-  notifies,
+  notify,
 }: ClassNotificationDialogProps) {
   const hasUnread = notifications.some((n) => !n.seen);
-  const fetcher = useFetcher();
   const [activeTab, setActiveTab] = useState<"notify" | "alert">("alert");
+  const [selected, setSelected] = useState<myNotify | null>(null);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -66,155 +68,47 @@ export default function ClassNotificationDialog({
           />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="flex flex-col h-[80vh] p-6">
         <DialogHeader>
           <DialogTitle>Notifications</DialogTitle>
-          <div className="flex gap-3">
-            <Button
-              variant={activeTab === "alert" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setActiveTab("alert")}
-              className="w-1/7"
-            >
-              알림
-            </Button>
-            <Button
-              variant={activeTab === "notify" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setActiveTab("notify")}
-              className="w-1/7"
-            >
-              공지사항
-            </Button>
-          </div>
+          <NotificationButtons
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </DialogHeader>
         {activeTab === "alert" && (
-          <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pr-2">
+          <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pb-3">
             {notifications.map((n) => (
-              <div
-                key={n.notification_id}
-                className="flex items-center gap-2 shadow-md rounded-md p-2"
-              >
-                <div className="flex items-center gap-2 justify-between w-full">
-                  <div className="flex flex-col gap-1 w-full">
-                    {n.type === "upload" ? (
-                      <div className="flex justify-between items-center w-full">
-                        <span>
-                          📌 {n.source?.name} 님이 새로운 레슨을 업로드했어요
-                        </span>
-                        {n.seen ? (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/delete`}
-                          >
-                            <button>
-                              <XCircle className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        ) : (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/see`}
-                          >
-                            <button>
-                              <Check className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        )}
-                      </div>
-                    ) : n.type === "upload-notify" ? (
-                      <div className="flex justify-between items-center w-full">
-                        <span>
-                          📌 {n.source?.name} 님이 새로운 공지 사항을
-                          업로드했어요
-                        </span>
-                        {n.seen ? (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/delete`}
-                          >
-                            <button>
-                              <XCircle className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        ) : (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/see`}
-                          >
-                            <button>
-                              <Check className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        )}
-                      </div>
-                    ) : n.type === "enrollment" ? (
-                      <div className="flex justify-between items-center w-full">
-                        <span>
-                          🎉 {n.class_title} 강의에 오신 걸 환영합니다!
-                        </span>
-                        {n.seen ? (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/delete`}
-                          >
-                            <button>
-                              <XCircle className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        ) : (
-                          <fetcher.Form
-                            method="post"
-                            action={`/classes/${n.notification_id}/see`}
-                          >
-                            <button>
-                              <Check className="size-4" />
-                            </button>
-                          </fetcher.Form>
-                        )}
-                      </div>
-                    ) : null}
-                    <span className="text-sm text-gray-400">
-                      {DateTime.fromISO(n.created_at ?? "").toRelative()}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <NotificationCard key={n.notification_id} notification={n} />
             ))}
           </div>
         )}
-
         {activeTab === "notify" && (
-          <div className="flex flex-col gap-1 max-h-96 overflow-y-auto pr-2">
-            {authorId === userId && (
-              <fetcher.Form method="post" action={`/classes/${classId}`}>
-                <input
-                  type="hidden"
-                  name="actionType"
-                  value="create-notification"
-                />
-                <Input
-                  className="bg-white mb-3"
-                  id="notification"
-                  name="notification"
-                />
-                <Button className="mb-3">공지사항 올리기</Button>
-              </fetcher.Form>
-            )}
-            <div className="flex flex-col gap-3">
-              {notifies.map((n) => (
-                <div key={n.notify_id} className="shadow-md  rounded-md p-2">
-                  <div className="flex items-center gap-2 justify-between w-full">
-                    <div className="flex flex-col gap-1">
-                      <span>📢 {n.notify_text}</span>
-                      <span className="text-sm text-gray-400">
-                        {DateTime.fromISO(n.created_at).toRelative()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="flex flex-col gap-1 max-h-96 overflow-y-auto pb-3">
+            {authorId === userId && <NotificationInput classId={classId} />}
+            <>
+              <div className="flex flex-col gap-3">
+                {notify.map((n) => (
+                  <NotifyCard
+                    key={n.notify_id}
+                    notify={n}
+                    onClick={() => setSelected(n)}
+                  />
+                ))}
+              </div>
+
+              <AnimatePresence>
+                {selected && (
+                  <NotifyModal
+                    selected={selected}
+                    onClose={() => setSelected(null)}
+                    classId={classId}
+                    authorId={authorId}
+                    userId={userId}
+                  />
+                )}
+              </AnimatePresence>
+            </>
           </div>
         )}
       </DialogContent>
