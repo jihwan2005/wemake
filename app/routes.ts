@@ -71,6 +71,10 @@ export default [
     ),
     route(":classId/:lessonId", "features/classes/pages/lesson-page.tsx"),
     route(
+      ":classId/send-message",
+      "features/classes/pages/action/class-send-message-page.tsx"
+    ),
+    route(
       "/:classId/enroll",
       "features/classes/pages/action/class-enroll-page.tsx"
     ),

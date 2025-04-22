@@ -491,6 +491,41 @@
       "when": 1745159294003,
       "tag": "0069_living_proudstar",
       "breakpoints": true
+    },
+    {
+      "idx": 70,
+      "version": "7",
+      "when": 1745233548153,
+      "tag": "0070_tiny_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1745320557587,
+      "tag": "0071_wealthy_mulholland_black",
+      "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1745320661003,
+      "tag": "0072_tranquil_vulture",
+      "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1745321698520,
+      "tag": "0073_mixed_revanche",
+      "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1745321806665,
+      "tag": "0074_zippy_deadpool",
+      "breakpoints": true
     }
   ]
 }

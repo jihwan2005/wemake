@@ -215,7 +215,8 @@ export const getCourseList = async (
     class_chapter_lesson (
       lesson_id,
       title,
-      video_url
+      video_url,
+      is_hidden
     )
   `
     )
@@ -347,6 +348,10 @@ export const getClassNotifications = async (
         notify_id,
         notify_title
       ),
+      message:class_message!message_id(
+        message_id,
+        message_content
+      ),
       class_title,
       seen,
       created_at
@@ -383,6 +388,26 @@ export const getCertificateByUserId = async (
     .select("*")
     .eq("profile_id", userId)
     .order("issued_at", { ascending: false });
+  if (error) throw error;
+  return data;
+};
+
+export const getMyClassStudents = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: string }
+) => {
+  const { data, error } = await client
+    .from("class_enrollments")
+    .select(
+      `
+      enrolled_at,
+      profiles (
+        profile_id,
+        username
+      )
+    `
+    )
+    .eq("class_post_id", Number(classId));
   if (error) throw error;
   return data;
 };

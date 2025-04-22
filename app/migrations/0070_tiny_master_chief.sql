@@ -1,0 +1,1 @@
+ALTER TABLE "class_chapter_lesson" ADD COLUMN "is_hidden" boolean DEFAULT false NOT NULL;

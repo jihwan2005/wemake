@@ -12,11 +12,21 @@ import {
   DialogTrigger,
 } from "~/common/components/ui/dialog";
 import { Input } from "~/common/components/ui/input";
+import { Switch } from "~/common/components/ui/switch";
+
+interface Lesson {
+  lesson_id: string;
+  title: string | null;
+  order: number | null;
+  is_completed?: boolean;
+  is_hidden?: boolean;
+}
 
 type Chapter = {
   chapter_id: string;
   title: string | null;
   order: number | null;
+  class_chapter_lesson: Lesson[];
 };
 
 export default function UpdateChapterDialog({ course }: { course: Chapter }) {
@@ -29,6 +39,10 @@ export default function UpdateChapterDialog({ course }: { course: Chapter }) {
     title: string;
     order: number;
   } | null>(null);
+  const allLessonsHidden = course.class_chapter_lesson.every(
+    (lesson) => lesson.is_hidden
+  );
+  const [isHiddenAll, setIsHiddenAll] = useState(allLessonsHidden);
   return (
     <Dialog
       open={updateChapterDialogOpen}
@@ -81,7 +95,23 @@ export default function UpdateChapterDialog({ course }: { course: Chapter }) {
               name="order"
             />
           </div>
-
+          <div className="mt-5 flex flex-col gap-2">
+            <span>모든 레슨 히든 상태</span>
+            <div className="flex items-center gap-2">
+              <span>OFF</span>
+              <input
+                type="hidden"
+                name="isHiddenAll"
+                value={String(isHiddenAll)}
+              />
+              <Switch
+                id="isHiddenAll"
+                checked={isHiddenAll}
+                onCheckedChange={setIsHiddenAll}
+              />
+              <span>ON</span>
+            </div>
+          </div>
           <DialogFooter className="mt-5">
             <Button
               type="button"

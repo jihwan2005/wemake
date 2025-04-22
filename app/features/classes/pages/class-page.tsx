@@ -9,6 +9,7 @@ import {
   getClassNotifications,
   getClassNotify,
   getMyBookMarkLessons,
+  getMyClassStudents,
   getReviewsById,
   getUserAttendance,
   getUserEmail,
@@ -29,6 +30,7 @@ import {
   deleteGoal,
   deleteLesson,
   toggleCheck,
+  updateAllLessonHiddenProp,
   updateChapter,
   updateClass,
   updateClassNotify,
@@ -47,6 +49,7 @@ import CreateChapterDialog from "../components/chapter/create-chapter-dialog";
 import ClassAttendanceDialog from "../components/class/class-attendance-dialog";
 import ClassNotificationDialog from "../components/class/class-notification-dialog";
 import BookMarkedLessonsDropdownMenu from "../components/lesson/bookmarked-lessons-dropdownmenu";
+import ClassMyStudentsDialog from "../components/class/class-my-students-dialog";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -147,6 +150,12 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       title,
       order,
     });
+    if (formData.has("isHiddenAll")) {
+      await updateAllLessonHiddenProp(client, {
+        chapterId,
+        isHidden: formData.get("isHiddenAll") === "true",
+      });
+    }
   } else if (String(actionType) === "create-lesson") {
     const chapterId = formData.get("chapterId") as string;
     const lesson = formData.get("lesson") as string;
@@ -175,6 +184,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       chapterId,
       lesson,
       video: videoUrl,
+      isHidden: formData.get("isHidden") === "on",
     });
   } else if (String(actionType) === "delete-lesson") {
     const lessonId = formData.get("lessonId") as string;
@@ -189,6 +199,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       lessonId,
       title,
       order,
+      isHidden: formData.get("isHidden") === "on",
     });
   } else if (String(actionType) === "create-goal") {
     const text = formData.get("goal") as string;
@@ -238,6 +249,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     });
   }
 };
+
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
@@ -286,6 +298,9 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
       is_completed: completedMap.get(lesson.lesson_id) ?? false,
     })),
   }));
+  const myStudents = await getMyClassStudents(client, {
+    classId,
+  });
   return {
     cls,
     clsCourse,
@@ -301,6 +316,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     notifications,
     clsCourseWithCompleted,
     notify,
+    myStudents,
   };
 };
 
@@ -346,6 +362,10 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           />
         ) : null}
       </div>
+      <ClassMyStudentsDialog
+        students={loaderData.myStudents}
+        classId={loaderData.classId}
+      />
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

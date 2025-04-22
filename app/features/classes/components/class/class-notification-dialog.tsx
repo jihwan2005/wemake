@@ -23,6 +23,7 @@ type Notification = {
     | "enrollment"
     | "complete"
     | "complete-goal"
+    | "message"
     | null;
   source: {
     profile_id: string;
@@ -33,6 +34,14 @@ type Notification = {
     lesson_id: string | null;
     title: string | null;
   } | null;
+  message: {
+    message_id: number | null;
+    message_content: string | null;
+  };
+  notify: {
+    notify_id: number | null;
+    notify_title: string | null;
+  };
   class_title: string | null;
   seen: boolean | null;
   created_at: string | null;

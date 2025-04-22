@@ -160,7 +160,13 @@ export const createLesson = async (
     lesson,
     chapterId,
     video,
-  }: { lesson: string; chapterId: string; video: string | null }
+    isHidden,
+  }: {
+    lesson: string;
+    chapterId: string;
+    video: string | null;
+    isHidden: boolean;
+  }
 ) => {
   const { data, error } = await client
     .from("class_chapter_lesson")
@@ -168,6 +174,7 @@ export const createLesson = async (
       title: lesson,
       chapter_id: chapterId,
       video_url: video,
+      is_hidden: isHidden,
     })
     .select()
     .single();
@@ -190,13 +197,31 @@ export const deleteLesson = async (
 
 export const updateLesson = async (
   client: SupabaseClient<Database>,
-  { lessonId, title, order }: { lessonId: string; title: string; order: string }
+  {
+    lessonId,
+    title,
+    order,
+    isHidden,
+  }: { lessonId: string; title: string; order: string; isHidden: boolean }
 ) => {
   const { data, error } = await client
     .from("class_chapter_lesson")
-    .update({ title, order: Number(order) })
+    .update({ title, order: Number(order), is_hidden: isHidden })
     .eq("lesson_id", lessonId)
     .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateAllLessonHiddenProp = async (
+  client: SupabaseClient<Database>,
+  { chapterId, isHidden }: { chapterId: string; isHidden: boolean }
+) => {
+  const { data, error } = await client
+    .from("class_chapter_lesson")
+    .update({ is_hidden: isHidden })
+    .eq("chapter_id", chapterId)
+    .select();
   if (error) throw error;
   return data;
 };
@@ -623,6 +648,34 @@ export const deleteClassNotify = async (
     .from("class_notify")
     .delete()
     .eq("notify_id", Number(notifyId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const createClassMessage = async (
+  client: SupabaseClient<Database>,
+  {
+    classId,
+    sender,
+    receiver,
+    message_content,
+  }: {
+    classId: string;
+    sender: string;
+    receiver: string;
+    message_content: string;
+  }
+) => {
+  const { data, error } = await client
+    .from("class_message")
+    .insert({
+      class_post_id: Number(classId),
+      sender: sender,
+      receiver: receiver,
+      message_content: message_content,
+    })
+    .select()
     .single();
   if (error) throw error;
   return data;

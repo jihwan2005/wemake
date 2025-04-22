@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { List, EyeOff, MoreVertical, CheckCircleIcon } from "lucide-react";
+import {
+  List,
+  EyeOff,
+  MoreVertical,
+  CheckCircleIcon,
+  Lock,
+} from "lucide-react";
 import { Button } from "~/common/components/ui/button";
 import {
   Popover,
@@ -18,6 +24,7 @@ interface Lesson {
   title: string | null;
   order: number | null;
   is_completed?: boolean;
+  is_hidden?: boolean;
 }
 
 interface Chapter {
@@ -101,32 +108,44 @@ export default function ClassCourse({
                 >
                   <Link
                     to={
-                      IsEnrolled || authorId === userId
+                      !lesson.is_hidden && (IsEnrolled || authorId === userId)
                         ? `/classes/${classId}/${lesson.lesson_id}`
                         : "#"
                     }
                     onClick={(e) => {
-                      if (!IsEnrolled && authorId !== userId)
+                      if (
+                        (lesson.is_hidden && userId !== authorId) ||
+                        (!IsEnrolled && userId !== authorId)
+                      ) {
                         e.preventDefault();
+                      }
                     }}
                     className={`font-medium flex-1 ${
-                      IsEnrolled || authorId === userId
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed text-gray-400"
+                      (lesson.is_hidden && userId !== authorId) ||
+                      (!IsEnrolled && userId !== authorId)
+                        ? "cursor-not-allowed text-gray-400"
+                        : "cursor-pointer"
                     }`}
                   >
                     <div className="flex items-center">
                       {authorId === userId && (
                         <span className="mr-2">{lesson.order}</span>
                       )}
-                      <div className="flex items-center gap-2">
-                        {lesson.is_completed ? (
-                          <CheckCircleIcon className="text-green-400" />
-                        ) : (
-                          <CheckCircleIcon />
-                        )}
-                        {lesson.title}
-                      </div>
+                      {lesson.is_hidden ? (
+                        <div className="flex items-center gap-2">
+                          <Lock className="size-4" />
+                          {lesson.title}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {lesson.is_completed ? (
+                            <CheckCircleIcon className="text-green-400" />
+                          ) : (
+                            <CheckCircleIcon />
+                          )}
+                          {lesson.title}
+                        </div>
+                      )}
                     </div>
                   </Link>
 

@@ -16,7 +16,7 @@ import {
   CollapsibleTrigger,
 } from "~/common/components/ui/collapsible";
 import { Link } from "react-router";
-import { Check } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import ProgressBar from "./progress";
 
 type LessonSidebarProps = {
@@ -27,16 +27,21 @@ type LessonSidebarProps = {
       lesson_id: string;
       title: string | null;
       is_completed: boolean | null;
+      is_hidden?: boolean;
     }[];
   }[];
   classTitle: string;
+  author: string;
   progress: number;
+  userId: string;
 };
 
 export default function LessonSidebar({
   course,
   classTitle,
   progress,
+  author,
+  userId,
 }: LessonSidebarProps) {
   return (
     <Sidebar className="z-50" variant="inset">
@@ -60,20 +65,40 @@ export default function LessonSidebar({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {cls.class_chapter_lesson.map((lesson) => (
-                        <SidebarMenuSubItem key={lesson.lesson_id}>
-                          <Link
-                            to={`/classes/${cls.class_post_id}/${lesson.lesson_id}`}
-                          >
-                            <SidebarMenuSubButton>
-                              {lesson.title}
-                              {lesson.is_completed ? (
-                                <Check className="size-4" />
-                              ) : null}
-                            </SidebarMenuSubButton>
-                          </Link>
-                        </SidebarMenuSubItem>
-                      ))}
+                      {cls.class_chapter_lesson.map((lesson) => {
+                        const isHidden = lesson.is_hidden && author !== userId;
+
+                        return (
+                          <SidebarMenuSubItem key={lesson.lesson_id}>
+                            <Link
+                              to={
+                                !isHidden
+                                  ? `/classes/${cls.class_post_id}/${lesson.lesson_id}`
+                                  : "#"
+                              }
+                              onClick={(e) => {
+                                if (isHidden) e.preventDefault(); // 링크 이동 방지
+                              }}
+                            >
+                              <SidebarMenuSubButton
+                                className={
+                                  isHidden
+                                    ? "cursor-not-allowed text-gray-400"
+                                    : ""
+                                }
+                              >
+                                <div className="flex items-center gap-2">
+                                  {isHidden && <Lock className="size-4" />}
+                                  <span>{lesson.title}</span>
+                                  {lesson.is_completed && (
+                                    <Check className="size-4 text-green-500 ml-auto" />
+                                  )}
+                                </div>
+                              </SidebarMenuSubButton>
+                            </Link>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>

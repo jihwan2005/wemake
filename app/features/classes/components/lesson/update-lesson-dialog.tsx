@@ -12,11 +12,13 @@ import {
   DialogTrigger,
 } from "~/common/components/ui/dialog";
 import { Input } from "~/common/components/ui/input";
+import { Switch } from "~/common/components/ui/switch";
 
 type Lesson = {
   lesson_id: string;
   title: string | null;
   order: number | null;
+  is_hidden?: boolean;
 };
 
 export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
@@ -28,6 +30,7 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
     id: string;
     title: string;
     order: number;
+    is_hidden?: boolean;
   } | null>(null);
   return (
     <Dialog
@@ -80,6 +83,18 @@ export default function UpdateLessonDialog({ lesson }: { lesson: Lesson }) {
               id="order"
               name="order"
             />
+          </div>
+          <div className="mt-5 flex flex-col gap-2">
+            <span>강의 히든 상태</span>
+            <div className="flex items-center gap-2">
+              <span>OFF</span>
+              <Switch
+                id="isHidden"
+                name="isHidden"
+                defaultChecked={lesson.is_hidden}
+              />
+              <span>ON</span>
+            </div>
           </div>
           <DialogFooter className="mt-5">
             <Button

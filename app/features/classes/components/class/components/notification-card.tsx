@@ -10,6 +10,7 @@ type Notification = {
     | "enrollment"
     | "complete"
     | "complete-goal"
+    | "message"
     | null;
   source: {
     profile_id: string;
@@ -20,6 +21,14 @@ type Notification = {
     lesson_id: string | null;
     title: string | null;
   } | null;
+  message: {
+    message_id: number | null;
+    message_content: string | null;
+  };
+  notify: {
+    notify_id: number | null;
+    notify_title: string | null;
+  };
   class_title: string | null;
   seen: boolean | null;
   created_at: string | null;
@@ -36,15 +45,17 @@ export function NotificationCard({ notification }: NotificationCardProps) {
 
   const renderContent = () => {
     if (notification.type === "upload") {
-      return `📌 ${notification.source?.name} 님이 새로운 레슨을 업로드했어요`;
+      return `✨ ${notification.source?.name} 님이 새로운 레슨을 업로드했어요 : ${notification.lesson?.title}`;
     } else if (notification.type === "upload-notify") {
-      return `📌 ${notification.source?.name} 님이 새로운 공지 사항을 업로드했어요`;
+      return `📌 ${notification.source?.name} 님이 새로운 공지 사항을 업로드했어요 : ${notification.notify.notify_title}`;
     } else if (notification.type === "enrollment") {
-      return `🎉 ${notification.class_title} 강의에 오신 걸 환영합니다!`;
+      return `💕 ${notification.class_title} 강의에 오신 걸 환영합니다!`;
     } else if (notification.type === "complete") {
-      return `🎉 ${notification.class_title} 레슨을 완료했어요!`;
+      return `🎖️ ${notification.class_title}을 완강했어요!`;
     } else if (notification.type === "complete-goal") {
       return `🎉 모든 목표를 완수했어요! 부라보!!`;
+    } else if (notification.type === "message") {
+      return `📨 ${notification.source?.name} 님이 쪽지를 보냈어요 : ${notification.message.message_content}`;
     }
     return null;
   };

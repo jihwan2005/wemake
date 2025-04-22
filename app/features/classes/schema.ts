@@ -11,7 +11,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { profiles } from "../users/schema";
 import { DIFFICULTY_TYPES } from "./constants";
-import { not } from "drizzle-orm";
 
 export const difficultyTypes = pgEnum(
   "difficulty_type",
@@ -72,6 +71,7 @@ export const classChapterLesson = pgTable("class_chapter_lesson", {
   title: text(),
   video_url: text(),
   order: bigint({ mode: "number" }).default(0).notNull(),
+  is_hidden: boolean().default(false).notNull(),
 });
 
 export const classUpvotes = pgTable(
@@ -220,6 +220,7 @@ export const notificationType = pgEnum("class_notification_type", [
   "enrollment",
   "complete",
   "complete-goal",
+  "message",
 ]);
 
 export const classNotifications = pgTable("class_notifications", {
@@ -240,6 +241,12 @@ export const classNotifications = pgTable("class_notifications", {
   ),
   notify_id: bigint({ mode: "number" }).references(
     () => classNotify.notify_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  message_id: bigint({ mode: "number" }).references(
+    () => classMessage.message_id,
     {
       onDelete: "cascade",
     }
@@ -284,3 +291,24 @@ export const classCertificate = pgTable(
   },
   (table) => [primaryKey({ columns: [table.profile_id, table.class_post_id] })]
 );
+
+export const classMessage = pgTable("class_message", {
+  message_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  sender: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  receiver: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  message_content: text().notNull(),
+  created_at: timestamp().notNull().defaultNow(),
+});

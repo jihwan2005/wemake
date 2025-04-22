@@ -12,9 +12,11 @@ import LessonSidebar from "./components/course-sidebar";
 import { useFetcher } from "react-router";
 import Header from "./components/header";
 import { calculateProgress } from "../utils/progress";
+import { getLoggedInUserId } from "~/features/users/queries";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);
+  const userId = await getLoggedInUserId(client);
   const classId = Number(params.classId);
   const lessonId = params.lessonId;
   const lesson = await getLessonById(client, {
@@ -42,6 +44,7 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
         lesson_id: item.lesson_id!,
         title: item.lesson_title,
         is_completed: item.is_completed,
+        is_hidden: item.is_hidden ?? undefined,
       };
       if (existing) {
         existing.class_chapter_lesson.push(lesson);
@@ -63,12 +66,14 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
         lesson_id: string;
         title: string | null;
         is_completed: boolean | null;
+        is_hidden?: boolean;
       }[];
     }[]
   );
   const progress = calculateProgress(grouped);
   return {
     lesson,
+    userId,
     course: grouped,
     classTitle,
     chapterTitle,
@@ -98,6 +103,8 @@ export default function LessonPage({ loaderData }: Route.ComponentProps) {
       <LessonSidebar
         course={loaderData.course}
         classTitle={loaderData.classTitle.title}
+        author={loaderData.classTitle.author_id}
+        userId={loaderData.userId}
         progress={loaderData.progress}
       />
       <SidebarInset>

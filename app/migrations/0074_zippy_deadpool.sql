@@ -1,0 +1,2 @@
+ALTER TABLE "class_notifications" ADD COLUMN "message_id" bigint;--> statement-breakpoint
+ALTER TABLE "class_notifications" ADD CONSTRAINT "class_notifications_message_id_class_message_message_id_fk" FOREIGN KEY ("message_id") REFERENCES "public"."class_message"("message_id") ON DELETE cascade ON UPDATE no action;

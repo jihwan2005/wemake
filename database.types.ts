@@ -348,6 +348,7 @@ export type Database = {
       class_chapter_lesson: {
         Row: {
           chapter_id: string
+          is_hidden: boolean
           lesson_id: string
           order: number
           title: string | null
@@ -355,6 +356,7 @@ export type Database = {
         }
         Insert: {
           chapter_id: string
+          is_hidden?: boolean
           lesson_id?: string
           order?: number
           title?: string | null
@@ -362,6 +364,7 @@ export type Database = {
         }
         Update: {
           chapter_id?: string
+          is_hidden?: boolean
           lesson_id?: string
           order?: number
           title?: string | null
@@ -559,12 +562,125 @@ export type Database = {
           },
         ]
       }
+      class_message: {
+        Row: {
+          class_post_id: number
+          created_at: string
+          message_content: string
+          message_id: number
+          receiver: string
+          sender: string
+        }
+        Insert: {
+          class_post_id: number
+          created_at?: string
+          message_content: string
+          message_id?: never
+          receiver: string
+          sender: string
+        }
+        Update: {
+          class_post_id?: number
+          created_at?: string
+          message_content?: string
+          message_id?: never
+          receiver?: string
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_message_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_message_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_message_receiver_profiles_profile_id_fk"
+            columns: ["receiver"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_receiver_profiles_profile_id_fk"
+            columns: ["receiver"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_receiver_profiles_profile_id_fk"
+            columns: ["receiver"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_receiver_profiles_profile_id_fk"
+            columns: ["receiver"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_receiver_profiles_profile_id_fk"
+            columns: ["receiver"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_sender_profiles_profile_id_fk"
+            columns: ["sender"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_sender_profiles_profile_id_fk"
+            columns: ["sender"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_sender_profiles_profile_id_fk"
+            columns: ["sender"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_sender_profiles_profile_id_fk"
+            columns: ["sender"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_sender_profiles_profile_id_fk"
+            columns: ["sender"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_notifications: {
         Row: {
           class_post_id: number | null
           created_at: string
           enrollment_id: number | null
           lesson_id: string | null
+          message_id: number | null
           notification_id: number
           notify_id: number | null
           seen: boolean
@@ -577,6 +693,7 @@ export type Database = {
           created_at?: string
           enrollment_id?: number | null
           lesson_id?: string | null
+          message_id?: number | null
           notification_id?: never
           notify_id?: number | null
           seen?: boolean
@@ -589,6 +706,7 @@ export type Database = {
           created_at?: string
           enrollment_id?: number | null
           lesson_id?: string | null
+          message_id?: number | null
           notification_id?: never
           notify_id?: number | null
           seen?: boolean
@@ -638,6 +756,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lesson_list_view"
             referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_message_id_class_message_message_id_fk"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "class_message"
+            referencedColumns: ["message_id"]
           },
           {
             foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
@@ -3107,6 +3232,7 @@ export type Database = {
           chapter_title: string | null
           class_post_id: number | null
           is_completed: boolean | null
+          is_hidden: boolean | null
           lesson_id: string | null
           lesson_title: string | null
           video_url: string | null
@@ -3393,6 +3519,7 @@ export type Database = {
           class_post_id: number | null
           is_bookmarked: boolean | null
           is_completed: boolean | null
+          is_hidden: boolean | null
           lesson_id: string | null
           title: string | null
           video_url: string | null
@@ -3524,6 +3651,7 @@ export type Database = {
           created_at: string | null
           enrollment_id: number | null
           lesson_id: string | null
+          message_id: number | null
           notification_id: number | null
           notify_id: number | null
           seen: boolean | null
@@ -3573,6 +3701,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lesson_list_view"
             referencedColumns: ["lesson_id"]
+          },
+          {
+            foreignKeyName: "class_notifications_message_id_class_message_message_id_fk"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "class_message"
+            referencedColumns: ["message_id"]
           },
           {
             foreignKeyName: "class_notifications_notify_id_class_notify_notify_id_fk"
@@ -3780,6 +3915,7 @@ export type Database = {
         | "enrollment"
         | "complete"
         | "complete-goal"
+        | "message"
       difficulty_type: "beginner" | "intermediate" | "advanced"
       difficulty_type_old: "beginner" | "Intermediate" | "advanced"
       job_type:
@@ -3926,6 +4062,7 @@ export const Constants = {
         "enrollment",
         "complete",
         "complete-goal",
+        "message",
       ],
       difficulty_type: ["beginner", "intermediate", "advanced"],
       difficulty_type_old: ["beginner", "Intermediate", "advanced"],

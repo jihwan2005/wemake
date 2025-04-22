@@ -12,6 +12,8 @@ import {
   DialogTrigger,
 } from "~/common/components/ui/dialog";
 import { Input } from "~/common/components/ui/input";
+import { Label } from "~/common/components/ui/label";
+import { Switch } from "~/common/components/ui/switch";
 
 export default function CreateLessonDialog({
   chapterId,
@@ -53,6 +55,10 @@ export default function CreateLessonDialog({
             placeholder="Lessson Video"
             type="file"
           />
+          <div className="flex items-center space-x-2 mt-3">
+            <Switch id="isHidden" name="isHidden" />
+            <Label htmlFor="isHidden">히든 강의로 만들기</Label>
+          </div>
           <DialogFooter className="mt-5">
             <Button
               type="button"
