@@ -17,7 +17,7 @@ import {
 } from "../queries";
 import { Hero } from "~/common/components/hero";
 import { useState } from "react";
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import { getLoggedInUserId } from "~/features/users/queries";
 import {
   createChapter,
@@ -50,6 +50,8 @@ import ClassAttendanceDialog from "../components/class/class-attendance-dialog";
 import ClassNotificationDialog from "../components/class/class-notification-dialog";
 import BookMarkedLessonsDropdownMenu from "../components/lesson/bookmarked-lessons-dropdownmenu";
 import ClassMyStudentsDialog from "../components/class/class-my-students-dialog";
+import { Button } from "~/common/components/ui/button";
+import { MessageSquare } from "lucide-react";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -63,7 +65,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const userId = await getLoggedInUserId(client);
   const classId = params.classId;
   const formData = await request.formData();
-  console.log(formData);
   const actionType = formData.get("actionType");
   if (String(actionType) === "delete") {
     try {
@@ -72,9 +73,17 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
         .select("class_poster")
         .eq("class_post_id", Number(classId))
         .single();
+      const data = await client
+        .from("class_showcase_images")
+        .select("image_url")
+        .eq("class_post_id", Number(classId));
+      const allShowcaseUrls = (data.data ?? []).flatMap(
+        (item) => item.image_url
+      );
       await deleteClass(client, {
         classId,
         posterUrl: classData!.class_poster as string,
+        showcaseUrl: allShowcaseUrls,
       });
       return redirect("/classes");
     } catch (error) {
@@ -366,6 +375,11 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         students={loaderData.myStudents}
         classId={loaderData.classId}
       />
+      <Link to={`/classes/${loaderData.classId}/messages`}>
+        <Button variant="outline">
+          <MessageSquare className="size-4" />
+        </Button>
+      </Link>
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

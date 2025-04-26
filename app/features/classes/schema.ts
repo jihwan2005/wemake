@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { profiles } from "../users/schema";
 import { DIFFICULTY_TYPES } from "./constants";
+import { profile } from "console";
 
 export const difficultyTypes = pgEnum(
   "difficulty_type",
@@ -36,6 +37,7 @@ export const classPosts = pgTable("class_posts", {
     .primaryKey()
     .generatedAlwaysAsIdentity(),
   title: text().notNull(),
+  subtitle: text(),
   description: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
   updated_at: timestamp().notNull().defaultNow(),
@@ -52,6 +54,19 @@ export const classPosts = pgTable("class_posts", {
   upvotes: bigint({ mode: "number" }).default(0),
   learners: bigint({ mode: "number" }).default(0),
   reviews: bigint({ mode: "number" }).default(0),
+});
+
+export const classShowcaseImages = pgTable("class_showcase_images", {
+  showcase_image_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" })
+    .notNull()
+    .references(() => classPosts.class_post_id, {
+      onDelete: "cascade",
+    }),
+  image_url: text().notNull(),
+  created_at: timestamp().defaultNow(),
 });
 
 export const classChapter = pgTable("class_chapter", {
@@ -246,7 +261,7 @@ export const classNotifications = pgTable("class_notifications", {
     }
   ),
   message_id: bigint({ mode: "number" }).references(
-    () => classMessage.message_id,
+    () => classMessage.class_message_id,
     {
       onDelete: "cascade",
     }
@@ -293,9 +308,15 @@ export const classCertificate = pgTable(
 );
 
 export const classMessage = pgTable("class_message", {
-  message_id: bigint({ mode: "number" })
+  class_message_id: bigint({ mode: "number" })
     .primaryKey()
     .generatedAlwaysAsIdentity(),
+  class_message_room_id: bigint({ mode: "number" }).references(
+    () => classMessageRooms.class_message_room_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
   class_post_id: bigint({ mode: "number" })
     .references(() => classPosts.class_post_id, { onDelete: "cascade" })
     .notNull(),
@@ -304,11 +325,33 @@ export const classMessage = pgTable("class_message", {
       onDelete: "cascade",
     })
     .notNull(),
-  receiver: uuid()
-    .references(() => profiles.profile_id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
   message_content: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
 });
+
+export const classMessageRooms = pgTable("class_message_rooms", {
+  class_message_room_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  created_at: timestamp().notNull().defaultNow(),
+});
+
+export const messageRoomMembers = pgTable(
+  "class_message_room_members",
+  {
+    class_message_room_id: bigint({ mode: "number" }).references(
+      () => classMessageRooms.class_message_room_id,
+      {
+        onDelete: "cascade",
+      }
+    ),
+    profile_id: uuid().references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    }),
+    created_at: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.class_message_room_id, table.profile_id] }),
+  ]
+);
+

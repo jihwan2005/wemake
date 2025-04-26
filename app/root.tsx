@@ -66,9 +66,10 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 export default function App({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const isLoggedIn = loaderData.user !== null;
-  const isLessonPage = /^\/classes\/[^/]+\/[^/]+$/.test(pathname);
+  const isLessonPage = /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
   const hideNavigation =
-    pathname.includes("/auth") || /^\/classes\/[^/]+\/[^/]+$/.test(pathname);
+    pathname.includes("/auth") ||
+    /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
   return (
     <Provider store={store}>
       <div

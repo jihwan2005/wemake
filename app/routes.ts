@@ -59,6 +59,7 @@ export default [
   ...prefix("/classes", [
     index("features/classes/pages/classes-page.tsx"),
     route(":classId", "features/classes/pages/class-page.tsx"),
+    route(":classId/lobby", "features/classes/pages/class-lobby-page.tsx"),
     route("/my", "features/classes/pages/class-my-page.tsx"),
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),
     route(
@@ -69,7 +70,10 @@ export default [
       "/:notificationId/delete",
       "features/classes/pages/action/delete-class-notification-page.tsx"
     ),
-    route(":classId/:lessonId", "features/classes/pages/lesson-page.tsx"),
+    route(
+      ":classId/lesson/:lessonId",
+      "features/classes/pages/lesson-page.tsx"
+    ),
     route(
       ":classId/send-message",
       "features/classes/pages/action/class-send-message-page.tsx"
@@ -106,6 +110,15 @@ export default [
       ":classId/:lessonId/complete",
       "features/classes/pages/action/lesson-complete-page.tsx"
     ),
+    layout("features/classes/layouts/class-messages-layout.tsx", [
+      ...prefix("/:classId/messages", [
+        index("features/classes/pages/class-messages-page.tsx"),
+        route(
+          "/:classMessageRoomId",
+          "features/classes/pages/class-message-page.tsx"
+        ),
+      ]),
+    ]),
   ]),
   ...prefix("/feedback", [
     index("features/feedback/pages/feedback-page.tsx"),

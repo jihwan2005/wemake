@@ -6,6 +6,7 @@ export const createClass = async (
   client: SupabaseClient<Database>,
   {
     title,
+    subtitle,
     description,
     start_at,
     end_at,
@@ -15,6 +16,7 @@ export const createClass = async (
     userId,
   }: {
     title: string;
+    subtitle: string;
     description: string;
     start_at: string;
     end_at: string;
@@ -28,6 +30,7 @@ export const createClass = async (
     .from("class_posts")
     .insert({
       title,
+      subtitle,
       description,
       class_poster: poster,
       profile_id: userId,
@@ -39,15 +42,30 @@ export const createClass = async (
     .select()
     .single();
   if (error) {
-    console.log(error);
     throw error;
   }
   return data;
 };
 
+export const createShowcaseImage = async (
+  client: SupabaseClient<Database>,
+  { classId, showcaseUrl }: { classId: number; showcaseUrl: string }
+) => {
+  const { data, error } = await client.from("class_showcase_images").insert({
+    class_post_id: classId,
+    image_url: showcaseUrl,
+  });
+  if (error) throw error;
+  return data;
+};
+
 export const deleteClass = async (
   client: SupabaseClient<Database>,
-  { classId, posterUrl }: { classId: string; posterUrl: string }
+  {
+    classId,
+    posterUrl,
+    showcaseUrl,
+  }: { classId: string; posterUrl: string; showcaseUrl: string[] }
 ) => {
   function extractPosterPath(url: string): string {
     return url.replace(
@@ -55,11 +73,26 @@ export const deleteClass = async (
       ""
     );
   }
+
+  function extractShowcasePath(url: string): string {
+    return url.replace(
+      "https://trwxbnzdoifmjxezpanj.supabase.co/storage/v1/object/public/showcase/",
+      ""
+    );
+  }
   const posterPath = extractPosterPath(posterUrl);
-  const { error: storageError } = await client.storage
+  const showcaseImgPaths = showcaseUrl.map(extractShowcasePath);
+  if (showcaseImgPaths.length > 0) {
+    const { error: showcaseError } = await client.storage
+      .from("showcase")
+      .remove(showcaseImgPaths);
+    if (showcaseError) throw showcaseError;
+  }
+  const { error: posterError } = await client.storage
     .from("poster")
     .remove([posterPath]);
-  if (storageError) throw storageError;
+
+  if (posterError) throw posterError;
   const { data, error } = await client
     .from("class_posts")
     .delete()
@@ -653,7 +686,7 @@ export const deleteClassNotify = async (
   return data;
 };
 
-export const createClassMessage = async (
+export const sendClassMessage = async (
   client: SupabaseClient<Database>,
   {
     classId,
@@ -661,22 +694,66 @@ export const createClassMessage = async (
     receiver,
     message_content,
   }: {
-    classId: string;
     sender: string;
     receiver: string;
     message_content: string;
+    classId: string;
   }
 ) => {
   const { data, error } = await client
-    .from("class_message")
-    .insert({
-      class_post_id: Number(classId),
-      sender: sender,
-      receiver: receiver,
-      message_content: message_content,
+    .rpc("get_class_room", {
+      sender,
+      receiver,
     })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+    .maybeSingle();
+  if (error) {
+    throw error;
+  }
+  if (data?.class_message_room_id) {
+    const { error: messageInsertError } = await client
+      .from("class_message")
+      .insert({
+        class_message_room_id: data.class_message_room_id,
+        sender,
+        class_post_id: Number(classId),
+        message_content,
+      });
+    if (messageInsertError) {
+      console.error("Message Insert Error:", messageInsertError);
+      throw messageInsertError;
+    }
+    return data.class_message_room_id;
+  } else {
+    const { data: roomData, error: roomError } = await client
+      .from("class_message_rooms")
+      .insert({})
+      .select("class_message_room_id")
+      .single();
+    if (roomError) {
+      throw roomError;
+    }
+    await client.from("class_message_room_members").insert([
+      {
+        class_message_room_id: roomData.class_message_room_id,
+        profile_id: sender,
+      },
+      {
+        class_message_room_id: roomData.class_message_room_id,
+        profile_id: receiver,
+      },
+    ]);
+    const { error: messageInsertError } = await client
+      .from("class_message")
+      .insert({
+        class_message_room_id: roomData.class_message_room_id,
+        sender,
+        class_post_id: Number(classId),
+        message_content,
+      });
+    if (messageInsertError) {
+      console.error("Message Insert Error:", messageInsertError);
+      throw messageInsertError;
+    }
+    return roomData.class_message_room_id;
+  }
 };

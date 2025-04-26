@@ -24,10 +24,10 @@ import { Label } from "~/common/components/ui/label";
 import { Input } from "~/common/components/ui/input";
 import { Calendar } from "~/common/components/ui/calendar";
 import { Button } from "~/common/components/ui/button";
-import { Form, useNavigation } from "react-router";
 import { useState } from "react";
 import { DIFFICULTY_TYPES } from "../../constants";
-import { BookPlus, LoaderCircle } from "lucide-react";
+import { BookPlus, LoaderCircle, X } from "lucide-react";
+import { Form, useNavigation } from "react-router";
 
 export default function CreateClassDialog() {
   const navigation = useNavigation();
@@ -49,28 +49,79 @@ export default function CreateClassDialog() {
   };
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [showcaseFiles, setShowcaseFiles] = useState<File[]>([]);
+  const [showcasePreviews, setShowcasePreviews] = useState<string[]>([]);
+  const handleShowcaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const selectedFiles = Array.from(files);
+
+    const filtered = selectedFiles.filter(
+      (newFile) =>
+        !showcaseFiles.some(
+          (existingFile) =>
+            existingFile.name === newFile.name &&
+            existingFile.size === newFile.size &&
+            existingFile.lastModified === newFile.lastModified
+        )
+    );
+
+    const allowed = filtered.slice(0, 5 - showcaseFiles.length);
+
+    setShowcaseFiles((prev) => {
+      const result = [...prev, ...allowed];
+
+      return result;
+    });
+
+    const readers = allowed.map(
+      (file) =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        })
+    );
+
+    Promise.all(readers)
+      .then((images) => {
+        setShowcasePreviews((prev) => [...prev, ...images]);
+      })
+      .catch((err) => console.error("File read error:", err));
+  };
+
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button>
           <BookPlus className="size-4" />
           Make Class
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-4xl">
+      <DialogContent className="w-full max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Make Class</DialogTitle>
           <DialogDescription>Write information of your class</DialogDescription>
         </DialogHeader>
-        <Form method="post" encType="multipart/form-data">
+        <Form encType="multipart/form-data" method="post">
           <div className="flex flex-col gap-3">
-            <div>
-              <Label htmlFor="title" className="text-right mb-2">
-                Title
-              </Label>
-              <Input id="title" className="col-span-3" name="title" />
-            </div>
-            <div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="title" className="text-right mb-2">
+                  Title
+                </Label>
+                <Input id="title" className="col-span-1" name="title" />
+              </div>
+              <div>
+                <Label htmlFor="title" className="text-right mb-2">
+                  Subtitle
+                </Label>
+                <Input id="subtitle" className="col-span-1" name="subtitle" />
+              </div>
+              <div></div>
               <Label htmlFor="description" className="text-right mb-2">
                 Description
               </Label>
@@ -190,6 +241,40 @@ export default function CreateClassDialog() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="showcase_images" className="text-right mb-2">
+                Showcase Images (Max 5)
+              </Label>
+              <Input
+                id="showcase_images"
+                name="showcase_images"
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleShowcaseChange}
+              />
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                {showcasePreviews.map((src, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={src}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowcasePreviews((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        )
+                      }
+                      className="absolute top-1 right-1 bg-white bg-opacity-75 rounded-full p-1 hover:bg-opacity-100 transition"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

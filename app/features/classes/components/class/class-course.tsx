@@ -109,7 +109,7 @@ export default function ClassCourse({
                   <Link
                     to={
                       !lesson.is_hidden && (IsEnrolled || authorId === userId)
-                        ? `/classes/${classId}/${lesson.lesson_id}`
+                        ? `/classes/${classId}/lesson/${lesson.lesson_id}`
                         : "#"
                     }
                     onClick={(e) => {

@@ -1,7 +1,7 @@
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-enroll-page";
-import { createClassMessage } from "../../mutations";
+import { sendClassMessage } from "../../mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
@@ -16,7 +16,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const studentIds = studentIdsString?.split(",").filter(Boolean) ?? [];
   await Promise.all(
     studentIds.map((receiverId) =>
-      createClassMessage(client, {
+      sendClassMessage(client, {
         classId,
         sender: userId,
         receiver: receiverId,

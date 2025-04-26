@@ -16,12 +16,39 @@ export const getClasses = async (
     keyword,
     sorting,
     order,
+    excludeUserId,
   }: {
     keyword?: string;
     sorting: "title" | "description" | "teacher" | "hashtag";
     order: "upvotes" | "learners" | "reviews";
+    excludeUserId: string;
   }
 ) => {
+  // 1. 제외할 class_post_id 목록 가져오기
+  let excludeClassIds: number[] = [];
+
+  if (excludeUserId) {
+    const [created, registered] = await Promise.all([
+      client
+        .from("class_posts")
+        .select("class_post_id")
+        .eq("profile_id", excludeUserId),
+      client
+        .from("class_enrollments")
+        .select("class_post_id")
+        .eq("profile_id", excludeUserId),
+    ]);
+
+    if (created.error || registered.error) {
+      throw created.error || registered.error;
+    }
+
+    const createdIds = created.data.map((c) => c.class_post_id);
+    const registeredIds = registered.data.map((r) => r.class_post_id);
+    excludeClassIds = [...new Set([...createdIds, ...registeredIds])];
+  }
+
+  // 2. 정렬 기준 매핑
   const columnMap: Record<typeof sorting, string> = {
     title: "title",
     description: "description",
@@ -30,18 +57,28 @@ export const getClasses = async (
   };
 
   const dbColumn = columnMap[sorting];
+
+  // 3. hashtag 정렬 처리
   if (sorting === "hashtag") {
     const { data, error } = await client.from("class_list_view").select("*");
     if (error) throw error;
-    if (!keyword) return data;
+
     let filtered = data;
+
     if (keyword) {
-      filtered = data.filter((item) =>
+      filtered = filtered.filter((item) =>
         item.hashtags?.some((tag: string) =>
           tag.toLowerCase().includes(keyword.toLowerCase())
         )
       );
     }
+
+    if (excludeClassIds.length > 0) {
+      filtered = filtered.filter(
+        (item) => !excludeClassIds.includes(item.class_post_id)
+      );
+    }
+
     return filtered.sort((a, b) => {
       const aVal =
         order === "upvotes"
@@ -60,6 +97,8 @@ export const getClasses = async (
       return bVal - aVal;
     });
   }
+
+  // 4. 기타 정렬 (title, description, teacher)
   const { data, error } = await client
     .from("class_list_view")
     .select("*")
@@ -74,8 +113,14 @@ export const getClasses = async (
         ascending: false,
       }
     );
+
   if (error) throw error;
-  return data;
+
+  const filteredData =
+    excludeClassIds.length > 0
+      ? data.filter((item) => !excludeClassIds.includes(item.class_post_id))
+      : data;
+  return filteredData;
 };
 
 export const getClassById = async (
@@ -348,8 +393,8 @@ export const getClassNotifications = async (
         notify_id,
         notify_title
       ),
-      message:class_message!message_id(
-        message_id,
+      message:class_message!class_message_id(
+        class_message_id,
         message_content
       ),
       class_title,
@@ -410,4 +455,115 @@ export const getMyClassStudents = async (
     .eq("class_post_id", Number(classId));
   if (error) throw error;
   return data;
+};
+
+export const getClassMessages = async (
+  client: SupabaseClient<Database>,
+  { userId }: { userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_messages_view")
+    .select("*")
+    .eq("profile_id", userId)
+    .neq("other_profile_id", userId);
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const getClassMessagesByClassMessagesRoomId = async (
+  client: SupabaseClient<Database>,
+  { messageRoomId, userId }: { messageRoomId: string; userId: string }
+) => {
+  const { count, error: countError } = await client
+    .from("class_message_room_members")
+    .select("*", { count: "exact", head: true })
+    .eq("class_message_room_id", Number(messageRoomId))
+    .eq("profile_id", userId);
+  if (countError) {
+    throw countError;
+  }
+  if (count === 0) {
+    throw new Error("Message room not found");
+  }
+  const { data, error } = await client
+    .from("class_message")
+    .select(
+      `*,
+        created_at
+      `
+    )
+    .eq("class_message_room_id", Number(messageRoomId))
+    .order("created_at", { ascending: true });
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const getClassRoomsParticipant = async (
+  client: SupabaseClient<Database>,
+  { messageRoomId, userId }: { messageRoomId: string; userId: string }
+) => {
+  const { count, error: countError } = await client
+    .from("class_message_room_members")
+    .select("*", { count: "exact", head: true })
+    .eq("class_message_room_id", Number(messageRoomId))
+    .eq("profile_id", userId);
+  if (countError) {
+    throw countError;
+  }
+  if (count === 0) {
+    throw new Error("Message room not found");
+  }
+  const { data, error } = await client
+    .from("class_message_room_members")
+    .select(
+      `
+      profile:profiles!profile_id!inner(
+        name,
+        profile_id,
+        avatar
+      )
+      `
+    )
+    .eq("class_message_room_id", Number(messageRoomId))
+    .neq("profile_id", userId)
+    .single();
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const sendClassMessageToRoom = async (
+  client: SupabaseClient<Database>,
+  {
+    messageRoomId,
+    message,
+    userId,
+    classId,
+  }: { messageRoomId: string; message: string; userId: string; classId: string }
+) => {
+  const { count, error: countError } = await client
+    .from("class_message_room_members")
+    .select("*", { count: "exact", head: true })
+    .eq("class_message_room_id", Number(messageRoomId))
+    .eq("profile_id", userId);
+  if (countError) {
+    throw countError;
+  }
+  if (count === 0) {
+    throw new Error("Message room not found");
+  }
+  const { error } = await client.from("class_message").insert({
+    message_content: message,
+    class_message_room_id: Number(messageRoomId),
+    sender: userId,
+    class_post_id: Number(classId),
+  });
+  if (error) {
+    throw error;
+  }
 };
