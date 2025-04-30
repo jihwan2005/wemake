@@ -689,7 +689,6 @@ export const deleteClassNotify = async (
 export const sendClassMessage = async (
   client: SupabaseClient<Database>,
   {
-    classId,
     sender,
     receiver,
     message_content,
@@ -697,7 +696,6 @@ export const sendClassMessage = async (
     sender: string;
     receiver: string;
     message_content: string;
-    classId: string;
   }
 ) => {
   const { data, error } = await client
@@ -715,7 +713,6 @@ export const sendClassMessage = async (
       .insert({
         class_message_room_id: data.class_message_room_id,
         sender,
-        class_post_id: Number(classId),
         message_content,
       });
     if (messageInsertError) {
@@ -747,7 +744,6 @@ export const sendClassMessage = async (
       .insert({
         class_message_room_id: roomData.class_message_room_id,
         sender,
-        class_post_id: Number(classId),
         message_content,
       });
     if (messageInsertError) {

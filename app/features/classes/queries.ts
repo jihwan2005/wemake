@@ -543,8 +543,8 @@ export const sendClassMessageToRoom = async (
     messageRoomId,
     message,
     userId,
-    classId,
-  }: { messageRoomId: string; message: string; userId: string; classId: string }
+    isRead,
+  }: { messageRoomId: string; message: string; userId: string; isRead: boolean }
 ) => {
   const { count, error: countError } = await client
     .from("class_message_room_members")
@@ -561,7 +561,7 @@ export const sendClassMessageToRoom = async (
     message_content: message,
     class_message_room_id: Number(messageRoomId),
     sender: userId,
-    class_post_id: Number(classId),
+    is_read: isRead,
   });
   if (error) {
     throw error;

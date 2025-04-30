@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import {
   Avatar,
   AvatarFallback,
@@ -10,13 +11,17 @@ interface MessageBubbleProps {
   avatarFallback: string;
   content: string;
   isCurrentUser?: boolean;
+  isRead: boolean;
+  readAt: string;
 }
 
 export function ClassMessageBubble({
   avatarUrl,
   avatarFallback,
   content,
+  isRead,
   isCurrentUser = false,
+  readAt,
 }: MessageBubbleProps) {
   return (
     <div
@@ -38,6 +43,16 @@ export function ClassMessageBubble({
       >
         <p>{content}</p>
       </div>
+      {isCurrentUser && (
+        <span className="text-sm text-gray-400">
+          {isRead
+            ? `${DateTime.fromISO(readAt)
+                .toLocal()
+                .setLocale("ko")
+                .toRelative()}에 읽음`
+            : "안읽음"}
+        </span>
+      )}
     </div>
   );
 }

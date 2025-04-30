@@ -111,7 +111,7 @@ export default [
       "features/classes/pages/action/lesson-complete-page.tsx"
     ),
     layout("features/classes/layouts/class-messages-layout.tsx", [
-      ...prefix("/:classId/messages", [
+      ...prefix("/messages", [
         index("features/classes/pages/class-messages-page.tsx"),
         route(
           "/:classMessageRoomId",

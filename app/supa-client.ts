@@ -112,22 +112,21 @@ export type Database = MergeDeep<
     };
   }
 >;
-
 export const browserClient = createBrowserClient<Database>(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
+  "https://trwxbnzdoifmjxezpanj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRyd3hibnpkb2lmbWp4ZXpwYW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0MTA4MTUsImV4cCI6MjA1Njk4NjgxNX0.rt_Z9sptZ5RQvgb2pa5DM1aMGrIK7u7huVH6pF2FKzo"
 );
 
 export const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export const makeSSRClient = (request: Request) => {
   const headers = new Headers();
   const serverSideClient = createServerClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
+    import.meta.env.VITE_SUPABASE_URL!,
+    import.meta.env.VITE_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {

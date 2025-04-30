@@ -554,6 +554,20 @@
       "when": 1745668906122,
       "tag": "0078_workable_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1745749965115,
+      "tag": "0079_sticky_nocturne",
+      "breakpoints": true
+    },
+    {
+      "idx": 80,
+      "version": "7",
+      "when": 1745897973827,
+      "tag": "0080_nostalgic_thor_girl",
+      "breakpoints": true
     }
   ]
 }

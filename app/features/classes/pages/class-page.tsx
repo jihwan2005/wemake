@@ -375,7 +375,7 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
         students={loaderData.myStudents}
         classId={loaderData.classId}
       />
-      <Link to={`/classes/${loaderData.classId}/messages`}>
+      <Link to={`/classes/messages`}>
         <Button variant="outline">
           <MessageSquare className="size-4" />
         </Button>

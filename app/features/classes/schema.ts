@@ -317,9 +317,6 @@ export const classMessage = pgTable("class_message", {
       onDelete: "cascade",
     }
   ),
-  class_post_id: bigint({ mode: "number" })
-    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
-    .notNull(),
   sender: uuid()
     .references(() => profiles.profile_id, {
       onDelete: "cascade",
@@ -327,6 +324,8 @@ export const classMessage = pgTable("class_message", {
     .notNull(),
   message_content: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
+  is_read: boolean().notNull().default(false),
+  read_at: timestamp().notNull().defaultNow(),
 });
 
 export const classMessageRooms = pgTable("class_message_rooms", {
