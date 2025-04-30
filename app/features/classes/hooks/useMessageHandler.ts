@@ -77,7 +77,14 @@ export const useMessageHandler = ({
           setMessages((prev) =>
             prev.map((msg) =>
               msg.class_message_id === updated.class_message_id
-                ? { ...msg, is_read: updated.is_read, read_at: updated.read_at }
+                ? {
+                    ...msg,
+                    is_delete: updated.is_delete,
+                    is_read: updated.is_read,
+                    is_edited: updated.is_edited,
+                    read_at: updated.read_at,
+                    message_content: updated.message_content,
+                  }
                 : msg
             )
           );

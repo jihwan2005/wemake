@@ -5,6 +5,8 @@ interface Message {
   sender: string;
   message_content: string;
   is_read: boolean;
+  is_delete: boolean;
+  is_edited: boolean;
   read_at: string;
 }
 
@@ -45,7 +47,11 @@ const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
           content={message.message_content}
           isCurrentUser={message.sender === userId}
           isRead={message.is_read}
+          isDelete={message.is_delete}
+          isEdited={message.is_edited}
           readAt={message.read_at}
+          senderId={message.sender}
+          messageId={message.class_message_id}
         />
       ))}
       {isTyping && typingUserId !== userId && (

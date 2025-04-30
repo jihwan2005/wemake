@@ -325,6 +325,8 @@ export const classMessage = pgTable("class_message", {
   message_content: text().notNull(),
   created_at: timestamp().notNull().defaultNow(),
   is_read: boolean().notNull().default(false),
+  is_delete: boolean().notNull().default(false),
+  is_edited: boolean().notNull().default(false),
   read_at: timestamp().notNull().defaultNow(),
 });
 

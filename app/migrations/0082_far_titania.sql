@@ -1,0 +1,1 @@
+ALTER TABLE "class_message" ADD COLUMN "is_edited" boolean DEFAULT false NOT NULL;

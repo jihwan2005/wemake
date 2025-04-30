@@ -567,6 +567,8 @@ export type Database = {
           class_message_id: number
           class_message_room_id: number | null
           created_at: string
+          is_delete: boolean
+          is_edited: boolean
           is_read: boolean
           message_content: string
           read_at: string
@@ -576,6 +578,8 @@ export type Database = {
           class_message_id?: never
           class_message_room_id?: number | null
           created_at?: string
+          is_delete?: boolean
+          is_edited?: boolean
           is_read?: boolean
           message_content: string
           read_at?: string
@@ -585,6 +589,8 @@ export type Database = {
           class_message_id?: never
           class_message_room_id?: number | null
           created_at?: string
+          is_delete?: boolean
+          is_edited?: boolean
           is_read?: boolean
           message_content?: string
           read_at?: string

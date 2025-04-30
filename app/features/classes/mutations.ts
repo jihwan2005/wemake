@@ -753,3 +753,49 @@ export const sendClassMessage = async (
     return roomData.class_message_room_id;
   }
 };
+
+export const deleteClassMessage = async (
+  client: SupabaseClient<Database>,
+  { messageId }: { messageId: string }
+) => {
+  const { data, error } = await client
+    .from("class_message")
+    .update({
+      is_delete: true,
+    })
+    .eq("class_message_id", Number(messageId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const restoreClassMessage = async (
+  client: SupabaseClient<Database>,
+  { messageId }: { messageId: string }
+) => {
+  const { data, error } = await client
+    .from("class_message")
+    .update({
+      is_delete: false,
+    })
+    .eq("class_message_id", Number(messageId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateClassMessage = async (
+  client: SupabaseClient<Database>,
+  { messageId, messageContent }: { messageId: string; messageContent: string }
+) => {
+  const { data, error } = await client
+    .from("class_message")
+    .update({
+      message_content: messageContent,
+      is_edited: true,
+    })
+    .eq("class_message_id", Number(messageId))
+    .single();
+  if (error) throw error;
+  return data;
+};

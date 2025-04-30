@@ -117,6 +117,18 @@ export default [
           "/:classMessageRoomId",
           "features/classes/pages/class-message-page.tsx"
         ),
+        route(
+          "/:classMessageRoomId/delete",
+          "features/classes/pages/action/class-message-delete-page.tsx"
+        ),
+        route(
+          "/:classMessageRoomId/restore",
+          "features/classes/pages/action/class-message-restore-page.tsx"
+        ),
+        route(
+          "/:classMessageRoomId/update",
+          "features/classes/pages/action/class-message-update-page.tsx"
+        ),
       ]),
     ]),
   ]),

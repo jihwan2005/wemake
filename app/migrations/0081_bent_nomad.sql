@@ -1,0 +1,1 @@
+ALTER TABLE "class_message" ADD COLUMN "is_delete" boolean DEFAULT false NOT NULL;
