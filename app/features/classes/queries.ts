@@ -465,7 +465,9 @@ export const getClassMessages = async (
     .from("class_messages_view")
     .select("*")
     .eq("profile_id", userId)
-    .neq("other_profile_id", userId);
+    .neq("other_profile_id", userId)
+    .order("unread_count", { ascending: false })
+    .order("last_message_created_at", { ascending: false });
   if (error) {
     throw error;
   }
@@ -566,4 +568,18 @@ export const sendClassMessageToRoom = async (
   if (error) {
     throw error;
   }
+};
+
+export const getUnReadClassMessages = async (
+  client: SupabaseClient<Database>,
+  { classRoomId }: { classRoomId: string }
+) => {
+  const { data, error } = await client
+    .from("class_message")
+    .select("*", { count: "exact", head: true })
+    .eq("is_read", false)
+    .eq("class_message_room_id", Number(classRoomId));
+
+  if (error) throw error;
+  return data;
 };

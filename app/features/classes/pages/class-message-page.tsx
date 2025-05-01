@@ -59,10 +59,11 @@ export default function MessagePage({
 }: Route.ComponentProps) {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState(loaderData.messages);
-  const { userId, name, avatar } = useOutletContext<{
+  const { userId, name, avatar, updateSidebarMessages } = useOutletContext<{
     userId: string;
     name: string;
     avatar: string;
+    updateSidebarMessages: React.Dispatch<React.SetStateAction<any[]>>;
   }>();
   const formRef = useRef<HTMLFormElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -74,6 +75,7 @@ export default function MessagePage({
     setMessages,
     setOnlineUsers,
     onlineUsers,
+    updateSidebarMessages,
   });
 
   const handleTypingChange = () => {

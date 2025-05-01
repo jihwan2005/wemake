@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { markMessagesAsRead } from "../functions/markMessagesAsRead";
 import { browserClient } from "~/supa-client";
 import type { Database } from "~/supa-client";
@@ -10,12 +10,14 @@ export const useMessageHandler = ({
   setMessages,
   setOnlineUsers,
   onlineUsers,
+  updateSidebarMessages,
 }: {
   userId: string;
   classMessageRoomId: string;
   loaderData: any;
   setMessages: React.Dispatch<React.SetStateAction<any[]>>;
   setOnlineUsers: React.Dispatch<React.SetStateAction<number>>;
+  updateSidebarMessages: React.Dispatch<React.SetStateAction<any[]>>;
   onlineUsers: number;
 }) => {
   const { isTyping, sendTypingEvent, payload } = useTypingIndicator({
@@ -34,6 +36,13 @@ export const useMessageHandler = ({
         )
       );
     }
+    updateSidebarMessages?.((prev) =>
+      prev.map((msg) =>
+        msg.class_message_room_id === Number(classMessageRoomId)
+          ? { ...msg, unread_count: 0 }
+          : msg
+      )
+    );
   }, [onlineUsers]);
 
   useEffect(() => {
@@ -48,6 +57,7 @@ export const useMessageHandler = ({
           event: "INSERT",
           schema: "public",
           table: "class_message",
+          filter: `class_message_room_id=eq.${classMessageRoomId}`,
         },
         (payload) => {
           const newMessage =
@@ -70,6 +80,7 @@ export const useMessageHandler = ({
           event: "UPDATE",
           schema: "public",
           table: "class_message",
+          filter: `class_message_room_id=eq.${classMessageRoomId}`,
         },
         (payload) => {
           const updated =

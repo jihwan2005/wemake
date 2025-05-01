@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, useLocation, useOutletContext } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
   Avatar,
   AvatarImage,
@@ -9,8 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/common/components/ui/sidebar";
-import { markMessagesAsRead } from "../../functions/markMessagesAsRead";
 import { DateTime } from "luxon";
+import { Star } from "lucide-react";
 
 interface MessageCardProps {
   id: string;
@@ -19,6 +18,7 @@ interface MessageCardProps {
   lastMessage: string;
   isOnline: boolean;
   lastmessageCreatedAt: string;
+  unReadCount: number;
 }
 
 export default function ClassMessageRoomCard({
@@ -28,6 +28,7 @@ export default function ClassMessageRoomCard({
   lastMessage,
   isOnline,
   lastmessageCreatedAt,
+  unReadCount,
 }: MessageCardProps) {
   const location = useLocation();
   return (
@@ -48,13 +49,30 @@ export default function ClassMessageRoomCard({
               <span className="text-xs text-muted-foreground">
                 {lastMessage}
               </span>
+              <span className="text-xs text-gray-400">
+                {DateTime.fromISO(lastmessageCreatedAt).toRelative()}
+              </span>
             </div>
           </div>
-          <span className="text-xs text-gray-400">
-            {DateTime.fromISO(lastmessageCreatedAt).toFormat("yyyy-MM-dd")}
-          </span>
-          {isOnline && (
+          <Star
+            className="size-3 right-1 absolute top-1"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("별 클릭됨!");
+            }}
+          />
+          {unReadCount === 0 ? (
+            ""
+          ) : (
+            <span className="rounded-full bg-orange-600 text-white w-5 h-5 text-center right-0 absolute">
+              {unReadCount}
+            </span>
+          )}
+          {isOnline ? (
             <span className="absolute bottom-0 right-0 block w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
+          ) : (
+            <span className="absolute bottom-0 right-0 block w-3 h-3 rounded-full bg-red-500 border-2 border-white" />
           )}
         </Link>
       </SidebarMenuButton>
