@@ -349,6 +349,7 @@ export const messageRoomMembers = pgTable(
     profile_id: uuid().references(() => profiles.profile_id, {
       onDelete: "cascade",
     }),
+    is_pinned: boolean().notNull().default(false),
     created_at: timestamp().notNull().defaultNow(),
   },
   (table) => [

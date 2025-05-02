@@ -27,6 +27,7 @@ interface MessageBubbleProps {
   readAt: string;
   senderId: string;
   messageId: number;
+  searchText?: string;
 }
 
 export function ClassMessageBubble({
@@ -40,6 +41,7 @@ export function ClassMessageBubble({
   senderId,
   messageId,
   isEdited,
+  searchText = "",
 }: MessageBubbleProps) {
   const { userId } = useOutletContext<{ userId: string }>();
   const fetcher = useFetcher();
@@ -98,7 +100,23 @@ export function ClassMessageBubble({
             </fetcher.Form>
           ) : (
             <p>
-              {isEdited ? <span>(수정됨)</span> : null} {content}
+              {isEdited ? <span>(수정됨)</span> : null}{" "}
+              {searchText
+                ? content
+                    .split(new RegExp(`(${searchText})`, "gi"))
+                    .map((part, i) =>
+                      part.toLowerCase() === searchText.toLowerCase() ? (
+                        <span
+                          key={i}
+                          className="font-bold text-lg text-yellow-400"
+                        >
+                          {part}
+                        </span>
+                      ) : (
+                        <span key={i}>{part}</span>
+                      )
+                    )
+                : content}
             </p>
           )}
           {senderId === userId ? (

@@ -1,0 +1,1 @@
+ALTER TABLE "class_message_room_members" ADD COLUMN "is_pinned" boolean DEFAULT false NOT NULL;

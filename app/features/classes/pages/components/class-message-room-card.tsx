@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link, useFetcher, useLocation } from "react-router";
 import {
   Avatar,
   AvatarImage,
@@ -10,6 +10,7 @@ import {
 } from "~/common/components/ui/sidebar";
 import { DateTime } from "luxon";
 import { Star } from "lucide-react";
+import { Button } from "~/common/components/ui/button";
 
 interface MessageCardProps {
   id: string;
@@ -17,6 +18,7 @@ interface MessageCardProps {
   name: string;
   lastMessage: string;
   isOnline: boolean;
+  isPinned: boolean;
   lastmessageCreatedAt: string;
   unReadCount: number;
 }
@@ -29,12 +31,14 @@ export default function ClassMessageRoomCard({
   isOnline,
   lastmessageCreatedAt,
   unReadCount,
+  isPinned,
 }: MessageCardProps) {
   const location = useLocation();
+  const fetcher = useFetcher();
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        className="h-18"
+        className="h-18 relative"
         asChild
         isActive={location.pathname === `/classes/messages/${id}`}
       >
@@ -54,26 +58,30 @@ export default function ClassMessageRoomCard({
               </span>
             </div>
           </div>
-          <Star
-            className="size-3 right-1 absolute top-1"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("별 클릭됨!");
-            }}
-          />
-          {unReadCount === 0 ? (
-            ""
-          ) : (
+          <fetcher.Form
+            method="post"
+            action={`/classes/messages/${id}/pin`}
+            onClick={(e) => e.stopPropagation()} // 클릭 전파 방지
+            className="absolute top-1 right-1"
+          >
+            <input type="hidden" name="roomId" value={id} />
+            <Button variant="ghost" size="icon">
+              <Star
+                className="size-4"
+                fill={isPinned ? "#facc15" : "none"} // 노란색 채움 (Tailwind의 yellow-400)
+                stroke={isPinned ? "#facc15" : "currentColor"} // 선도 노란색으로
+              />
+            </Button>
+          </fetcher.Form>
+          {unReadCount > 0 && (
             <span className="rounded-full bg-orange-600 text-white w-5 h-5 text-center right-0 absolute">
               {unReadCount}
             </span>
           )}
-          {isOnline ? (
-            <span className="absolute bottom-0 right-0 block w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
-          ) : (
-            <span className="absolute bottom-0 right-0 block w-3 h-3 rounded-full bg-red-500 border-2 border-white" />
-          )}
+          <span
+            className="absolute bottom-0 right-0 block w-3 h-3 rounded-full border-2 border-white"
+            style={{ backgroundColor: isOnline ? "#22c55e" : "#ef4444" }}
+          />
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

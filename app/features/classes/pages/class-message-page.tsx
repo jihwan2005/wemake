@@ -12,6 +12,7 @@ import { useMessageHandler } from "../hooks/useMessageHandler";
 import ClassMessageHeader from "./components/ClassMessageHeader";
 import ClassMessageFooter from "./components/ClassMessageFooter";
 import ClassMessageBody from "./components/ClassMessageBody";
+import ClassMessageSearch from "./components/ClassMessageSearch";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Message | wemake" }];
@@ -77,6 +78,26 @@ export default function MessagePage({
     onlineUsers,
     updateSidebarMessages,
   });
+  const [searchText, setSearchText] = useState("");
+  const messageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const scrollToMessage = (messageId: number) => {
+    const target = messageRefs.current[messageId];
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  const searchAndScroll = () => {
+    const found = messages.find((msg) =>
+      msg.message_content.includes(searchText)
+    );
+    if (found) {
+      scrollToMessage(found.class_message_id);
+    } else {
+      alert("메시지를 찾을 수 없습니다.");
+    }
+  };
 
   const handleTypingChange = () => {
     sendTypingEvent();
@@ -100,7 +121,7 @@ export default function MessagePage({
   }, [messages]);
 
   return (
-    <div className="h-full flex flex-col justify-between">
+    <div className="h-full flex flex-col justify-between w-full">
       <ClassMessageHeader
         avatarUrl={loaderData.participant?.profile?.avatar ?? ""}
         avatarFallback={loaderData.participant?.profile?.name.charAt(0) ?? ""}
@@ -112,6 +133,13 @@ export default function MessagePage({
         }
         messagesCount={loaderData.messages.length}
       />
+
+      <ClassMessageSearch
+        searchText={searchText}
+        setSearchText={setSearchText}
+        searchAndScroll={searchAndScroll}
+      />
+
       <ClassMessageBody
         messages={messages}
         userId={userId}
@@ -122,6 +150,8 @@ export default function MessagePage({
         isTyping={isTyping}
         typingUserId={payload?.userId ?? null}
         messagesEndRef={messagesEndRef}
+        searchText={searchText}
+        messageRefs={messageRefs}
       />
       <ClassMessageFooter
         newMessage={newMessage}

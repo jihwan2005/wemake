@@ -129,6 +129,10 @@ export default [
           "/:classMessageRoomId/update",
           "features/classes/pages/action/class-message-update-page.tsx"
         ),
+        route(
+          "/:classMessageRoomId/pin",
+          "features/classes/pages/action/class-message-pin-page.tsx"
+        ),
       ]),
     ]),
   ]),

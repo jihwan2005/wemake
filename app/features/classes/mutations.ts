@@ -799,3 +799,21 @@ export const updateClassMessage = async (
   if (error) throw error;
   return data;
 };
+
+export const pinclassMessageRooms = async (
+  client: SupabaseClient<Database>,
+  { roomId, userId }: { roomId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_message_room_members")
+    .select("is_pinned")
+    .eq("class_message_room_id", Number(roomId))
+    .eq("profile_id", userId)
+    .single();
+  if (!data || error) return;
+  await client
+    .from("class_message_room_members")
+    .update({ is_pinned: !data.is_pinned })
+    .eq("class_message_room_id", Number(roomId))
+    .eq("profile_id", userId);
+};

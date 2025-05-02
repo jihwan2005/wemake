@@ -19,12 +19,12 @@ export const useMessageHandler = ({
   setOnlineUsers: React.Dispatch<React.SetStateAction<number>>;
   updateSidebarMessages: React.Dispatch<React.SetStateAction<any[]>>;
   onlineUsers: number;
+  setLastSeen?: (roomId: string, value: string) => void;
 }) => {
   const { isTyping, sendTypingEvent, payload } = useTypingIndicator({
     roomId: classMessageRoomId,
     userId,
   });
-
   useEffect(() => {
     if (onlineUsers > 1) {
       markMessagesAsRead(classMessageRoomId, userId);
@@ -35,14 +35,14 @@ export const useMessageHandler = ({
             : msg
         )
       );
+      updateSidebarMessages((prev) =>
+        prev.map((msg) =>
+          msg.class_message_room_id === Number(classMessageRoomId)
+            ? { ...msg, unread_count: 0 }
+            : msg
+        )
+      );
     }
-    updateSidebarMessages?.((prev) =>
-      prev.map((msg) =>
-        msg.class_message_room_id === Number(classMessageRoomId)
-          ? { ...msg, unread_count: 0 }
-          : msg
-      )
-    );
   }, [onlineUsers]);
 
   useEffect(() => {
@@ -64,6 +64,15 @@ export const useMessageHandler = ({
             payload.new as Database["public"]["Tables"]["class_message"]["Row"];
           const isFromOther = newMessage.sender !== userId;
           const isRead = onlineUsers > 1 && isFromOther;
+          if (onlineUsers > 1) {
+            updateSidebarMessages((prev) =>
+              prev.map((msg) =>
+                msg.class_message_room_id === Number(classMessageRoomId)
+                  ? { ...msg, unread_count: 0 }
+                  : msg
+              )
+            );
+          }
           setMessages((prev) => [
             ...prev,
             {
