@@ -641,6 +641,45 @@ export type Database = {
           },
         ]
       }
+      class_message_images: {
+        Row: {
+          class_message_id: number | null
+          class_message_room_id: number | null
+          created_at: string | null
+          image_url: string
+          message_image_id: number
+        }
+        Insert: {
+          class_message_id?: number | null
+          class_message_room_id?: number | null
+          created_at?: string | null
+          image_url: string
+          message_image_id?: never
+        }
+        Update: {
+          class_message_id?: number | null
+          class_message_room_id?: number | null
+          created_at?: string | null
+          image_url?: string
+          message_image_id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_message_images_class_message_id_class_message_class_messa"
+            columns: ["class_message_id"]
+            isOneToOne: false
+            referencedRelation: "class_message"
+            referencedColumns: ["class_message_id"]
+          },
+          {
+            foreignKeyName: "class_message_images_class_message_room_id_class_message_rooms_"
+            columns: ["class_message_room_id"]
+            isOneToOne: false
+            referencedRelation: "class_message_rooms"
+            referencedColumns: ["class_message_room_id"]
+          },
+        ]
+      }
       class_message_room_members: {
         Row: {
           class_message_room_id: number

@@ -817,3 +817,20 @@ export const pinclassMessageRooms = async (
     .eq("class_message_room_id", Number(roomId))
     .eq("profile_id", userId);
 };
+
+export const createMessageImage = async (
+  client: SupabaseClient<Database>,
+  {
+    roomId,
+    messageImageUrl,
+    messageId,
+  }: { roomId: string; messageImageUrl: string; messageId: number }
+) => {
+  const { data, error } = await client.from("class_message_images").insert({
+    class_message_room_id: Number(roomId),
+    image_url: messageImageUrl,
+    class_message_id: messageId,
+  });
+  if (error) throw error;
+  return data;
+};

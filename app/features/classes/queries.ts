@@ -559,15 +559,19 @@ export const sendClassMessageToRoom = async (
   if (count === 0) {
     throw new Error("Message room not found");
   }
-  const { error } = await client.from("class_message").insert({
-    message_content: message,
-    class_message_room_id: Number(messageRoomId),
-    sender: userId,
-    is_read: isRead,
-  });
+  const { data, error } = await client
+    .from("class_message")
+    .insert({
+      message_content: message,
+      class_message_room_id: Number(messageRoomId),
+      sender: userId,
+      is_read: isRead,
+    })
+    .select();
   if (error) {
     throw error;
   }
+  return data[0].class_message_id;
 };
 
 export const getUnReadClassMessages = async (

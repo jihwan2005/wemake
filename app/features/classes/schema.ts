@@ -11,7 +11,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { profiles } from "../users/schema";
 import { DIFFICULTY_TYPES } from "./constants";
-import { profile } from "console";
 
 export const difficultyTypes = pgEnum(
   "difficulty_type",
@@ -377,3 +376,23 @@ export const classMessageRoomNotification = pgTable(
     created_at: timestamp().notNull().defaultNow(),
   }
 );
+
+export const classMessageImages = pgTable("class_message_images", {
+  message_image_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_message_room_id: bigint({ mode: "number" }).references(
+    () => classMessageRooms.class_message_room_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+  image_url: text().notNull(),
+  created_at: timestamp().defaultNow(),
+  class_message_id: bigint({ mode: "number" }).references(
+    () => classMessage.class_message_id,
+    {
+      onDelete: "cascade",
+    }
+  ),
+});

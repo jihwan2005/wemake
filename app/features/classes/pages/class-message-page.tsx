@@ -15,6 +15,7 @@ import ClassMessageFooter from "./components/ClassMessageFooter";
 import ClassMessageBody from "./components/ClassMessageBody";
 import ClassMessageSearch from "./components/ClassMessageSearch";
 import ClassMessageNotification from "./components/ClassMessageNotification";
+import { createMessageImage } from "../mutations";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Message | wemake" }];
@@ -49,12 +50,41 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   const formData = await request.formData();
   const message = formData.get("message");
   const isRead = formData.get("is_read") === "true";
-  await sendClassMessageToRoom(client, {
+  const messageImages = formData.getAll("images") as File[];
+  const classMessageId = await sendClassMessageToRoom(client, {
     messageRoomId: params.classMessageRoomId,
     message: message as string,
     userId,
     isRead,
   });
+  const uploadResults = await Promise.all(
+    messageImages.map(async (showcaseImage) => {
+      const filePath = `${userId}/${Date.now()}`;
+      const { error } = await client.storage
+        .from("message-image")
+        .upload(filePath, showcaseImage, {
+          contentType: showcaseImage.type,
+        });
+
+      if (error) throw error;
+
+      const {
+        data: { publicUrl },
+      } = client.storage.from("message-image").getPublicUrl(filePath);
+
+      return publicUrl;
+    })
+  );
+
+  await Promise.all(
+    uploadResults.map((messageImageUrl) =>
+      createMessageImage(client, {
+        roomId: params.classMessageRoomId,
+        messageImageUrl,
+        messageId: classMessageId,
+      })
+    )
+  );
   return {
     ok: true,
   };
@@ -167,6 +197,7 @@ export default function MessagePage({
         setNewMessage={setNewMessage}
         handleTypingChange={handleTypingChange}
         onlineUsers={onlineUsers}
+        roomId={loaderData.classMessageRoomId}
       />
     </div>
   );
