@@ -583,3 +583,15 @@ export const getUnReadClassMessages = async (
   if (error) throw error;
   return data;
 };
+
+export const getClassMessageRoomNotification = async (
+  client: SupabaseClient<Database>,
+  { roomId }: { roomId: string }
+) => {
+  const { data, error } = await client
+    .from("class_message_room_notification")
+    .select("*")
+    .eq("class_message_room_id", Number(roomId));
+  if (error) throw error;
+  return data;
+};

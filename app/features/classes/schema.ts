@@ -357,3 +357,23 @@ export const messageRoomMembers = pgTable(
   ]
 );
 
+export const classMessageRoomNotification = pgTable(
+  "class_message_room_notification",
+  {
+    class_message_room_id: bigint({ mode: "number" }).references(
+      () => classMessageRooms.class_message_room_id,
+      {
+        onDelete: "cascade",
+      }
+    ),
+    notification_id: bigint({ mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+    notification_title: text().notNull(),
+    notification_content: text().notNull(),
+    profile_id: uuid().references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    }),
+    created_at: timestamp().notNull().defaultNow(),
+  }
+);

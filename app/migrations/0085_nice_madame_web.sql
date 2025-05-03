@@ -1,0 +1,1 @@
+ALTER TABLE "class_message_room_notification" ADD COLUMN "notification_id" bigint PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY (sequence name "class_message_room_notification_notification_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1);

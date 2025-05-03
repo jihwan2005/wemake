@@ -705,6 +705,76 @@ export type Database = {
           },
         ]
       }
+      class_message_room_notification: {
+        Row: {
+          class_message_room_id: number | null
+          created_at: string
+          notification_content: string
+          notification_id: number
+          notification_title: string
+          profile_id: string | null
+        }
+        Insert: {
+          class_message_room_id?: number | null
+          created_at?: string
+          notification_content: string
+          notification_id?: never
+          notification_title: string
+          profile_id?: string | null
+        }
+        Update: {
+          class_message_room_id?: number | null
+          created_at?: string
+          notification_content?: string
+          notification_id?: never
+          notification_title?: string
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_message_room_notification_class_message_room_id_class_mes"
+            columns: ["class_message_room_id"]
+            isOneToOne: false
+            referencedRelation: "class_message_rooms"
+            referencedColumns: ["class_message_room_id"]
+          },
+          {
+            foreignKeyName: "class_message_room_notification_profile_id_profiles_profile_id_"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_room_notification_profile_id_profiles_profile_id_"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_room_notification_profile_id_profiles_profile_id_"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_message_room_notification_profile_id_profiles_profile_id_"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_message_room_notification_profile_id_profiles_profile_id_"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_message_rooms: {
         Row: {
           class_message_room_id: number

@@ -1,5 +1,6 @@
 import { useOutletContext } from "react-router";
 import {
+  getClassMessageRoomNotification,
   getClassMessagesByClassMessagesRoomId,
   getClassRoomsParticipant,
   sendClassMessageToRoom,
@@ -13,6 +14,7 @@ import ClassMessageHeader from "./components/ClassMessageHeader";
 import ClassMessageFooter from "./components/ClassMessageFooter";
 import ClassMessageBody from "./components/ClassMessageBody";
 import ClassMessageSearch from "./components/ClassMessageSearch";
+import ClassMessageNotification from "./components/ClassMessageNotification";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Message | wemake" }];
@@ -30,10 +32,14 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
     messageRoomId: params.classMessageRoomId,
     userId,
   });
+  const notifications = await getClassMessageRoomNotification(client, {
+    roomId: params.classMessageRoomId,
+  });
   return {
     messages,
     participant,
     classMessageRoomId,
+    notifications,
   };
 };
 
@@ -133,12 +139,15 @@ export default function MessagePage({
         }
         messagesCount={loaderData.messages.length}
       />
+      <div className="flex items-center">
+        <ClassMessageNotification notifications={loaderData.notifications} />
 
-      <ClassMessageSearch
-        searchText={searchText}
-        setSearchText={setSearchText}
-        searchAndScroll={searchAndScroll}
-      />
+        <ClassMessageSearch
+          searchText={searchText}
+          setSearchText={setSearchText}
+          searchAndScroll={searchAndScroll}
+        />
+      </div>
 
       <ClassMessageBody
         messages={messages}
