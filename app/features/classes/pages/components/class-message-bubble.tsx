@@ -26,6 +26,7 @@ export function ClassMessageBubble({
   messageId,
   isEdited,
   searchText = "",
+  onlineUsers,
 }: MessageBubbleProps) {
   const { userId } = useOutletContext<{ userId: string }>();
   const [isEditing, setIsEditing] = useState(false);
@@ -92,6 +93,8 @@ export function ClassMessageBubble({
               messageId={messageId}
               onEditClick={handleEditClick}
               isEditing={isEditing}
+              content={content}
+              onlineUsers={onlineUsers}
             />
           ) : null}
         </div>

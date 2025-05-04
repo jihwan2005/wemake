@@ -29,6 +29,7 @@ export interface ClassMessageBodyProps {
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   messageRefs: React.MutableRefObject<Record<number, HTMLDivElement | null>>;
   searchText: string;
+  onlineUsers: number;
 }
 
 export interface MessageBubbleProps {
@@ -43,4 +44,5 @@ export interface MessageBubbleProps {
   senderId: string;
   messageId: number;
   searchText?: string;
+  onlineUsers: number;
 }

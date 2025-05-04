@@ -17,6 +17,7 @@ const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
   messagesEndRef,
   messageRefs,
   searchText,
+  onlineUsers,
 }) => {
   let lastDate = "";
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -63,6 +64,7 @@ const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
                   senderId={message.sender}
                   messageId={message.class_message_id}
                   searchText={searchText}
+                  onlineUsers={onlineUsers}
                 />
               )}
               {message.class_message_images &&

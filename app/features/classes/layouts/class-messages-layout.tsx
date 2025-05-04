@@ -183,7 +183,16 @@ export default function ClassMessagesLayout({
       </Sidebar>
       <div className=" h-full flex-1">
         <Outlet
-          context={{ userId, name, avatar, updateSidebarMessages: setMessages }}
+          context={{
+            userId,
+            name,
+            avatar,
+            updateSidebarMessages: setMessages,
+            username: messages.map((msg) => ({
+              roomId: msg.class_message_room_id,
+              username: msg.name,
+            })),
+          }}
         />
       </div>
     </SidebarProvider>

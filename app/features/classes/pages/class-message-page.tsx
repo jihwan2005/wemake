@@ -191,6 +191,7 @@ export default function MessagePage({
         messagesEndRef={messagesEndRef}
         searchText={searchText}
         messageRefs={messageRefs}
+        onlineUsers={onlineUsers}
       />
       <ClassMessageFooter
         newMessage={newMessage}

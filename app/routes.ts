@@ -114,6 +114,10 @@ export default [
       ...prefix("/messages", [
         index("features/classes/pages/class-messages-page.tsx"),
         route(
+          "/deliver",
+          "features/classes/pages/action/class-message-deliver-page.tsx"
+        ),
+        route(
           "/:classMessageRoomId",
           "features/classes/pages/class-message-page.tsx"
         ),
