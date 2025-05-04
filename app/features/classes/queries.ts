@@ -493,7 +493,8 @@ export const getClassMessagesByClassMessagesRoomId = async (
     .from("class_message")
     .select(
       `*,
-        created_at
+        created_at,
+        class_message_images(*)
       `
     )
     .eq("class_message_room_id", Number(messageRoomId))

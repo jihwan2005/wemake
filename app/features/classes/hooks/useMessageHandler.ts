@@ -118,6 +118,32 @@ export const useMessageHandler = ({
         }
         setOnlineUsers(onlineUsers);
       })
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "class_message_images",
+          filter: `class_message_room_id=eq.${classMessageRoomId}`,
+        },
+        (payload) => {
+          const newImage =
+            payload.new as Database["public"]["Tables"]["class_message_images"]["Row"];
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.class_message_id === newImage.class_message_id
+                ? {
+                    ...msg,
+                    class_message_images: [
+                      ...(msg.class_message_images ?? []),
+                      newImage,
+                    ],
+                  }
+                : msg
+            )
+          );
+        }
+      )
       .subscribe();
 
     channel.track({

@@ -1,38 +1,9 @@
-import { CalendarIcon } from "lucide-react";
 import { ClassMessageBubble } from "./class-message-bubble";
 import { DateTime } from "luxon";
 import React, { useRef } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/common/components/ui/popover";
-import { Calendar } from "~/common/components/ui/calendar";
 import ClassMessageDate from "./ClassMessageDate";
-
-interface Message {
-  class_message_id: number;
-  sender: string;
-  message_content: string;
-  is_read: boolean;
-  is_delete: boolean;
-  is_edited: boolean;
-  read_at: string;
-}
-
-interface ClassMessageBodyProps {
-  messages: Message[];
-  userId: string;
-  avatar: string;
-  name: string;
-  participantAvatar: string;
-  participantName: string;
-  isTyping: boolean;
-  typingUserId: string | null;
-  messagesEndRef: React.RefObject<HTMLDivElement | null>;
-  messageRefs: React.MutableRefObject<Record<number, HTMLDivElement | null>>;
-  searchText: string;
-}
+import ClassMessageImage from "./ClassMessageImage";
+import type { ClassMessageBodyProps } from "../../types/class-types";
 
 const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
   messages,
@@ -49,7 +20,6 @@ const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
 }) => {
   let lastDate = "";
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
   return (
     <div className="py-10 overflow-y-scroll flex flex-col justify-start h-full space-y-4">
       {messages.map((message) => {
@@ -74,25 +44,34 @@ const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
                 messageRefs.current[message.class_message_id] = el;
               }}
             >
-              <ClassMessageBubble
-                avatarUrl={
-                  message.sender === userId ? avatar : participantAvatar
-                }
-                avatarFallback={
-                  message.sender === userId
-                    ? name.charAt(0)
-                    : participantName.charAt(0)
-                }
-                content={message.message_content}
-                isCurrentUser={message.sender === userId}
-                isRead={message.is_read}
-                isDelete={message.is_delete}
-                isEdited={message.is_edited}
-                readAt={message.read_at}
-                senderId={message.sender}
-                messageId={message.class_message_id}
-                searchText={searchText}
-              />
+              {message.message_content.trim() && (
+                <ClassMessageBubble
+                  avatarUrl={
+                    message.sender === userId ? avatar : participantAvatar
+                  }
+                  avatarFallback={
+                    message.sender === userId
+                      ? name.charAt(0)
+                      : participantName.charAt(0)
+                  }
+                  content={message.message_content}
+                  isCurrentUser={message.sender === userId}
+                  isRead={message.is_read}
+                  isDelete={message.is_delete}
+                  isEdited={message.is_edited}
+                  readAt={message.read_at}
+                  senderId={message.sender}
+                  messageId={message.class_message_id}
+                  searchText={searchText}
+                />
+              )}
+              {message.class_message_images &&
+                message.class_message_images.length > 0 && (
+                  <ClassMessageImage
+                    images={message.class_message_images}
+                    isCurrentUser={message.sender === userId}
+                  />
+                )}
             </div>
           </React.Fragment>
         );
