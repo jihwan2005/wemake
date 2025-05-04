@@ -51,7 +51,7 @@ import ClassNotificationDialog from "../components/class/class-notification-dial
 import BookMarkedLessonsDropdownMenu from "../components/lesson/bookmarked-lessons-dropdownmenu";
 import ClassMyStudentsDialog from "../components/class/class-my-students-dialog";
 import { Button } from "~/common/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { FileQuestion, MessageSquare } from "lucide-react";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -378,6 +378,11 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
       <Link to={`/classes/messages`}>
         <Button variant="outline">
           <MessageSquare className="size-4" />
+        </Button>
+      </Link>
+      <Link to={`/classes/${loaderData.classId}/quiz`}>
+        <Button variant="outline">
+          <FileQuestion className="size-4" />
         </Button>
       </Link>
       <div className="grid grid-cols-4 gap-4 w-full items-start">

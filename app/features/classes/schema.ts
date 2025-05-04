@@ -2,6 +2,7 @@ import {
   bigint,
   boolean,
   date,
+  integer,
   pgEnum,
   pgTable,
   primaryKey,
@@ -395,4 +396,106 @@ export const classMessageImages = pgTable("class_message_images", {
       onDelete: "cascade",
     }
   ),
+});
+
+export const classQuizzes = pgTable("class_quizzes", {
+  class_post_id: bigint({ mode: "number" })
+    .references(() => classPosts.class_post_id, { onDelete: "cascade" })
+    .notNull(),
+  quiz_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  quiz_title: text().notNull(),
+  quiz_description: text().notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  created_at: timestamp().defaultNow(),
+  start_time: timestamp().notNull(),
+  time_limit_minutes: integer(),
+});
+
+export const questionType = pgEnum("question_type", [
+  "multiple_choice",
+  "short_answer",
+  "long_answer",
+]);
+
+export const classQuizQuestions = pgTable("class_quiz_questions", {
+  question_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  quiz_id: bigint({ mode: "number" })
+    .references(() => classQuizzes.quiz_id, { onDelete: "cascade" })
+    .notNull(),
+  question_text: text().notNull(),
+  question_type: questionType().notNull(),
+  question_point: integer().notNull().default(1),
+  question_position: integer().default(0),
+});
+
+export const classQuizChoices = pgTable("class_quiz_choices", {
+  choice_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  question_id: bigint({ mode: "number" })
+    .references(() => classQuizQuestions.question_id, { onDelete: "cascade" })
+    .notNull(),
+  choice_text: text().notNull(),
+  choice_position: integer().default(0),
+  is_correct: boolean().notNull(),
+});
+
+export const classQuizResponses = pgTable("class_quiz_responses", {
+  response_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  quiz_id: bigint({ mode: "number" })
+    .references(() => classQuizzes.quiz_id, { onDelete: "cascade" })
+    .notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  submitted_at: timestamp().defaultNow(),
+});
+
+export const classQuizAnswers = pgTable("class_quiz_answers", {
+  answer_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  response_id: bigint({ mode: "number" })
+    .references(() => classQuizResponses.response_id, { onDelete: "cascade" })
+    .notNull(),
+  question_id: bigint({ mode: "number" })
+    .references(() => classQuizQuestions.question_id, { onDelete: "cascade" })
+    .notNull(),
+  choice_id: bigint({ mode: "number" }).references(
+    () => classQuizChoices.choice_id,
+    { onDelete: "cascade" }
+  ),
+  answer_text: text(),
+});
+
+export const classQuizImages = pgTable("class_quiz_images", {
+  quiz_image_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  question_id: bigint({ mode: "number" })
+    .references(() => classQuizQuestions.question_id, { onDelete: "cascade" })
+    .notNull(),
+  image_url: text().notNull(),
+  image_position: integer().default(0),
+});
+
+export const classQuizVideos = pgTable("class_quiz_videos", {
+  quiz_video_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  question_id: bigint({ mode: "number" })
+    .references(() => classQuizQuestions.question_id, { onDelete: "cascade" })
+    .notNull(),
+  video_url: text().notNull(),
+  video_position: integer().default(0),
 });

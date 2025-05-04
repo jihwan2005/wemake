@@ -1165,6 +1165,324 @@ export type Database = {
           },
         ]
       }
+      class_quiz_answers: {
+        Row: {
+          answer_id: number
+          answer_text: string | null
+          choice_id: number | null
+          question_id: number
+          response_id: number
+        }
+        Insert: {
+          answer_id?: never
+          answer_text?: string | null
+          choice_id?: number | null
+          question_id: number
+          response_id: number
+        }
+        Update: {
+          answer_id?: never
+          answer_text?: string | null
+          choice_id?: number | null
+          question_id?: number
+          response_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_answers_choice_id_class_quiz_choices_choice_id_fk"
+            columns: ["choice_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_choices"
+            referencedColumns: ["choice_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_answers_question_id_class_quiz_questions_question_id"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_questions"
+            referencedColumns: ["question_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_answers_response_id_class_quiz_responses_response_id"
+            columns: ["response_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_responses"
+            referencedColumns: ["response_id"]
+          },
+        ]
+      }
+      class_quiz_choices: {
+        Row: {
+          choice_id: number
+          choice_position: number | null
+          choice_text: string
+          is_correct: boolean
+          question_id: number
+        }
+        Insert: {
+          choice_id?: never
+          choice_position?: number | null
+          choice_text: string
+          is_correct: boolean
+          question_id: number
+        }
+        Update: {
+          choice_id?: never
+          choice_position?: number | null
+          choice_text?: string
+          is_correct?: boolean
+          question_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_choices_question_id_class_quiz_questions_question_id"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_questions"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      class_quiz_images: {
+        Row: {
+          image_position: number | null
+          image_url: string
+          question_id: number
+          quiz_image_id: number
+        }
+        Insert: {
+          image_position?: number | null
+          image_url: string
+          question_id: number
+          quiz_image_id?: never
+        }
+        Update: {
+          image_position?: number | null
+          image_url?: string
+          question_id?: number
+          quiz_image_id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_images_question_id_class_quiz_questions_question_id_"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_questions"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      class_quiz_questions: {
+        Row: {
+          question_id: number
+          question_point: number
+          question_position: number | null
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          quiz_id: number
+        }
+        Insert: {
+          question_id?: never
+          question_point?: number
+          question_position?: number | null
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          quiz_id: number
+        }
+        Update: {
+          question_id?: never
+          question_point?: number
+          question_position?: number | null
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          quiz_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_questions_quiz_id_class_quizzes_quiz_id_fk"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "class_quizzes"
+            referencedColumns: ["quiz_id"]
+          },
+        ]
+      }
+      class_quiz_responses: {
+        Row: {
+          profile_id: string
+          quiz_id: number
+          response_id: number
+          submitted_at: string | null
+        }
+        Insert: {
+          profile_id: string
+          quiz_id: number
+          response_id?: never
+          submitted_at?: string | null
+        }
+        Update: {
+          profile_id?: string
+          quiz_id?: number
+          response_id?: never
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_quiz_id_class_quizzes_quiz_id_fk"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "class_quizzes"
+            referencedColumns: ["quiz_id"]
+          },
+        ]
+      }
+      class_quiz_videos: {
+        Row: {
+          question_id: number
+          quiz_video_id: number
+          video_position: number | null
+          video_url: string
+        }
+        Insert: {
+          question_id: number
+          quiz_video_id?: never
+          video_position?: number | null
+          video_url: string
+        }
+        Update: {
+          question_id?: number
+          quiz_video_id?: never
+          video_position?: number | null
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_videos_question_id_class_quiz_questions_question_id_"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_questions"
+            referencedColumns: ["question_id"]
+          },
+        ]
+      }
+      class_quizzes: {
+        Row: {
+          class_post_id: number
+          created_at: string | null
+          profile_id: string
+          quiz_description: string
+          quiz_id: number
+          quiz_title: string
+          start_time: string
+          time_limit_minutes: number | null
+        }
+        Insert: {
+          class_post_id: number
+          created_at?: string | null
+          profile_id: string
+          quiz_description: string
+          quiz_id?: never
+          quiz_title: string
+          start_time: string
+          time_limit_minutes?: number | null
+        }
+        Update: {
+          class_post_id?: number
+          created_at?: string | null
+          profile_id?: string
+          quiz_description?: string
+          quiz_id?: never
+          quiz_title?: string
+          start_time?: string
+          time_limit_minutes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quizzes_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quizzes_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_reviews: {
         Row: {
           class_post_id: number | null
@@ -4221,6 +4539,7 @@ export type Database = {
       location: "remote" | "in-person" | "hybrid"
       notification_type: "follow" | "review" | "reply" | "mention"
       product_stage: "idea" | "prototype" | "mvp" | "product"
+      question_type: "multiple_choice" | "short_answer" | "long_answer"
       role:
         | "developer"
         | "designer"
@@ -4364,6 +4683,7 @@ export const Constants = {
       location: ["remote", "in-person", "hybrid"],
       notification_type: ["follow", "review", "reply", "mention"],
       product_stage: ["idea", "prototype", "mvp", "product"],
+      question_type: ["multiple_choice", "short_answer", "long_answer"],
       role: ["developer", "designer", "marketer", "founder", "product-manager"],
       salary_range: [
         "$0 - $10,000",
