@@ -1,7 +1,8 @@
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
-import { toggleAttendance } from "../../mutations";
+
 import type { Route } from "./+types/class-attendance-page";
+import { toggleAttendance } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {

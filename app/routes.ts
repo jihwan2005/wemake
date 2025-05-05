@@ -60,7 +60,11 @@ export default [
     index("features/classes/pages/classes-page.tsx"),
     route(":classId", "features/classes/pages/class-page.tsx"),
     route(":classId/lobby", "features/classes/pages/class-lobby-page.tsx"),
-    route(":classId/quiz", "features/classes/pages/class-quiz-page.tsx"),
+    route(":classId/quiz", "features/classes/pages/class-quizzes-page.tsx"),
+    route(
+      ":classId/quiz/:quizId",
+      "features/classes/pages/class-quiz-page.tsx"
+    ),
     route(
       ":classId/quiz/upload",
       "features/classes/pages/class-quiz-upload-page.tsx"
@@ -69,11 +73,11 @@ export default [
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),
     route(
       "/:notificationId/see",
-      "features/classes/pages/action/see-class-notification-page.tsx"
+      "features/classes/pages/action/class/see-class-notification-page.tsx"
     ),
     route(
       "/:notificationId/delete",
-      "features/classes/pages/action/delete-class-notification-page.tsx"
+      "features/classes/pages/action/class/delete-class-notification-page.tsx"
     ),
     route(
       ":classId/lesson/:lessonId",
@@ -81,46 +85,46 @@ export default [
     ),
     route(
       ":classId/send-message",
-      "features/classes/pages/action/class-send-message-page.tsx"
+      "features/classes/pages/action/message/class-send-message-page.tsx"
     ),
     route(
       "/:classId/enroll",
-      "features/classes/pages/action/class-enroll-page.tsx"
+      "features/classes/pages/action/class/class-enroll-page.tsx"
     ),
     route(
       "/:classId/upvote",
-      "features/classes/pages/action/class-upvote-page.tsx"
+      "features/classes/pages/action/class/class-upvote-page.tsx"
     ),
     route(
       "/:classId/review",
-      "features/classes/pages/action/class-review-page.tsx"
+      "features/classes/pages/action/review/class-review-page.tsx"
     ),
     route(
       "/:classId/attendance",
-      "features/classes/pages/action/class-attendance-page.tsx"
+      "features/classes/pages/action/class/class-attendance-page.tsx"
     ),
     route(
       "/:classId/review/update",
-      "features/classes/pages/action/class-review-update-page.tsx"
+      "features/classes/pages/action/review/class-review-update-page.tsx"
     ),
     route(
       "/:classId/review/delete",
-      "features/classes/pages/action/class-review-delete-page.tsx"
+      "features/classes/pages/action/review/class-review-delete-page.tsx"
     ),
     route(
       ":classId/:lessonId/bookmark",
-      "features/classes/pages/action/lesson-bookmark-page.tsx"
+      "features/classes/pages/action/lesson/lesson-bookmark-page.tsx"
     ),
     route(
       ":classId/:lessonId/complete",
-      "features/classes/pages/action/lesson-complete-page.tsx"
+      "features/classes/pages/action/lesson/lesson-complete-page.tsx"
     ),
     layout("features/classes/layouts/class-messages-layout.tsx", [
       ...prefix("/messages", [
         index("features/classes/pages/class-messages-page.tsx"),
         route(
           "/deliver",
-          "features/classes/pages/action/class-message-deliver-page.tsx"
+          "features/classes/pages/action/message/class-message-deliver-page.tsx"
         ),
         route(
           "/:classMessageRoomId",
@@ -128,19 +132,19 @@ export default [
         ),
         route(
           "/:classMessageRoomId/delete",
-          "features/classes/pages/action/class-message-delete-page.tsx"
+          "features/classes/pages/action/message/class-message-delete-page.tsx"
         ),
         route(
           "/:classMessageRoomId/restore",
-          "features/classes/pages/action/class-message-restore-page.tsx"
+          "features/classes/pages/action/message/class-message-restore-page.tsx"
         ),
         route(
           "/:classMessageRoomId/update",
-          "features/classes/pages/action/class-message-update-page.tsx"
+          "features/classes/pages/action/message/class-message-update-page.tsx"
         ),
         route(
           "/:classMessageRoomId/pin",
-          "features/classes/pages/action/class-message-pin-page.tsx"
+          "features/classes/pages/action/message/class-message-pin-page.tsx"
         ),
       ]),
     ]),

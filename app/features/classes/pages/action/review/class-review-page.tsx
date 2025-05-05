@@ -1,18 +1,21 @@
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
-import { toggleComplete } from "../../mutations";
-import type { Route } from "./+types/lesson-bookmark-page";
+
+import type { Route } from "./+types/class-review-page";
+import { createReview } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
     throw new Response("Method Not Allowed", { status: 405 });
   }
   const { client } = await makeSSRClient(request);
-  const lessonId = params.lessonId;
   const userId = await getLoggedInUserId(client);
-  await toggleComplete(client, {
-    lessonId: lessonId,
+  const formData = await request.formData();
+  const review = formData.get("review") as string;
+  await createReview(client, {
+    classId: Number(params.classId),
     userId,
+    review,
   });
   return {
     ok: true,

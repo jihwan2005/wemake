@@ -1,7 +1,7 @@
+import { sendClassMessage } from "~/features/classes/data/mutations";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-enroll-page";
-import { sendClassMessage } from "../../mutations";
+import type { Route } from "../+types/class-send-message-page";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
@@ -9,7 +9,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   }
   const { client } = await makeSSRClient(request);
   const userId = await getLoggedInUserId(client);
-  const classId = params.classId;
   const formData = await request.formData();
   const message = formData.get("message") as string;
   const studentIdsString = formData.get("studentIds") as string;
@@ -17,7 +16,6 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   await Promise.all(
     studentIds.map((receiverId) =>
       sendClassMessage(client, {
-        classId,
         sender: userId,
         receiver: receiverId,
         message_content: message,

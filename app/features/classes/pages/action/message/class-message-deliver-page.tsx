@@ -1,7 +1,7 @@
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-message-deliver-page";
 import { getLoggedInUserId } from "~/features/users/queries";
-import { sendClassMessageToRoom } from "../../queries";
+import { sendClassMessageToRoom } from "~/features/classes/data/queries";
 
 export const action = async ({ request }: Route.ActionArgs) => {
   if (request.method !== "POST") {

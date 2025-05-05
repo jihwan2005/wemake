@@ -11,7 +11,7 @@ import { ClassMessageBubbleContent } from "./ClassMessageBubbleContent";
 import { useFetcher } from "react-router";
 import { Input } from "~/common/components/ui/input";
 import { Button } from "~/common/components/ui/button";
-import type { MessageBubbleProps } from "../../types/class-types";
+import type { MessageBubbleProps } from "../../../types/class-types";
 import { ClassMessageBubbleTime } from "./ClassMessageBubbleTime";
 
 export function ClassMessageBubble({

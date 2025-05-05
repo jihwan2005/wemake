@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "~/common/components/ui/dialog";
-import MyCalendar from "../../utils/big-calendar";
+import MyCalendar from "../../libs/big-calendar";
 import { Button } from "~/common/components/ui/button";
 import { CalendarCheck } from "lucide-react";
 import { useOutletContext } from "react-router";

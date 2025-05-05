@@ -600,3 +600,15 @@ export const getClassMessageRoomNotification = async (
   if (error) throw error;
   return data;
 };
+
+export const getClassQuizzesByClassId = async (
+  client: SupabaseClient<Database>,
+  { classId }: { classId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quizzes")
+    .select("*")
+    .eq("class_post_id", Number(classId));
+  if (error) throw error;
+  return data;
+};

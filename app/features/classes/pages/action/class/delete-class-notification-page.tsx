@@ -1,7 +1,8 @@
 import { makeSSRClient } from "~/supa-client";
-import { deleteClassNotification, seeClassNotification } from "../../mutations";
+
 import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/delete-class-notification-page";
+import { deleteClassNotification } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {

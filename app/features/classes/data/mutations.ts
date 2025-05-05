@@ -834,3 +834,40 @@ export const createMessageImage = async (
   if (error) throw error;
   return data;
 };
+
+export const createClassQuiz = async (
+  client: SupabaseClient<Database>,
+  {
+    classId,
+    userId,
+    title,
+    description,
+    startDate,
+    endDate,
+    limitTime,
+  }: {
+    classId: string;
+    userId: string;
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    limitTime: string;
+  }
+) => {
+  const { data, error } = await client
+    .from("class_quizzes")
+    .insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+      quiz_title: title,
+      quiz_description: description,
+      start_time: startDate,
+      end_time: endDate,
+      time_limit_minutes: Number(limitTime),
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};

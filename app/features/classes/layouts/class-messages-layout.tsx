@@ -9,9 +9,9 @@ import {
 } from "~/common/components/ui/sidebar";
 import { makeSSRClient, browserClient, type Database } from "~/supa-client";
 import type { Route } from "./+types/class-messages-layout";
-import { getClassMessages } from "../queries";
+import { getClassMessages } from "../data/queries";
 import { getLoggedInUserId } from "~/features/users/queries";
-import ClassMessageRoomCard from "../pages/components/class-message-room-card";
+import ClassMessageRoomCard from "../pages/components/message/class-message-room-card";
 import { useEffect, useState } from "react";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {

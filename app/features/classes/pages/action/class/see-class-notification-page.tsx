@@ -1,7 +1,8 @@
 import { makeSSRClient } from "~/supa-client";
-import { seeClassNotification } from "../../mutations";
+
 import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/see-class-notification-page";
+import { seeClassNotification } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {

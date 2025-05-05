@@ -1,5 +1,5 @@
 import { makeSSRClient } from "~/supa-client";
-import { deleteReview } from "../../mutations";
+import { deleteReview } from "../../../data/mutations";
 import type { Route } from "./+types/class-review-delete-page";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {

@@ -1,6 +1,6 @@
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-message-delete-page";
-import { deleteClassMessage } from "../../mutations";
+import type { Route } from "./+types/class-message-update-page";
+import { updateClassMessage } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
@@ -8,8 +8,11 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   }
   const { client } = await makeSSRClient(request);
   const messageId = params.classMessageRoomId;
-  await deleteClassMessage(client, {
+  const formData = await request.formData();
+  const messageContent = formData.get("updatedContent") as string;
+  await updateClassMessage(client, {
     messageId,
+    messageContent,
   });
   return {
     ok: true,

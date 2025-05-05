@@ -14,7 +14,7 @@ import {
   getUserAttendance,
   getUserEmail,
   getUserReview,
-} from "../queries";
+} from "../data/queries";
 import { Hero } from "~/common/components/hero";
 import { useState } from "react";
 import { Link, redirect } from "react-router";
@@ -36,8 +36,8 @@ import {
   updateClassNotify,
   updateGoal,
   updateLesson,
-} from "../mutations";
-import { updateClassHashtags } from "../mutations";
+} from "../data/mutations";
+import { updateClassHashtags } from "../data/mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
 import ClassCourse from "../components/class/class-course";
 import ClassActionButtons from "../components/class/class-action-buttons";
@@ -380,11 +380,14 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           <MessageSquare className="size-4" />
         </Button>
       </Link>
-      <Link to={`/classes/${loaderData.classId}/quiz`}>
-        <Button variant="outline">
-          <FileQuestion className="size-4" />
-        </Button>
-      </Link>
+      {loaderData.cls.is_enrolled ||
+        (loaderData.cls.author_id && (
+          <Link to={`/classes/${loaderData.classId}/quiz`}>
+            <Button variant="outline">
+              <FileQuestion className="size-4" />
+            </Button>
+          </Link>
+        ))}
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

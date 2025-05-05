@@ -6,12 +6,13 @@ import {
   getChapterWithLessons,
   getMyClasses,
   getMyMakingClasses,
-} from "../queries";
+} from "../data/queries";
 import { Hero } from "~/common/components/hero";
-import MyEnrollingClass from "./components/my-enrolling-class";
-import MyMakingClass from "./components/my-making-class";
+import MyEnrollingClass from "./components/my/my-enrolling-class";
+import MyMakingClass from "./components/my/my-making-class";
 import { calculateProgress } from "../utils/progress";
-import MyInventoryDialog from "./components/my-inventory-dialog";
+import MyInventoryDialog from "./components/my/my-inventory-dialog";
+
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);

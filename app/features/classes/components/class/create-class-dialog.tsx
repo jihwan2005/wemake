@@ -25,7 +25,7 @@ import { Input } from "~/common/components/ui/input";
 import { Calendar } from "~/common/components/ui/calendar";
 import { Button } from "~/common/components/ui/button";
 import { useState } from "react";
-import { DIFFICULTY_TYPES } from "../../constants";
+import { DIFFICULTY_TYPES } from "../../constants/constants";
 import { BookPlus, LoaderCircle, X } from "lucide-react";
 import { Form, useNavigation } from "react-router";
 

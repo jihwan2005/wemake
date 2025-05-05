@@ -1,7 +1,7 @@
 import { makeSSRClient } from "~/supa-client";
 
 import type { Route } from "./+types/class-review-page";
-import { createKeyword } from "../../mutations";
+import { createKeyword } from "../../data/mutations";
 
 export const action = async ({ request }: Route.ActionArgs) => {
   if (request.method !== "POST") {

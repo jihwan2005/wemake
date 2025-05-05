@@ -1404,6 +1404,7 @@ export type Database = {
         Row: {
           class_post_id: number
           created_at: string | null
+          end_time: string
           profile_id: string
           quiz_description: string
           quiz_id: number
@@ -1414,6 +1415,7 @@ export type Database = {
         Insert: {
           class_post_id: number
           created_at?: string | null
+          end_time: string
           profile_id: string
           quiz_description: string
           quiz_id?: never
@@ -1424,6 +1426,7 @@ export type Database = {
         Update: {
           class_post_id?: number
           created_at?: string | null
+          end_time?: string
           profile_id?: string
           quiz_description?: string
           quiz_id?: never

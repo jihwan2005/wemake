@@ -4,18 +4,18 @@ import {
   getClassMessagesByClassMessagesRoomId,
   getClassRoomsParticipant,
   sendClassMessageToRoom,
-} from "../queries";
+} from "../data/queries";
 import { makeSSRClient } from "~/supa-client";
 import { useEffect, useRef, useState } from "react";
 import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/class-message-page";
 import { useMessageHandler } from "../hooks/useMessageHandler";
-import ClassMessageHeader from "./components/ClassMessageHeader";
-import ClassMessageFooter from "./components/ClassMessageFooter";
-import ClassMessageBody from "./components/ClassMessageBody";
-import ClassMessageSearch from "./components/ClassMessageSearch";
-import ClassMessageNotification from "./components/ClassMessageNotification";
-import { createMessageImage } from "../mutations";
+import ClassMessageHeader from "./components/message/ClassMessageHeader";
+import ClassMessageFooter from "./components/message/ClassMessageFooter";
+import ClassMessageBody from "./components/message/ClassMessageBody";
+import ClassMessageSearch from "./components/message/ClassMessageSearch";
+import ClassMessageNotification from "./components/message/ClassMessageNotification";
+import { createMessageImage } from "../data/mutations";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Message | wemake" }];

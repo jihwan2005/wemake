@@ -20,7 +20,7 @@ import { Calendar } from "~/common/components/ui/calendar";
 import { Button } from "~/common/components/ui/button";
 import { Pencil, LoaderCircle } from "lucide-react";
 import { useState } from "react";
-import { DIFFICULTY_TYPES } from "../../constants";
+import { DIFFICULTY_TYPES } from "../../constants/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,

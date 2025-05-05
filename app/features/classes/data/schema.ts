@@ -412,6 +412,7 @@ export const classQuizzes = pgTable("class_quizzes", {
     .notNull(),
   created_at: timestamp().defaultNow(),
   start_time: timestamp().notNull(),
+  end_time: timestamp().notNull(),
   time_limit_minutes: integer(),
 });
 

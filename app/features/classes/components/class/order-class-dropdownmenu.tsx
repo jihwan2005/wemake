@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/common/components/ui/dropdown-menu";
-import { SortOptions } from "../../constants";
+import { SortOptions } from "../../constants/constants";
 
 export default function OrderClassDropdownMenu() {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,6 +1,6 @@
 import { Hero } from "~/common/components/hero";
 import type { Route } from "./+types/class-lobby-page";
-import { getClassById } from "../queries";
+import { getClassById } from "../data/queries";
 import { makeSSRClient } from "~/supa-client";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {

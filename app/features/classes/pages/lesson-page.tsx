@@ -6,11 +6,11 @@ import {
   getClassById,
   getCourseList,
   getLessonById,
-} from "../queries";
+} from "../data/queries";
 import { SidebarInset, SidebarProvider } from "~/common/components/ui/sidebar";
 import LessonSidebar from "./components/course-sidebar";
 import { useFetcher } from "react-router";
-import Header from "./components/header";
+import Header from "./components/my/header";
 import { calculateProgress } from "../utils/progress";
 import { getLoggedInUserId } from "~/features/users/queries";
 

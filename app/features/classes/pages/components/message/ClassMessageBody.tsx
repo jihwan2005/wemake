@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import React, { useRef } from "react";
 import ClassMessageDate from "./ClassMessageDate";
 import ClassMessageImage from "./ClassMessageImage";
-import type { ClassMessageBodyProps } from "../../types/class-types";
+import type { ClassMessageBodyProps } from "../../../types/class-types";
 
 const ClassMessageBody: React.FC<ClassMessageBodyProps> = ({
   messages,

@@ -1,0 +1,1 @@
+ALTER TABLE "class_quizzes" ADD COLUMN "end_time" timestamp NOT NULL;

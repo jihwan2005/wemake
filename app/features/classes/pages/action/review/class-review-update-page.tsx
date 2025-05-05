@@ -1,6 +1,7 @@
 import { makeSSRClient } from "~/supa-client";
-import { updateReview } from "../../mutations";
+
 import type { Route } from "./+types/class-review-delete-page";
+import { updateReview } from "~/features/classes/data/mutations";
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
   if (request.method !== "POST") {
