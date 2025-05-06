@@ -608,7 +608,8 @@ export const getClassQuizzesByClassId = async (
   const { data, error } = await client
     .from("class_quizzes")
     .select("*")
-    .eq("class_post_id", Number(classId));
+    .eq("class_post_id", Number(classId))
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };

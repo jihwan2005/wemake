@@ -62,12 +62,16 @@ export default [
     route(":classId/lobby", "features/classes/pages/class-lobby-page.tsx"),
     route(":classId/quiz", "features/classes/pages/class-quizzes-page.tsx"),
     route(
-      ":classId/quiz/:quizId",
-      "features/classes/pages/class-quiz-page.tsx"
+      ":classId/quiz/public",
+      "features/classes/pages/action/quiz/class-quizzes-public-page.tsx"
     ),
     route(
-      ":classId/quiz/upload",
+      ":classId/quiz/:quizId/upload",
       "features/classes/pages/class-quiz-upload-page.tsx"
+    ),
+    route(
+      ":classId/quiz/:quizId/",
+      "features/classes/pages/class-quiz-page.tsx"
     ),
     route("/my", "features/classes/pages/class-my-page.tsx"),
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),

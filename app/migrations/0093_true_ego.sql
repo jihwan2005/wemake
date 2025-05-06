@@ -1,0 +1,1 @@
+ALTER TABLE "class_quizzes" ADD COLUMN "is_public" boolean DEFAULT false NOT NULL;

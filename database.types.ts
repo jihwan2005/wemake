@@ -1405,6 +1405,7 @@ export type Database = {
           class_post_id: number
           created_at: string | null
           end_time: string
+          is_public: boolean
           profile_id: string
           quiz_description: string
           quiz_id: number
@@ -1416,6 +1417,7 @@ export type Database = {
           class_post_id: number
           created_at?: string | null
           end_time: string
+          is_public?: boolean
           profile_id: string
           quiz_description: string
           quiz_id?: never
@@ -1427,6 +1429,7 @@ export type Database = {
           class_post_id?: number
           created_at?: string | null
           end_time?: string
+          is_public?: boolean
           profile_id?: string
           quiz_description?: string
           quiz_id?: never

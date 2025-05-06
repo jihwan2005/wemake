@@ -871,3 +871,21 @@ export const createClassQuiz = async (
   if (error) throw error;
   return data;
 };
+
+export const updateClassQuizPublic = async (
+  client: SupabaseClient<Database>,
+  { quizId, userId }: { quizId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quizzes")
+    .select("is_public")
+    .eq("quiz_id", Number(quizId))
+    .eq("profile_id", userId)
+    .single();
+  if (!data || error) return;
+  await client
+    .from("class_quizzes")
+    .update({ is_public: !data.is_public })
+    .eq("quiz_id", Number(quizId))
+    .eq("profile_id", userId);
+};

@@ -380,14 +380,13 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           <MessageSquare className="size-4" />
         </Button>
       </Link>
-      {loaderData.cls.is_enrolled ||
-        (loaderData.cls.author_id && (
-          <Link to={`/classes/${loaderData.classId}/quiz`}>
-            <Button variant="outline">
-              <FileQuestion className="size-4" />
-            </Button>
-          </Link>
-        ))}
+      {loaderData.cls.is_enrolled || loaderData.cls.author_id ? (
+        <Link to={`/classes/${loaderData.classId}/quiz`}>
+          <Button variant="outline">
+            <FileQuestion className="size-4" />
+          </Button>
+        </Link>
+      ) : null}
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

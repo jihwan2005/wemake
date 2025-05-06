@@ -10,8 +10,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { profiles } from "../users/schema";
-import { DIFFICULTY_TYPES } from "./constants";
+import { profiles } from "../../users/schema";
+import { DIFFICULTY_TYPES } from "../constants/constants";
 
 export const difficultyTypes = pgEnum(
   "difficulty_type",
@@ -414,6 +414,7 @@ export const classQuizzes = pgTable("class_quizzes", {
   start_time: timestamp().notNull(),
   end_time: timestamp().notNull(),
   time_limit_minutes: integer(),
+  is_public: boolean().default(false).notNull(),
 });
 
 export const questionType = pgEnum("question_type", [

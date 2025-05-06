@@ -17,7 +17,7 @@ import {
 } from "~/common/components/ui/collapsible";
 import { Link } from "react-router";
 import { Check, Lock } from "lucide-react";
-import ProgressBar from "./progress";
+import ProgressBar from "../../libs/progress";
 
 type LessonSidebarProps = {
   course: {
