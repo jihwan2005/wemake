@@ -889,3 +889,53 @@ export const updateClassQuizPublic = async (
     .eq("quiz_id", Number(quizId))
     .eq("profile_id", userId);
 };
+
+export const createQuizQuestion = async (
+  client: SupabaseClient<Database>,
+  {
+    quizId,
+    text,
+    point,
+    type,
+    position,
+    choices,
+  }: {
+    quizId: string;
+    text: string;
+    point: string;
+    type: "multiple_choice" | "short_answer" | "long_answer";
+    position: string;
+    choices: { choice_text: string; position: number; is_correct: boolean }[];
+  }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_questions")
+    .insert({
+      quiz_id: Number(quizId),
+      question_text: text,
+      question_type: type,
+      question_point: Number(point),
+      question_position: Number(position),
+    })
+    .select();
+  if (error) throw error;
+  const questionId = data[0].question_id;
+  if (choices && choices.length > 0) {
+    const choicesToInsert = choices.map((choice) => ({
+      question_id: questionId, // 새로 저장된 질문의 ID
+      choice_text: choice.choice_text,
+      choice_position: choice.position,
+      is_correct: choice.is_correct,
+    }));
+
+    const { error: choicesError } = await client
+      .from("class_quiz_choices")
+      .insert(choicesToInsert);
+
+    if (choicesError) {
+      console.error("Error saving choices:", choicesError);
+    } else {
+      console.log("Choices saved successfully.");
+    }
+  }
+};
