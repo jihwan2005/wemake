@@ -7,13 +7,20 @@ import {
 } from "~/common/components/ui/carousel";
 import { Card, CardContent } from "~/common/components/ui/card";
 import { Button } from "~/common/components/ui/button";
-import { Plus } from "lucide-react";
-import { Textarea } from "~/common/components/ui/textarea";
-import { Input } from "~/common/components/ui/input";
-import { Form } from "react-router";
+import { LoaderCircle, Plus } from "lucide-react";
+import { Form, useNavigation } from "react-router";
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-quiz-upload-page";
-import { createQuizQuestion } from "../data/mutations";
+import { createQuizQuestion, updateQuizQuestion } from "../data/mutations";
+import { getClassQuestionByQuizId } from "../data/queries";
+import ClassQuestionTypeSelect from "./components/quiz/question/ClassQuestionTypeSelect";
+import ClassQuestionPointInput from "./components/quiz/question/ClassQuestionPointInput";
+import ClassQuestionTextTextArea from "./components/quiz/question/ClassQuestionTextTextArea";
+import ClassQuestionChoiceInput from "./components/quiz/question/ClassQuestionChoiceInput";
+import ClassQuestionMediaInput from "./components/quiz/question/ClassQuestionMediaInput";
+import ClassQuestionHintInput from "./components/quiz/question/ClassQuestionHintInput";
+import { useActionData } from "react-router";
+import ClassQuestionPositionInput from "./components/quiz/question/ClassQuestionPositionInput";
 
 type QuizItem = {
   question: string;
@@ -21,11 +28,22 @@ type QuizItem = {
   questionPoint: number;
   options: Choice[];
   question_position: number;
+  questionId?: number;
+  questionHint: string;
 };
 
 type Choice = {
   choice_text: string;
   is_correct: boolean;
+};
+
+export const loader = async ({ request, params }: Route.LoaderArgs) => {
+  const { client } = await makeSSRClient(request);
+  const quizId = params.quizId;
+  const questions = await getClassQuestionByQuizId(client, {
+    quizId,
+  });
+  return { questions };
 };
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
@@ -39,7 +57,8 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     | "short_answer"
     | "long_answer";
   const position = formData.get("questionPosition") as string;
-
+  const questionId = formData.get("questionId") as string;
+  const hint = formData.get("questionHint") as string;
   const choices: {
     choice_text: string;
     position: number;
@@ -73,33 +92,56 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     });
   });
 
-  await createQuizQuestion(client, {
-    quizId,
-    text,
-    point,
-    type,
-    position,
-    choices,
-  });
+  if (questionId) {
+    await updateQuizQuestion(client, {
+      questionId,
+      text,
+      point,
+      type,
+      position,
+      choices,
+      hint,
+    });
+    return { success: true, message: "문제 수정 완료!" };
+  } else {
+    await createQuizQuestion(client, {
+      quizId,
+      text,
+      point,
+      type,
+      position,
+      choices,
+      hint,
+    });
+    return { success: true, message: "문제 수정 완료!" };
+  }
 };
 
-export default function ClassQuizUploadPage() {
-  const [items, setItems] = useState<QuizItem[]>([
-    {
-      question: "",
-      questionType: "multiple_choice",
-      questionPoint: 1,
-      options: [{ choice_text: "", is_correct: false }],
-      question_position: 0,
-    },
-  ]);
+export default function ClassQuizUploadPage({
+  loaderData,
+}: Route.ComponentProps) {
+  const [items, setItems] = useState<QuizItem[]>(
+    loaderData.questions.map((q: any) => ({
+      question: q.question_text,
+      questionType: q.question_type,
+      questionPoint: q.question_point,
+      question_position: q.question_position,
+      options: q.class_quiz_choices || [],
+      questionId: q.question_id,
+      questionHint: q.question_hint,
+    }))
+  );
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
 
   const handleAddItem = () => {
     const newItem: QuizItem = {
       question: "",
+      questionHint: "",
       questionType: "multiple_choice",
       questionPoint: 1,
       options: [{ choice_text: "", is_correct: false }],
@@ -126,9 +168,15 @@ export default function ClassQuizUploadPage() {
     });
   }, [api]);
 
+  const actionData = useActionData<typeof action>();
+  useEffect(() => {
+    if (actionData?.success) {
+      alert(actionData.message);
+    }
+  }, [actionData]);
   return (
     <div className="space-y-20 flex justify-center w-full">
-      <div className="w-1/2 bg-amber-100 h-[800px] flex flex-col items-center justify-center gap-4 rounded-md overflow-y-auto max-h-screen">
+      <div className="w-1/2 bg-amber-100 h-[800px] flex flex-col items-center justify-center gap-4 rounded-md">
         <Button className="rounded-full" onClick={handleAddItem} type="button">
           <Plus className="size-6" />
         </Button>
@@ -137,10 +185,21 @@ export default function ClassQuizUploadPage() {
           <CarouselContent>
             {items.map((item, index) => (
               <CarouselItem key={index}>
-                <Form method="post" className="w-full">
-                  <input type="hidden" name="questionPosition" value={index} />
+                <Form
+                  method="post"
+                  className="w-full"
+                  encType="multipart/form-data"
+                >
+                  {item.questionId && (
+                    <input
+                      type="hidden"
+                      name="questionId"
+                      value={item.questionId}
+                    />
+                  )}
+
                   <Card>
-                    <CardContent className="relative w-full h-[650px] flex justify-center text-xl">
+                    <CardContent className="relative w-full h-[650px] flex justify-center text-xl overflow-y-auto max-h-screen">
                       <div className="absolute top-0 right-7 text-md text-white bg-black px-4 py-1 rounded-full">
                         {current}/{count}
                       </div>
@@ -150,130 +209,103 @@ export default function ClassQuizUploadPage() {
                           type="submit"
                           className="mt-4 w-fit self-center"
                         >
-                          퀴즈 저장
+                          {isSubmitting ? (
+                            <LoaderCircle className="animate-spin" />
+                          ) : item.questionId ? (
+                            "퀴즈 수정"
+                          ) : (
+                            "퀴즈 저장"
+                          )}
                         </Button>
 
-                        <div className="flex items-center gap-2">
-                          <div className="mt-10 flex flex-col gap-3">
-                            <span className="font-semibold">문제 유형</span>
-                            <select
-                              className="p-2 border rounded h-10"
-                              name="questionType"
-                              value={item.questionType}
-                              onChange={(e) => {
-                                const newItems = [...items];
-                                newItems[index].questionType = e.target
-                                  .value as QuizItem["questionType"];
-                                if (e.target.value !== "multiple_choice") {
-                                  newItems[index].options = [];
-                                } else if (
-                                  newItems[index].options.length === 0
-                                ) {
-                                  newItems[index].options = [
-                                    { choice_text: "", is_correct: false },
-                                  ];
-                                }
-                                setItems(newItems);
-                              }}
-                            >
-                              <option value="multiple_choice">객관식</option>
-                              <option value="short_answer">단답형</option>
-                              <option value="long_answer">서술형</option>
-                            </select>
-                          </div>
+                        <ClassQuestionTypeSelect
+                          value={item.questionType}
+                          onChange={(e) => {
+                            const newItems = [...items];
+                            newItems[index].questionType = e.target
+                              .value as QuizItem["questionType"];
+                            setItems(newItems);
+                          }}
+                        />
 
-                          <div className="mt-10 flex flex-col gap-3">
-                            <span className="font-semibold">배점</span>
-                            <Input
-                              className="w-1/2 h-10"
-                              name="questionPoint"
-                              value={item.questionPoint}
-                              onChange={(e) => {
-                                const newItems = [...items];
-                                newItems[index].questionPoint =
-                                  parseInt(e.target.value) || 0;
-                                setItems(newItems);
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="mt-10 flex flex-col gap-3">
-                          <span className="font-semibold">문제 작성</span>
-                          <Textarea
-                            name="questionText"
-                            value={item.question}
+                        <div className="flex items-center">
+                          <ClassQuestionPositionInput
+                            value={item.question_position}
                             onChange={(e) => {
                               const newItems = [...items];
-                              newItems[index].question = e.target.value;
+                              newItems[index].question_position =
+                                parseInt(e.target.value) || 0;
+                              setItems(newItems);
+                            }}
+                          />
+
+                          <ClassQuestionPointInput
+                            value={item.questionPoint}
+                            onChange={(e) => {
+                              const newItems = [...items];
+                              newItems[index].questionPoint =
+                                parseInt(e.target.value) || 0;
                               setItems(newItems);
                             }}
                           />
                         </div>
 
-                        <div className="mt-10 flex flex-col gap-3">
-                          <span className="font-semibold">
-                            사진 / 동영상 첨부
-                          </span>
-                          <Input type="file" name="questionMedia" />
-                        </div>
+                        <ClassQuestionTextTextArea
+                          value={item.question}
+                          onChange={(e) => {
+                            const newItems = [...items];
+                            newItems[index].question = e.target.value;
+                            setItems(newItems);
+                          }}
+                        />
+
+                        <ClassQuestionMediaInput
+                          onClickImage={() => {
+                            // TODO: 이미지 추가 핸들러
+                          }}
+                          onClickVideo={() => {
+                            // TODO: 비디오 추가 핸들러
+                          }}
+                        />
 
                         {item.questionType === "multiple_choice" && (
-                          <div className="mt-10 flex flex-col gap-3">
-                            <span className="font-semibold">선지 작성</span>
-                            {item.options.map((option, optIdx) => (
-                              <div
-                                key={optIdx}
-                                className="flex items-center gap-2"
-                              >
-                                <Input
-                                  value={option.choice_text}
-                                  name={`questionChoices[${optIdx}].choice_text`}
-                                  onChange={(e) => {
-                                    const newItems = [...items];
-                                    newItems[index].options[
-                                      optIdx
-                                    ].choice_text = e.target.value;
-                                    setItems(newItems);
-                                  }}
-                                />
-                                <label className="flex items-center">
-                                  <input
-                                    type="checkbox"
-                                    checked={option.is_correct}
-                                    name={`questionChoices[${optIdx}].is_correct`}
-                                    onChange={(e) => {
-                                      const newItems = [...items];
-                                      newItems[index].options.forEach((opt) => {
-                                        opt.is_correct = false;
-                                      });
-                                      newItems[index].options[
-                                        optIdx
-                                      ].is_correct = e.target.checked;
-                                      setItems(newItems);
-                                    }}
-                                  />
-                                  <span className="ml-2">정답</span>
-                                </label>
-                              </div>
-                            ))}
-                            <Button
-                              className="rounded-full w-fit self-center"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                const newItems = [...items];
-                                newItems[index].options.push({
-                                  choice_text: "",
-                                  is_correct: false,
-                                });
-                                setItems(newItems);
-                              }}
-                            >
-                              <Plus className="size-5" />
-                            </Button>
-                          </div>
+                          <ClassQuestionChoiceInput
+                            options={item.options}
+                            onTextChange={(optIdx, e) => {
+                              const newItems = [...items];
+                              newItems[index].options[optIdx].choice_text =
+                                e.target.value;
+                              setItems(newItems);
+                            }}
+                            onCorrectChange={(optIdx, e) => {
+                              const newItems = [...items];
+                              newItems[index].options.forEach((opt) => {
+                                opt.is_correct = false;
+                              });
+                              newItems[index].options[optIdx].is_correct =
+                                e.target.checked;
+                              setItems(newItems);
+                            }}
+                            onAddChoice={(e) => {
+                              e.preventDefault();
+                              const newItems = [...items];
+                              newItems[index].options.push({
+                                choice_text: "",
+                                is_correct: false,
+                              });
+                              setItems(newItems);
+                            }}
+                          />
                         )}
+
+                        <ClassQuestionHintInput
+                          value={item.questionHint}
+                          onChange={(e) => {
+                            const newItems = [...items];
+                            newItems[index].questionHint = e.target.value;
+                            setItems(newItems);
+                          }}
+                        />
                       </div>
                     </CardContent>
                   </Card>

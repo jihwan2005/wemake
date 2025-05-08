@@ -1274,6 +1274,7 @@ export type Database = {
       }
       class_quiz_questions: {
         Row: {
+          question_hint: string | null
           question_id: number
           question_point: number
           question_position: number | null
@@ -1282,6 +1283,7 @@ export type Database = {
           quiz_id: number
         }
         Insert: {
+          question_hint?: string | null
           question_id?: never
           question_point?: number
           question_position?: number | null
@@ -1290,6 +1292,7 @@ export type Database = {
           quiz_id: number
         }
         Update: {
+          question_hint?: string | null
           question_id?: never
           question_point?: number
           question_position?: number | null

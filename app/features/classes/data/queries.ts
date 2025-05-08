@@ -613,3 +613,17 @@ export const getClassQuizzesByClassId = async (
   if (error) throw error;
   return data;
 };
+
+export const getClassQuestionByQuizId = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_questions")
+    .select("*, class_quiz_choices(*)")
+    .eq("quiz_id", Number(quizId))
+    .order("question_position", { ascending: true });
+
+  if (error) throw error;
+  return data;
+};

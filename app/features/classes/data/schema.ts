@@ -434,6 +434,7 @@ export const classQuizQuestions = pgTable("class_quiz_questions", {
   question_type: questionType().notNull(),
   question_point: integer().notNull().default(1),
   question_position: integer().default(0),
+  question_hint: text(),
 });
 
 export const classQuizChoices = pgTable("class_quiz_choices", {

@@ -899,8 +899,10 @@ export const createQuizQuestion = async (
     type,
     position,
     choices,
+    hint,
   }: {
     quizId: string;
+    hint: string;
     text: string;
     point: string;
     type: "multiple_choice" | "short_answer" | "long_answer";
@@ -914,6 +916,7 @@ export const createQuizQuestion = async (
       quiz_id: Number(quizId),
       question_text: text,
       question_type: type,
+      question_hint: hint,
       question_point: Number(point),
       question_position: Number(position),
     })
@@ -939,3 +942,55 @@ export const createQuizQuestion = async (
     }
   }
 };
+
+export async function updateQuizQuestion(
+  client: SupabaseClient,
+  {
+    questionId,
+    text,
+    point,
+    type,
+    position,
+    choices,
+    hint,
+  }: {
+    questionId: string;
+    text: string;
+    hint: string;
+    point: string;
+    type: "multiple_choice" | "short_answer" | "long_answer";
+    position: string;
+    choices: {
+      choice_text: string;
+      position: number;
+      is_correct: boolean;
+    }[];
+  }
+) {
+  // 문제 수정
+  await client
+    .from("class_quiz_questions")
+    .update({
+      question_text: text,
+      question_hint: hint,
+      question_point: Number(point),
+      question_type: type,
+      question_position: Number(position),
+    })
+    .eq("question_id", questionId);
+
+  // 기존 선택지 삭제 후 재삽입 (간단한 방식)
+  await client
+    .from("class_quiz_choices")
+    .delete()
+    .eq("question_id", Number(questionId));
+
+  await client.from("class_quiz_choices").insert(
+    choices.map((choice) => ({
+      question_id: Number(questionId),
+      choice_text: choice.choice_text,
+      choice_position: choice.position,
+      is_correct: choice.is_correct,
+    }))
+  );
+}
