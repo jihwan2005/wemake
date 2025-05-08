@@ -627,3 +627,4 @@ export const getClassQuestionByQuizId = async (
   if (error) throw error;
   return data;
 };
+

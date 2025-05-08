@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -7,8 +7,8 @@ import {
 } from "~/common/components/ui/carousel";
 import { Card, CardContent } from "~/common/components/ui/card";
 import { Button } from "~/common/components/ui/button";
-import { LoaderCircle, Plus } from "lucide-react";
-import { Form, useNavigation } from "react-router";
+import { Plus } from "lucide-react";
+import { Form, useFetcher, useNavigation } from "react-router";
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-quiz-upload-page";
 import { createQuizQuestion, updateQuizQuestion } from "../data/mutations";
@@ -21,6 +21,10 @@ import ClassQuestionMediaInput from "./components/quiz/question/ClassQuestionMed
 import ClassQuestionHintInput from "./components/quiz/question/ClassQuestionHintInput";
 import { useActionData } from "react-router";
 import ClassQuestionPositionInput from "./components/quiz/question/ClassQuestionPositionInput";
+import ClassQuestionHandleButton from "./components/quiz/question/ClassQuestionHandleButton";
+import { useCarouselSync } from "../hooks/useCarouselSync";
+import { useHandleDeleteEffect } from "../hooks/useHandleDeleteEffect";
+import { useSuccessAlert } from "../hooks/useSuccessAlert";
 
 type QuizItem = {
   question: string;
@@ -40,10 +44,11 @@ type Choice = {
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
   const quizId = params.quizId;
+  const classId = params.classId;
   const questions = await getClassQuestionByQuizId(client, {
     quizId,
   });
-  return { questions };
+  return { questions, quizId, classId };
 };
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
@@ -104,7 +109,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     });
     return { success: true, message: "문제 수정 완료!" };
   } else {
-    await createQuizQuestion(client, {
+    const createdQuestionId = await createQuizQuestion(client, {
       quizId,
       text,
       point,
@@ -113,7 +118,11 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       choices,
       hint,
     });
-    return { success: true, message: "문제 수정 완료!" };
+    return {
+      success: true,
+      message: "문제 생성 완료!",
+      questionId: createdQuestionId,
+    };
   }
 };
 
@@ -135,8 +144,22 @@ export default function ClassQuizUploadPage({
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
   const navigation = useNavigation();
+  const fetcher = useFetcher();
+  const actionData = useActionData<typeof action>();
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
+
+  useCarouselSync(api, setCount, setCurrent);
+  useHandleDeleteEffect({
+    fetcherData: fetcher.data,
+    deleteIndex,
+    setItems,
+    api,
+    setCurrent,
+    resetDeleteIndex: () => setDeleteIndex(null),
+  });
+  useSuccessAlert({ actionData, current, setItems });
 
   const handleAddItem = () => {
     const newItem: QuizItem = {
@@ -158,29 +181,54 @@ export default function ClassQuizUploadPage({
     }, 0);
   };
 
-  useEffect(() => {
-    if (!api) return;
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
+  const handleDeleteItem = (index: number) => {
+    const item = items[index];
 
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
+    if (item.questionId) {
+      // 삭제할 항목 인덱스를 저장
+      setDeleteIndex(index);
 
-  const actionData = useActionData<typeof action>();
-  useEffect(() => {
-    if (actionData?.success) {
-      alert(actionData.message);
+      fetcher.submit(
+        { questionId: String(item.questionId) },
+        {
+          method: "POST",
+          action: `/classes/${loaderData.classId}/quiz/${loaderData.quizId}/delete`,
+        }
+      );
+    } else {
+      // questionId가 없으면 그냥 클라이언트에서 삭제
+      setItems((prevItems) => {
+        const newItems = [...prevItems];
+        newItems.splice(index, 1);
+        return newItems;
+      });
+
+      setTimeout(() => {
+        const newIndex = Math.max(0, index - 1);
+        api?.scrollTo(newIndex);
+        setCurrent(newIndex + 1);
+      }, 0);
     }
-  }, [actionData]);
+  };
+
   return (
     <div className="space-y-20 flex justify-center w-full">
-      <div className="w-1/2 bg-amber-100 h-[800px] flex flex-col items-center justify-center gap-4 rounded-md">
+      <div className="w-1/2 bg-amber-100 h-[1000px] flex flex-col items-center gap-4 rounded-md pt-10">
         <Button className="rounded-full" onClick={handleAddItem} type="button">
           <Plus className="size-6" />
         </Button>
-
+        <div className="flex gap-2 flex-wrap justify-center">
+          {items.map((_, index) => (
+            <Button
+              key={index}
+              variant={current === index + 1 ? "default" : "outline"}
+              size="sm"
+              onClick={() => api?.scrollTo(index)}
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
         <Carousel className="w-7/8" setApi={setApi}>
           <CarouselContent>
             {items.map((item, index) => (
@@ -205,18 +253,11 @@ export default function ClassQuizUploadPage({
                       </div>
 
                       <div className="flex flex-col w-full gap-1">
-                        <Button
-                          type="submit"
-                          className="mt-4 w-fit self-center"
-                        >
-                          {isSubmitting ? (
-                            <LoaderCircle className="animate-spin" />
-                          ) : item.questionId ? (
-                            "퀴즈 수정"
-                          ) : (
-                            "퀴즈 저장"
-                          )}
-                        </Button>
+                        <ClassQuestionHandleButton
+                          isSubmitting={isSubmitting}
+                          hasQuestionId={!!item.questionId}
+                          onDelete={() => handleDeleteItem(index)}
+                        />
 
                         <ClassQuestionTypeSelect
                           value={item.questionType}

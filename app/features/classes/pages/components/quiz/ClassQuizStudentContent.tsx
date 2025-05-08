@@ -2,6 +2,7 @@
 
 import { Button } from "~/common/components/ui/button";
 import { DateTime } from "luxon";
+import { Link } from "react-router";
 
 interface Props {
   quiz: any;
@@ -11,6 +12,7 @@ interface Props {
   isEnded: boolean;
   isOngoing: boolean;
   onClose: () => void;
+  classId: string;
 }
 
 export const ClassQuizStudentContent = ({
@@ -21,6 +23,7 @@ export const ClassQuizStudentContent = ({
   isEnded,
   isOngoing,
   onClose,
+  classId,
 }: Props) => {
   return (
     <div className="space-y-2">
@@ -60,13 +63,15 @@ export const ClassQuizStudentContent = ({
             <Button variant="outline" onClick={onClose}>
               나중에
             </Button>
-            <Button
-              onClick={() => {
-                console.log("퀴즈 응시 시작");
-              }}
-            >
-              응시하기
-            </Button>
+            <Link to={`/classes/${classId}/quiz/${quiz.quiz_id}`}>
+              <Button
+                onClick={() => {
+                  console.log("퀴즈 응시 시작");
+                }}
+              >
+                응시하기
+              </Button>
+            </Link>
           </div>
         </div>
       )}

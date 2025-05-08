@@ -920,9 +920,10 @@ export const createQuizQuestion = async (
       question_point: Number(point),
       question_position: Number(position),
     })
-    .select();
+    .select()
+    .single();
   if (error) throw error;
-  const questionId = data[0].question_id;
+  const questionId = data.question_id;
   if (choices && choices.length > 0) {
     const choicesToInsert = choices.map((choice) => ({
       question_id: questionId, // 새로 저장된 질문의 ID
@@ -941,6 +942,7 @@ export const createQuizQuestion = async (
       console.log("Choices saved successfully.");
     }
   }
+  return questionId;
 };
 
 export async function updateQuizQuestion(
@@ -994,3 +996,15 @@ export async function updateQuizQuestion(
     }))
   );
 }
+
+export const deleteClassQuestion = async (
+  client: SupabaseClient<Database>,
+  { questionId }: { questionId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_questions")
+    .delete()
+    .eq("question_id", Number(questionId));
+  if (error) throw error;
+  return data;
+};

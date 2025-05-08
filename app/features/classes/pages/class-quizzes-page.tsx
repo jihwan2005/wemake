@@ -84,6 +84,7 @@ export default function ClassQuizzesPage({ loaderData }: Route.ComponentProps) {
                 isEnded={isEnded}
                 isOngoing={isOngoing}
                 onClose={() => setQuiz(null)}
+                classId={loaderData.classId}
               />
             </DialogContent>
           ) : (
