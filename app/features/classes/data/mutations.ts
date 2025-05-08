@@ -900,6 +900,7 @@ export const createQuizQuestion = async (
     position,
     choices,
     hint,
+    minLength,
   }: {
     quizId: string;
     hint: string;
@@ -908,6 +909,7 @@ export const createQuizQuestion = async (
     type: "multiple_choice" | "short_answer" | "long_answer";
     position: string;
     choices: { choice_text: string; position: number; is_correct: boolean }[];
+    minLength: string;
   }
 ) => {
   const { data, error } = await client
@@ -919,6 +921,7 @@ export const createQuizQuestion = async (
       question_hint: hint,
       question_point: Number(point),
       question_position: Number(position),
+      question_min_length: Number(minLength),
     })
     .select()
     .single();
@@ -955,6 +958,7 @@ export async function updateQuizQuestion(
     position,
     choices,
     hint,
+    minLength,
   }: {
     questionId: string;
     text: string;
@@ -967,6 +971,7 @@ export async function updateQuizQuestion(
       position: number;
       is_correct: boolean;
     }[];
+    minLength: string;
   }
 ) {
   // 문제 수정
@@ -978,6 +983,7 @@ export async function updateQuizQuestion(
       question_point: Number(point),
       question_type: type,
       question_position: Number(position),
+      question_min_length: Number(minLength),
     })
     .eq("question_id", questionId);
 

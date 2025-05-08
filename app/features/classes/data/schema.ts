@@ -435,6 +435,7 @@ export const classQuizQuestions = pgTable("class_quiz_questions", {
   question_point: integer().notNull().default(1),
   question_position: integer().default(0),
   question_hint: text(),
+  question_min_length: integer(),
 });
 
 export const classQuizChoices = pgTable("class_quiz_choices", {
@@ -464,6 +465,12 @@ export const classQuizResponses = pgTable("class_quiz_responses", {
   submitted_at: timestamp().defaultNow(),
 });
 
+export const confidenceLevelType = pgEnum("confidence_level_type", [
+  "confident", // 확실히 품
+  "unsure", // 애매하게 품
+  "unanswered", // 아예 못 품
+]);
+
 export const classQuizAnswers = pgTable("class_quiz_answers", {
   answer_id: bigint({ mode: "number" })
     .primaryKey()
@@ -479,6 +486,7 @@ export const classQuizAnswers = pgTable("class_quiz_answers", {
     { onDelete: "cascade" }
   ),
   answer_text: text(),
+  confidence_level: confidenceLevelType().notNull().default("unanswered"),
 });
 
 export const classQuizImages = pgTable("class_quiz_images", {

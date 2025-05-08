@@ -25,6 +25,7 @@ import ClassQuestionHandleButton from "./components/quiz/question/ClassQuestionH
 import { useCarouselSync } from "../hooks/useCarouselSync";
 import { useHandleDeleteEffect } from "../hooks/useHandleDeleteEffect";
 import { useSuccessAlert } from "../hooks/useSuccessAlert";
+import ClassQuestionMinLengthInput from "./components/quiz/question/ClassQuestionMinLengthInput";
 
 type QuizItem = {
   question: string;
@@ -34,6 +35,7 @@ type QuizItem = {
   question_position: number;
   questionId?: number;
   questionHint: string;
+  questionMinLength?: number;
 };
 
 type Choice = {
@@ -63,6 +65,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     | "long_answer";
   const position = formData.get("questionPosition") as string;
   const questionId = formData.get("questionId") as string;
+  const minLength = formData.get("questionMinLength") as string;
   const hint = formData.get("questionHint") as string;
   const choices: {
     choice_text: string;
@@ -106,6 +109,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       position,
       choices,
       hint,
+      minLength,
     });
     return { success: true, message: "문제 수정 완료!" };
   } else {
@@ -117,6 +121,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       position,
       choices,
       hint,
+      minLength,
     });
     return {
       success: true,
@@ -138,6 +143,7 @@ export default function ClassQuizUploadPage({
       options: q.class_quiz_choices || [],
       questionId: q.question_id,
       questionHint: q.question_hint,
+      questionMinLength: q.question_min_length ?? 0,
     }))
   );
   const [api, setApi] = useState<CarouselApi>();
@@ -169,6 +175,7 @@ export default function ClassQuizUploadPage({
       questionPoint: 1,
       options: [{ choice_text: "", is_correct: false }],
       question_position: items.length,
+      questionMinLength: 0,
     };
     setItems((prev) => [...prev, newItem]);
 
@@ -299,6 +306,18 @@ export default function ClassQuizUploadPage({
                             setItems(newItems);
                           }}
                         />
+
+                        {item.questionType === "long_answer" && (
+                          <ClassQuestionMinLengthInput
+                            value={item.questionMinLength ?? 0}
+                            onChange={(e) => {
+                              const newItems = [...items];
+                              newItems[index].questionMinLength =
+                                parseInt(e.target.value) || 0;
+                              setItems(newItems);
+                            }}
+                          />
+                        )}
 
                         <ClassQuestionMediaInput
                           onClickImage={() => {

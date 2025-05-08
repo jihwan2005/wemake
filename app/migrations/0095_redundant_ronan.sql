@@ -1,0 +1,1 @@
+ALTER TABLE "class_quiz_questions" ADD COLUMN "question_min_length" integer;

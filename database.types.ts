@@ -1170,6 +1170,7 @@ export type Database = {
           answer_id: number
           answer_text: string | null
           choice_id: number | null
+          confidence_level: Database["public"]["Enums"]["confidence_level_type"]
           question_id: number
           response_id: number
         }
@@ -1177,6 +1178,7 @@ export type Database = {
           answer_id?: never
           answer_text?: string | null
           choice_id?: number | null
+          confidence_level?: Database["public"]["Enums"]["confidence_level_type"]
           question_id: number
           response_id: number
         }
@@ -1184,6 +1186,7 @@ export type Database = {
           answer_id?: never
           answer_text?: string | null
           choice_id?: number | null
+          confidence_level?: Database["public"]["Enums"]["confidence_level_type"]
           question_id?: number
           response_id?: number
         }
@@ -1276,6 +1279,7 @@ export type Database = {
         Row: {
           question_hint: string | null
           question_id: number
+          question_min_length: number | null
           question_point: number
           question_position: number | null
           question_text: string
@@ -1285,6 +1289,7 @@ export type Database = {
         Insert: {
           question_hint?: string | null
           question_id?: never
+          question_min_length?: number | null
           question_point?: number
           question_position?: number | null
           question_text: string
@@ -1294,6 +1299,7 @@ export type Database = {
         Update: {
           question_hint?: string | null
           question_id?: never
+          question_min_length?: number | null
           question_point?: number
           question_position?: number | null
           question_text?: string
@@ -4537,6 +4543,7 @@ export type Database = {
         | "complete"
         | "complete-goal"
         | "message"
+      confidence_level_type: "confident" | "unsure" | "unanswered"
       difficulty_type: "beginner" | "intermediate" | "advanced"
       difficulty_type_old: "beginner" | "Intermediate" | "advanced"
       job_type:
@@ -4686,6 +4693,7 @@ export const Constants = {
         "complete-goal",
         "message",
       ],
+      confidence_level_type: ["confident", "unsure", "unanswered"],
       difficulty_type: ["beginner", "intermediate", "advanced"],
       difficulty_type_old: ["beginner", "Intermediate", "advanced"],
       job_type: ["full-time", "part-time", "hybrid", "freelance", "internship"],

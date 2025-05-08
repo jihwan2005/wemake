@@ -1,0 +1,2 @@
+CREATE TYPE "public"."confidence_level_type" AS ENUM('confident', 'unsure', 'unanswered');--> statement-breakpoint
+ALTER TABLE "class_quiz_answers" ADD COLUMN "confidence_level" "confidence_level_type" DEFAULT 'unanswered' NOT NULL;
