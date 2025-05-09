@@ -4105,6 +4105,7 @@ export type Database = {
             | Database["public"]["Enums"]["confidence_level_type"]
             | null
           correct_choice_text: string | null
+          dispute_text: string | null
           final_score: number | null
           is_correct: boolean | null
           is_correct_answer: boolean | null

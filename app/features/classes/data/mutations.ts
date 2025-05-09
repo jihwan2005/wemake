@@ -1074,13 +1074,41 @@ export const createClassQuizScore = async (
     reason,
   }: { answerId: string; score: string; reason: string }
 ) => {
-  const { data, error } = await client.from("class_quiz_manual_score").insert({
-    answer_id: Number(answerId),
-    score: Number(score),
-    score_reason: reason,
-  });
-  if (error) throw error;
-  return data;
+  const { data: existing, error: selectError } = await client
+    .from("class_quiz_manual_score")
+    .select("score_id")
+    .eq("answer_id", Number(answerId))
+    .maybeSingle();
+
+  if (selectError) throw selectError;
+
+  if (existing) {
+    // 기존 점수 데이터가 있으면 update
+    const { data, error } = await client
+      .from("class_quiz_manual_score")
+      .update({
+        score: Number(score),
+        score_reason: reason,
+      })
+      .eq("score_id", existing.score_id)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } else {
+    // 기존 점수 데이터가 없으면 insert
+    const { data, error } = await client
+      .from("class_quiz_manual_score")
+      .insert({
+        answer_id: Number(answerId),
+        score: Number(score),
+        score_reason: reason,
+      })
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
 };
 
 export const createClassQuizStudentDispute = async (
@@ -1091,11 +1119,40 @@ export const createClassQuizStudentDispute = async (
     userId,
   }: { answerId: string; disputeText: string; userId: string }
 ) => {
-  const { data, error } = await client.from("class_quiz_score_dispute").insert({
-    answer_id: Number(answerId),
-    dispute_text: disputeText,
-    profile_id: userId,
-  });
-  if (error) throw error;
-  return data;
+  // 먼저 기존 이의신청 여부를 확인
+  const { data: existing, error: selectError } = await client
+    .from("class_quiz_score_dispute")
+    .select("dispute_id")
+    .eq("answer_id", Number(answerId))
+    .eq("profile_id", userId)
+    .maybeSingle();
+
+  if (selectError) throw selectError;
+
+  if (existing) {
+    // 기존 이의신청이 있으면 update
+    const { data, error } = await client
+      .from("class_quiz_score_dispute")
+      .update({
+        dispute_text: disputeText,
+      })
+      .eq("dispute_id", existing.dispute_id)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } else {
+    // 없으면 insert
+    const { data, error } = await client
+      .from("class_quiz_score_dispute")
+      .insert({
+        answer_id: Number(answerId),
+        dispute_text: disputeText,
+        profile_id: userId,
+      })
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
 };

@@ -9,8 +9,11 @@ import {
   PopoverTrigger,
 } from "~/common/components/ui/popover";
 import { Textarea } from "~/common/components/ui/textarea";
-import { Form } from "react-router";
+import { Form, useActionData } from "react-router";
 import { createClassQuizStudentDispute } from "../data/mutations";
+import { useNavigation } from "react-router";
+import { LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
@@ -42,16 +45,31 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const answerId = formData.get("answerId") as string;
   const disputeText = formData.get("disputeText") as string;
+  const hadDispute = formData.get("hadDispute") === "true";
   await createClassQuizStudentDispute(client, {
     userId,
     answerId,
     disputeText,
   });
+  return {
+    success: true,
+    message: hadDispute ? "이의 신청 수정 완료!" : "이의 신청 제출 완료!",
+  };
 };
 
 export default function ClassQuizResultPage({
   loaderData,
 }: Route.ComponentProps) {
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
+  const actionData = useActionData<typeof action>();
+
+  useEffect(() => {
+    if (actionData?.message) {
+      alert(actionData.message);
+    }
+  }, [actionData]);
   return (
     <div className="space-y-20">
       <h2 className="text-xl font-bold">
@@ -83,13 +101,27 @@ export default function ClassQuizResultPage({
                         name="answerId"
                         value={result.answer_id!}
                       />
+                      <input
+                        type="hidden"
+                        name="hadDispute"
+                        value={result.dispute_text ? "true" : "false"}
+                      />
                       <Textarea
                         placeholder="이의 신청 내용 작성하기"
                         className="mb-5"
                         name="disputeText"
+                        defaultValue={result.dispute_text ?? ""}
                       />
                       <div className="flex justify-end">
-                        <Button type="submit">제출</Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {isSubmitting ? (
+                            <LoaderCircle className="animate-spin h-4 w-4" />
+                          ) : result.dispute_text ? (
+                            "수정"
+                          ) : (
+                            "제출"
+                          )}
+                        </Button>
                       </div>
                     </Form>
                   </PopoverContent>
@@ -131,7 +163,10 @@ export default function ClassQuizResultPage({
             )}
             {result.score_reason && (
               <div>
-                <span>점수 부여 이유 : {result.score_reason}</span>
+                <span>
+                  점수 부여 이유 :{" "}
+                  {result.score_reason ? result.score_reason : "미기재"}
+                </span>
               </div>
             )}
           </div>
