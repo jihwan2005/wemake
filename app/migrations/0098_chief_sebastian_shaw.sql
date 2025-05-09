@@ -1,0 +1,1 @@
+ALTER TABLE "class_quiz_manual_score" ALTER COLUMN "score" SET DATA TYPE numeric(3, 1);

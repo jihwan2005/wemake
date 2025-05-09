@@ -1280,16 +1280,19 @@ export type Database = {
           answer_id: number
           score: number
           score_id: number
+          score_reason: string | null
         }
         Insert: {
           answer_id: number
           score: number
           score_id?: never
+          score_reason?: string | null
         }
         Update: {
           answer_id?: number
           score?: number
           score_id?: never
+          score_reason?: string | null
         }
         Relationships: [
           {
@@ -1410,6 +1413,80 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "class_quizzes"
             referencedColumns: ["quiz_id"]
+          },
+        ]
+      }
+      class_quiz_score_dispute: {
+        Row: {
+          answer_id: number
+          created_at: string | null
+          dispute_id: number
+          dispute_text: string
+          profile_id: string
+        }
+        Insert: {
+          answer_id: number
+          created_at?: string | null
+          dispute_id?: never
+          dispute_text: string
+          profile_id: string
+        }
+        Update: {
+          answer_id?: number
+          created_at?: string | null
+          dispute_id?: never
+          dispute_text?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_score_dispute_answer_id_class_quiz_answers_answer_id"
+            columns: ["answer_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_answer_view"
+            referencedColumns: ["answer_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_answer_id_class_quiz_answers_answer_id"
+            columns: ["answer_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_answers"
+            referencedColumns: ["answer_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_score_dispute_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
           },
         ]
       }
@@ -4028,15 +4105,19 @@ export type Database = {
             | Database["public"]["Enums"]["confidence_level_type"]
             | null
           correct_choice_text: string | null
+          final_score: number | null
           is_correct: boolean | null
           is_correct_answer: boolean | null
+          manual_score: number | null
           profile_id: string | null
           question_id: number | null
           question_point: number | null
           question_position: number | null
+          question_text: string | null
           question_type: Database["public"]["Enums"]["question_type"] | null
           quiz_id: number | null
           response_id: number | null
+          score_reason: string | null
         }
         Relationships: [
           {
@@ -4060,6 +4141,58 @@ export type Database = {
             referencedRelation: "class_quiz_responses"
             referencedColumns: ["response_id"]
           },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_responses_quiz_id_class_quizzes_quiz_id_fk"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "class_quizzes"
+            referencedColumns: ["quiz_id"]
+          },
+        ]
+      }
+      class_quiz_written_answers_view: {
+        Row: {
+          answers: Json[] | null
+          profile_id: string | null
+          quiz_id: number | null
+          username: string | null
+        }
+        Relationships: [
           {
             foreignKeyName: "class_quiz_responses_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]

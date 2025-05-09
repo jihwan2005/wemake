@@ -636,7 +636,20 @@ export const getClassQuizResult = async (
     .from("class_quiz_answer_view")
     .select("*")
     .eq("quiz_id", Number(quizId))
-    .eq("profile_id", userId);
+    .eq("profile_id", userId)
+    .order("question_position", { ascending: true });
+  if (error) throw error;
+  return data;
+};
+
+export const getClassQuizStudentText = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_written_answers_view")
+    .select("*")
+    .eq("quiz_id", Number(quizId));
   if (error) throw error;
   return data;
 };

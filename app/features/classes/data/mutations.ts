@@ -1065,3 +1065,37 @@ export const createClassQuizAnswers = async ({
 
   if (error) throw error;
 };
+
+export const createClassQuizScore = async (
+  client: SupabaseClient<Database>,
+  {
+    answerId,
+    score,
+    reason,
+  }: { answerId: string; score: string; reason: string }
+) => {
+  const { data, error } = await client.from("class_quiz_manual_score").insert({
+    answer_id: Number(answerId),
+    score: Number(score),
+    score_reason: reason,
+  });
+  if (error) throw error;
+  return data;
+};
+
+export const createClassQuizStudentDispute = async (
+  client: SupabaseClient<Database>,
+  {
+    answerId,
+    disputeText,
+    userId,
+  }: { answerId: string; disputeText: string; userId: string }
+) => {
+  const { data, error } = await client.from("class_quiz_score_dispute").insert({
+    answer_id: Number(answerId),
+    dispute_text: disputeText,
+    profile_id: userId,
+  });
+  if (error) throw error;
+  return data;
+};

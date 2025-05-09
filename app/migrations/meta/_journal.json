@@ -687,6 +687,27 @@
       "when": 1746768472383,
       "tag": "0097_thin_tempest",
       "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1746781918200,
+      "tag": "0098_chief_sebastian_shaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "7",
+      "when": 1746784788874,
+      "tag": "0099_salty_lady_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 100,
+      "version": "7",
+      "when": 1746785917042,
+      "tag": "0100_nebulous_vulcan",
+      "breakpoints": true
     }
   ]
 }

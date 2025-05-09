@@ -2,6 +2,7 @@ import {
   bigint,
   boolean,
   date,
+  decimal,
   integer,
   pgEnum,
   pgTable,
@@ -516,5 +517,22 @@ export const classQuizManualScore = pgTable("class_quiz_manual_score", {
   answer_id: bigint({ mode: "number" })
     .references(() => classQuizAnswers.answer_id, { onDelete: "cascade" })
     .notNull(),
-  score: integer().notNull(),
+  score: decimal({ precision: 3, scale: 1 }).notNull(),
+  score_reason: text(),
+});
+
+export const classQuizScoreDispute = pgTable("class_quiz_score_dispute", {
+  dispute_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  answer_id: bigint({ mode: "number" })
+    .references(() => classQuizAnswers.answer_id, { onDelete: "cascade" })
+    .notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  dispute_text: text().notNull(), // 학생이 제출한 이의신청 내용
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
 });

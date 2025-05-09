@@ -1,0 +1,1 @@
+ALTER TABLE "class_quiz_manual_score" ADD COLUMN "score_reason" text;
