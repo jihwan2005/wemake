@@ -1014,3 +1014,54 @@ export const deleteClassQuestion = async (
   if (error) throw error;
   return data;
 };
+
+export const createClassQuizResponse = async (
+  client: SupabaseClient<Database>,
+  { quizId, userId }: { quizId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_responses")
+    .insert({
+      profile_id: userId,
+      quiz_id: Number(quizId),
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+type CreateClassQuizAnswersArgs = {
+  client: SupabaseClient<Database>;
+  responseId: number;
+  answers: Record<string, string>;
+  confidence: Record<string, string>;
+};
+
+type ConfidenceLevel = "confident" | "unsure" | "unanswered";
+
+export const createClassQuizAnswers = async ({
+  client,
+  responseId,
+  answers,
+  confidence,
+}: CreateClassQuizAnswersArgs) => {
+  const rowsToInsert = Object.entries(answers).map(([questionId, value]) => {
+    const isMultipleChoice = /^\d+$/.test(value); // 숫자면 choice_id로 간주
+
+    return {
+      response_id: responseId,
+      question_id: Number(questionId),
+      choice_id: isMultipleChoice ? Number(value) : null,
+      answer_text: isMultipleChoice ? null : value || null,
+      confidence_level: (confidence[questionId] ??
+        "unanswered") as ConfidenceLevel,
+    };
+  });
+
+  const { error } = await client
+    .from("class_quiz_answers")
+    .insert(rowsToInsert);
+
+  if (error) throw error;
+};

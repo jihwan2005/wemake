@@ -13,6 +13,7 @@ interface Props {
   isOngoing: boolean;
   onClose: () => void;
   classId: string;
+  hasSubmitted: boolean;
 }
 
 export const ClassQuizStudentContent = ({
@@ -24,6 +25,7 @@ export const ClassQuizStudentContent = ({
   isOngoing,
   onClose,
   classId,
+  hasSubmitted,
 }: Props) => {
   return (
     <div className="space-y-2">
@@ -54,7 +56,23 @@ export const ClassQuizStudentContent = ({
         </div>
       )}
 
-      {isOngoing && (
+      {isOngoing && hasSubmitted && (
+        <div className="text-center space-y-4">
+          <p className="text-lg text-blue-600 font-semibold">
+            이미 응시한 시험입니다.
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button variant="outline" onClick={onClose}>
+              닫기
+            </Button>
+            <Link to={`/classes/${classId}/quiz/${quiz.quiz_id}/result`}>
+              <Button>결과 확인하기</Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {isOngoing && !hasSubmitted && (
         <div className="text-center space-y-4">
           <p className="text-lg text-green-600 font-semibold">
             지금 퀴즈를 응시할 수 있습니다.

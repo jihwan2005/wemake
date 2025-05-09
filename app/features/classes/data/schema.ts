@@ -510,3 +510,11 @@ export const classQuizVideos = pgTable("class_quiz_videos", {
   video_url: text().notNull(),
   video_position: integer().default(0),
 });
+
+export const classQuizManualScore = pgTable("class_quiz_manual_score", {
+  score_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  answer_id: bigint({ mode: "number" })
+    .references(() => classQuizAnswers.answer_id, { onDelete: "cascade" })
+    .notNull(),
+  score: integer().notNull(),
+});

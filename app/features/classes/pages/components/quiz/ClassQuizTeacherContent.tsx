@@ -47,6 +47,11 @@ export const ClassQuizTeacherContent = ({
         </Link>
       )}
       {isEnded && <Button>삭제하기</Button>}
+      {!isBeforeStart && !isEnded && (
+        <Link to={`/classes/${classId}/quiz/${quiz.quiz_id}/score `}>
+          <Button>채점하기</Button>
+        </Link>
+      )}
     </div>
   );
 };

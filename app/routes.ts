@@ -77,6 +77,14 @@ export default [
       ":classId/quiz/:quizId/",
       "features/classes/pages/class-quiz-page.tsx"
     ),
+    route(
+      ":classId/quiz/:quizId/result",
+      "features/classes/pages/class-quiz-result-page.tsx"
+    ),
+    route(
+      ":classId/quiz/:quizId/score",
+      "features/classes/pages/class-quiz-score-page.tsx"
+    ),
     route("/my", "features/classes/pages/class-my-page.tsx"),
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),
     route(

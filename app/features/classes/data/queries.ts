@@ -628,3 +628,15 @@ export const getClassQuestionByQuizId = async (
   return data;
 };
 
+export const getClassQuizResult = async (
+  client: SupabaseClient<Database>,
+  { quizId, userId }: { quizId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_answer_view")
+    .select("*")
+    .eq("quiz_id", Number(quizId))
+    .eq("profile_id", userId);
+  if (error) throw error;
+  return data;
+};

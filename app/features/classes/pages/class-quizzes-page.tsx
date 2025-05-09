@@ -1,10 +1,10 @@
 import { Hero } from "~/common/components/hero";
 import { getClassById, getClassQuizzesByClassId } from "../data/queries";
 import type { Route } from "./+types/class-quizzes-page";
-import { makeSSRClient } from "~/supa-client";
+import { browserClient, makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { DateTime } from "luxon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -57,6 +57,23 @@ export default function ClassQuizzesPage({ loaderData }: Route.ComponentProps) {
   const isBeforeStart = startTime ? now < startTime : false;
   const isEnded = endTime ? now >= endTime : false;
   const isOngoing = !isBeforeStart && !isEnded;
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  useEffect(() => {
+    const checkSubmission = async () => {
+      if (!quiz) return;
+
+      const { data } = await browserClient
+        .from("class_quiz_responses")
+        .select("*")
+        .eq("quiz_id", quiz.quiz_id)
+        .eq("profile_id", loaderData.userId)
+        .maybeSingle();
+
+      setHasSubmitted(!!data);
+    };
+
+    checkSubmission();
+  }, [quiz]);
   return (
     <div className="space-y-20">
       <Hero title="Quiz" subtitle={`${loaderData.title}`} />
@@ -85,6 +102,7 @@ export default function ClassQuizzesPage({ loaderData }: Route.ComponentProps) {
                 isOngoing={isOngoing}
                 onClose={() => setQuiz(null)}
                 classId={loaderData.classId}
+                hasSubmitted={hasSubmitted}
               />
             </DialogContent>
           ) : (
