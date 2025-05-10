@@ -1,6 +1,9 @@
 import { makeSSRClient } from "~/supa-client";
 import type { Route } from "./+types/class-quiz-page";
-import { getClassQuestionByQuizId } from "../data/queries";
+import {
+  getClassQuestionByQuizId,
+  getClassQuizLimitTime,
+} from "../data/queries";
 import {
   Carousel,
   CarouselContent,
@@ -13,7 +16,7 @@ import {
 } from "~/common/components/ui/toggle-group";
 import { Card, CardContent } from "~/common/components/ui/card";
 import { Button } from "~/common/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import {
   Popover,
@@ -31,7 +34,8 @@ export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
   const quizId = params.quizId;
   const questions = await getClassQuestionByQuizId(client, { quizId });
-  return { questions };
+  const limitTime = await getClassQuizLimitTime(client, { quizId });
+  return { questions, limitTime };
 };
 
 export const action = async ({ request, params }: Route.ActionArgs) => {
@@ -101,9 +105,38 @@ export default function ClassQuizPage({ loaderData }: Route.ComponentProps) {
       [questionId]: value,
     }));
   };
+  const timeLimit = loaderData.limitTime.time_limit_minutes! * 60; // 초 단위
+  const [timeLeft, setTimeLeft] = useState(timeLimit);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      alert(
+        "제한 시간이 모두 소요되어 시험이 자동 제출됩니다. 수고하셨습니다!"
+      );
+      formRef.current?.submit();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
   return (
-    <div className="space-y-20 flex justify-center w-full">
+    <div className="space-y-20 flex flex-col items-center justify-center w-full">
+      <div className="text-xl font-bold">남은 시간: {formatTime(timeLeft)}</div>
+
       <div className="w-1/2 bg-amber-100 h-[850px] flex flex-col items-center justify-center gap-3">
         <div className="flex gap-2 flex-wrap justify-center">
           {loaderData.questions.map((question, index) => {
@@ -136,7 +169,7 @@ export default function ClassQuizPage({ loaderData }: Route.ComponentProps) {
         </div>
 
         {/* Form 컴포넌트에 method='post'만 남기고, onChange는 그대로 처리 */}
-        <Form method="post" className="w-7/8">
+        <Form method="post" className="w-7/8" ref={formRef}>
           <Carousel setApi={setApi}>
             <CarouselContent>
               {loaderData.questions.map((question) => {

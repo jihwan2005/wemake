@@ -70,6 +70,10 @@ export default [
       "features/classes/pages/class-quiz-upload-page.tsx"
     ),
     route(
+      ":classId/quiz/:quizId/insight",
+      "features/classes/pages/class-quiz-insight-page.tsx"
+    ),
+    route(
       ":classId/quiz/:quizId/delete",
       "features/classes/pages/action/quiz/class-quiz-delete-page.tsx"
     ),

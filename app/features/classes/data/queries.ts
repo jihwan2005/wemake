@@ -653,3 +653,53 @@ export const getClassQuizStudentText = async (
   if (error) throw error;
   return data;
 };
+
+export const getClassQuizLimitTime = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quizzes")
+    .select("time_limit_minutes")
+    .eq("quiz_id", Number(quizId))
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const getClassQuizInsight = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_question_stats")
+    .select("*")
+    .eq("quiz_id", Number(quizId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassQuizDescriptiveInsight = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_descriptive_question_stats")
+    .select("*")
+    .eq("quiz_id", Number(quizId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassQuizStudentScore = async (
+  client: SupabaseClient<Database>,
+  { quizId }: { quizId: string }
+) => {
+  const { data, error } = await client
+    .from("class_quiz_student_scores")
+    .select("*")
+    .eq("quiz_id", Number(quizId))
+    .order("total_score", { ascending: false });
+  if (error) throw error;
+  return data;
+};

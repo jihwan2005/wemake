@@ -46,7 +46,14 @@ export const ClassQuizTeacherContent = ({
           <Button>문제 출제 및 수정</Button>
         </Link>
       )}
-      {isEnded && <Button>삭제하기</Button>}
+      {isEnded && (
+        <div>
+          <Button className="mr-3">삭제하기</Button>
+          <Link to={`/classes/${classId}/quiz/${quiz.quiz_id}/insight`}>
+            <Button>분석하기</Button>
+          </Link>
+        </div>
+      )}
       {!isBeforeStart && !isEnded && (
         <Link to={`/classes/${classId}/quiz/${quiz.quiz_id}/score`}>
           <Button>채점하기</Button>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -99,6 +99,14 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       is_correct: !!isCorrectMap[index],
     });
   });
+
+  const correctChoiceExists = choices.some((choice) => choice.is_correct);
+  if (type === "multiple_choice" && !correctChoiceExists) {
+    return {
+      success: false,
+      message: "선지에서 정답을 지정해주세요!",
+    };
+  }
 
   if (questionId) {
     await updateQuizQuestion(client, {
@@ -217,6 +225,12 @@ export default function ClassQuizUploadPage({
       }, 0);
     }
   };
+
+  useEffect(() => {
+    if (actionData?.message) {
+      alert(actionData.message);
+    }
+  }, [actionData]);
 
   return (
     <div className="space-y-20 flex justify-center w-full">
