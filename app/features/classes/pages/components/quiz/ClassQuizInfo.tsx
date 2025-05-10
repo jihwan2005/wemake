@@ -3,13 +3,17 @@ import { Input } from "~/common/components/ui/input";
 import { Textarea } from "~/common/components/ui/textarea";
 import { Label } from "~/common/components/ui/label";
 import { Button } from "~/common/components/ui/button";
-import DatePicker from "react-datepicker";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from "~/common/components/ui/dialog";
 import { Upload } from "lucide-react";
+import React, { Suspense } from "react";
+
+// 클라이언트 사이드에서만 react-datepicker 불러오기
+const DatePicker = React.lazy(() => import("react-datepicker"));
+import "react-datepicker/dist/react-datepicker.css";
 
 interface ClassQuizInfoProps {
   startDate: Date | null;
@@ -29,6 +33,8 @@ export function ClassQuizInfo({
   setStartDate,
   setEndDate,
 }: ClassQuizInfoProps) {
+  const isClient = typeof window !== "undefined";
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -49,40 +55,48 @@ export function ClassQuizInfo({
                 <Label>유의 사항, 문제 수, 시험 범위 ...</Label>
                 <Textarea name="description" />
               </div>
-              <div className="flex gap-4">
-                <div className="flex flex-col gap-2">
-                  <span>시작일</span>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    showTimeSelect
-                    minDate={new Date()}
-                    dateFormat="yyyy-MM-dd HH:mm"
-                    timeIntervals={1}
-                    showIcon
-                    name="startDate"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span>종료일</span>
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    showTimeSelect
-                    dateFormat="yyyy-MM-dd HH:mm"
-                    minDate={startDate || new Date()}
-                    minTime={
-                      endDate && startDate && isSameDay(endDate, startDate)
-                        ? startDate
-                        : new Date(0, 0, 0, 0, 0)
-                    }
-                    maxTime={new Date(0, 0, 0, 23, 59)}
-                    timeIntervals={1}
-                    showIcon
-                    name="endDate"
-                  />
-                </div>
-              </div>
+
+              {isClient && (
+                <Suspense
+                  fallback={<div>날짜 선택 컴포넌트를 불러오는 중...</div>}
+                >
+                  <div className="flex gap-4">
+                    <div className="flex flex-col gap-2">
+                      <span>시작일</span>
+                      <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        showTimeSelect
+                        minDate={new Date()}
+                        dateFormat="yyyy-MM-dd HH:mm"
+                        timeIntervals={1}
+                        showIcon
+                        name="startDate"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <span>종료일</span>
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        showTimeSelect
+                        dateFormat="yyyy-MM-dd HH:mm"
+                        minDate={startDate || new Date()}
+                        minTime={
+                          endDate && startDate && isSameDay(endDate, startDate)
+                            ? startDate
+                            : new Date(0, 0, 0, 0, 0)
+                        }
+                        maxTime={new Date(0, 0, 0, 23, 59)}
+                        timeIntervals={1}
+                        showIcon
+                        name="endDate"
+                      />
+                    </div>
+                  </div>
+                </Suspense>
+              )}
+
               <div>
                 <span>제한 시간(분)</span>
                 <Input name="limitTime" />
