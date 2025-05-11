@@ -1,6 +1,5 @@
 import { Hero } from "~/common/components/hero";
-import { getClassById, getClassQuizzesByClassId } from "../data/queries";
-import type { Route } from "./+types/class-quizzes-page";
+
 import { browserClient, makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { DateTime } from "luxon";
@@ -11,11 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/common/components/ui/dialog";
-import { createClassQuiz } from "../data/mutations";
+
 import "react-datepicker/dist/react-datepicker.css";
-import { ClassQuizzesBoard } from "./components/quiz/ClassQuizzesBoard";
-import { ClassQuizStudentContent } from "./components/quiz/ClassQuizStudentContent";
-import { ClassQuizTeacherContent } from "./components/quiz/ClassQuizTeacherContent";
+
+import {
+  getClassById,
+  getClassQuizzesByClassId,
+} from "~/features/classes/data/queries";
+import { createClassQuiz } from "~/features/classes/data/mutations";
+import { ClassQuizzesBoard } from "../components/quiz/ClassQuizzesBoard";
+import { ClassQuizStudentContent } from "../components/quiz/ClassQuizStudentContent";
+import { ClassQuizTeacherContent } from "../components/quiz/ClassQuizTeacherContent";
+import type { Route } from "./+types/class-quizzes-page";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
@@ -121,4 +127,3 @@ export default function ClassQuizzesPage({ loaderData }: Route.ComponentProps) {
     </div>
   );
 }
-

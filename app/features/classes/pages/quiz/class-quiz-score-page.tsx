@@ -1,6 +1,5 @@
 import { makeSSRClient } from "~/supa-client";
-import { getClassQuizStudentText } from "../data/queries";
-import type { Route } from "./+types/class-quiz-score-page";
+
 import { useEffect, useState } from "react";
 import { Input } from "~/common/components/ui/input";
 import { Button } from "~/common/components/ui/button";
@@ -10,9 +9,12 @@ import {
   CarouselItem,
 } from "~/common/components/ui/carousel";
 import { Form, useActionData } from "react-router";
-import { createClassQuizScore } from "../data/mutations";
+
 import { useNavigation } from "react-router";
 import { LoaderCircle } from "lucide-react";
+import type { Route } from "./+types/class-quiz-score-page";
+import { createClassQuizScore } from "~/features/classes/data/mutations";
+import { getClassQuizStudentText } from "~/features/classes/data/queries";
 
 type Answer = {
   answer_id: number;

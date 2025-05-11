@@ -1156,3 +1156,20 @@ export const createClassQuizStudentDispute = async (
     return data;
   }
 };
+
+export const createClassMindMap = async (
+  client: SupabaseClient<Database>,
+  { classId, userId, title }: { classId: string; userId: string; title: string }
+) => {
+  const { data, error } = await client
+    .from("class_mindmap")
+    .insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+      mindmap_title: title,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};

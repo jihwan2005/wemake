@@ -829,6 +829,80 @@ export type Database = {
         }
         Relationships: []
       }
+      class_mindmap: {
+        Row: {
+          class_post_id: number
+          created_at: string | null
+          mindmap_id: number
+          mindmap_title: string
+          profile_id: string
+        }
+        Insert: {
+          class_post_id: number
+          created_at?: string | null
+          mindmap_id?: never
+          mindmap_title: string
+          profile_id: string
+        }
+        Update: {
+          class_post_id?: number
+          created_at?: string | null
+          mindmap_id?: never
+          mindmap_title?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_mindmap_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_class_post_id_class_posts_class_post_id_fk"
+            columns: ["class_post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["class_post_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "checked_goal_list_view"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "class_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_list_view"
+            referencedColumns: ["author_id"]
+          },
+          {
+            foreignKeyName: "class_mindmap_profile_id_profiles_profile_id_fk"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "video_replies_list_view"
+            referencedColumns: ["author_id"]
+          },
+        ]
+      }
       class_notifications: {
         Row: {
           class_post_id: number | null
@@ -1191,6 +1265,13 @@ export type Database = {
           response_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "class_quiz_answers_choice_id_class_quiz_choices_choice_id_fk"
+            columns: ["choice_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_choice_stats"
+            referencedColumns: ["choice_id"]
+          },
           {
             foreignKeyName: "class_quiz_answers_choice_id_class_quiz_choices_choice_id_fk"
             columns: ["choice_id"]
@@ -4153,6 +4234,13 @@ export type Database = {
             foreignKeyName: "class_quiz_answers_choice_id_class_quiz_choices_choice_id_fk"
             columns: ["choice_id"]
             isOneToOne: false
+            referencedRelation: "class_quiz_choice_stats"
+            referencedColumns: ["choice_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_answers_choice_id_class_quiz_choices_choice_id_fk"
+            columns: ["choice_id"]
+            isOneToOne: false
             referencedRelation: "class_quiz_choices"
             referencedColumns: ["choice_id"]
           },
@@ -4218,6 +4306,31 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "class_quizzes"
             referencedColumns: ["quiz_id"]
+          },
+        ]
+      }
+      class_quiz_choice_stats: {
+        Row: {
+          choice_id: number | null
+          choice_position: number | null
+          choice_text: string | null
+          question_id: number | null
+          selected_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_quiz_choices_question_id_class_quiz_questions_question_id"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_descriptive_question_stats"
+            referencedColumns: ["question_id"]
+          },
+          {
+            foreignKeyName: "class_quiz_choices_question_id_class_quiz_questions_question_id"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "class_quiz_questions"
+            referencedColumns: ["question_id"]
           },
         ]
       }

@@ -4,7 +4,7 @@ import {
   getClassQuizDescriptiveInsight,
   getClassQuizInsight,
   getClassQuizStudentScore,
-} from "../data/queries";
+} from "~/features/classes/data/queries";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);

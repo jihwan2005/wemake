@@ -1,18 +1,20 @@
 import { makeSSRClient } from "~/supa-client";
+
+import { SidebarInset, SidebarProvider } from "~/common/components/ui/sidebar";
+
+import { useFetcher } from "react-router";
+import LessonSidebar from "../components/course-sidebar";
+import Header from "../components/my/header";
 import type { Route } from "./+types/lesson-page";
+import { getLoggedInUserId } from "~/features/users/queries";
 import {
   getChapterTitleByLessonId,
   getChapterWithLessons,
   getClassById,
   getCourseList,
   getLessonById,
-} from "../data/queries";
-import { SidebarInset, SidebarProvider } from "~/common/components/ui/sidebar";
-import LessonSidebar from "./components/course-sidebar";
-import { useFetcher } from "react-router";
-import Header from "./components/my/header";
-import { calculateProgress } from "../utils/progress";
-import { getLoggedInUserId } from "~/features/users/queries";
+} from "~/features/classes/data/queries";
+import { calculateProgress } from "~/features/classes/utils/progress";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);

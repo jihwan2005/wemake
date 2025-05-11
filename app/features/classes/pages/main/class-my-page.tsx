@@ -1,18 +1,18 @@
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-my-page";
+
 import { getLoggedInUserId } from "~/features/users/queries";
 import {
   getCertificateByUserId,
   getChapterWithLessons,
   getMyClasses,
   getMyMakingClasses,
-} from "../data/queries";
+} from "../../data/queries";
 import { Hero } from "~/common/components/hero";
-import MyEnrollingClass from "./components/my/my-enrolling-class";
-import MyMakingClass from "./components/my/my-making-class";
-import { calculateProgress } from "../utils/progress";
-import MyInventoryDialog from "./components/my/my-inventory-dialog";
-
+import MyEnrollingClass from "../components/my/my-enrolling-class";
+import MyMakingClass from "../components/my/my-making-class";
+import { calculateProgress } from "../../utils/progress";
+import MyInventoryDialog from "../components/my/my-inventory-dialog";
+import type { Route } from "./+types/class-my-page";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { client } = makeSSRClient(request);

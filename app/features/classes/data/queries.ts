@@ -703,3 +703,16 @@ export const getClassQuizStudentScore = async (
   if (error) throw error;
   return data;
 };
+
+export const getClassMindMaps = async (
+  client: SupabaseClient<Database>,
+  { classId, userId }: { classId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_mindmap")
+    .select("*")
+    .eq("class_post_id", Number(classId))
+    .eq("profile_id", userId);
+  if (error) throw error;
+  return data;
+};

@@ -1,9 +1,5 @@
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-quiz-page";
-import {
-  getClassQuestionByQuizId,
-  getClassQuizLimitTime,
-} from "../data/queries";
+
 import {
   Carousel,
   CarouselContent,
@@ -24,11 +20,17 @@ import {
   PopoverTrigger,
 } from "~/common/components/ui/popover";
 import { Form, redirect } from "react-router";
+
+import { getLoggedInUserId } from "~/features/users/queries";
+import type { Route } from "./+types/class-quiz-page";
+import {
+  getClassQuestionByQuizId,
+  getClassQuizLimitTime,
+} from "~/features/classes/data/queries";
 import {
   createClassQuizAnswers,
   createClassQuizResponse,
-} from "../data/mutations";
-import { getLoggedInUserId } from "~/features/users/queries";
+} from "~/features/classes/data/mutations";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
@@ -313,4 +315,3 @@ export default function ClassQuizPage({ loaderData }: Route.ComponentProps) {
     </div>
   );
 }
-

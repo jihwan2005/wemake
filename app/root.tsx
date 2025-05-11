@@ -67,6 +67,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const isLoggedIn = loaderData.user !== null;
   const isLessonPage = /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
+  const isMindmapPage = /^\/classes\/[^/]+\/mindmap$/.test(pathname);
   const hideNavigation =
     pathname.includes("/auth") ||
     /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
@@ -74,7 +75,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
     <Provider store={store}>
       <div
         className={
-          pathname.includes("/auth/") || isLessonPage
+          pathname.includes("/auth/") || isLessonPage || isMindmapPage
             ? ""
             : "py-28 px-5 md:px-20"
         }

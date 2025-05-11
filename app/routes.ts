@@ -57,21 +57,32 @@ export default [
     route("/:ideaId", "features/ideas/pages/idea-page.tsx"),
   ]),
   ...prefix("/classes", [
-    index("features/classes/pages/classes-page.tsx"),
-    route(":classId", "features/classes/pages/class-page.tsx"),
-    route(":classId/lobby", "features/classes/pages/class-lobby-page.tsx"),
-    route(":classId/quiz", "features/classes/pages/class-quizzes-page.tsx"),
+    index("features/classes/pages/main/classes-page.tsx"),
+    route(":classId", "features/classes/pages/main/class-page.tsx"),
+    route(":classId/lobby", "features/classes/pages/main/class-lobby-page.tsx"),
+    route(
+      ":classId/quiz",
+      "features/classes/pages/quiz/class-quizzes-page.tsx"
+    ),
+    route(
+      ":classId/mindmaps",
+      "features/classes/pages/mindmap/class-mindmaps-page.tsx"
+    ),
+    route(
+      ":classId/mindmaps/:mindmapId",
+      "features/classes/pages/mindmap/class-mindmap-page.tsx"
+    ),
     route(
       ":classId/quiz/public",
       "features/classes/pages/action/quiz/class-quizzes-public-page.tsx"
     ),
     route(
       ":classId/quiz/:quizId/upload",
-      "features/classes/pages/class-quiz-upload-page.tsx"
+      "features/classes/pages/quiz/class-quiz-upload-page.tsx"
     ),
     route(
       ":classId/quiz/:quizId/insight",
-      "features/classes/pages/class-quiz-insight-page.tsx"
+      "features/classes/pages/quiz/class-quiz-insight-page.tsx"
     ),
     route(
       ":classId/quiz/:quizId/delete",
@@ -79,17 +90,17 @@ export default [
     ),
     route(
       ":classId/quiz/:quizId/",
-      "features/classes/pages/class-quiz-page.tsx"
+      "features/classes/pages/quiz/class-quiz-page.tsx"
     ),
     route(
       ":classId/quiz/:quizId/result",
-      "features/classes/pages/class-quiz-result-page.tsx"
+      "features/classes/pages/quiz/class-quiz-result-page.tsx"
     ),
     route(
       ":classId/quiz/:quizId/score",
-      "features/classes/pages/class-quiz-score-page.tsx"
+      "features/classes/pages/quiz/class-quiz-score-page.tsx"
     ),
-    route("/my", "features/classes/pages/class-my-page.tsx"),
+    route("/my", "features/classes/pages/main/class-my-page.tsx"),
     route("/keyword", "features/classes/pages/action/keyword-page.tsx"),
     route(
       "/:notificationId/see",
@@ -101,7 +112,7 @@ export default [
     ),
     route(
       ":classId/lesson/:lessonId",
-      "features/classes/pages/lesson-page.tsx"
+      "features/classes/pages/lesson/lesson-page.tsx"
     ),
     route(
       ":classId/send-message",
@@ -141,14 +152,14 @@ export default [
     ),
     layout("features/classes/layouts/class-messages-layout.tsx", [
       ...prefix("/messages", [
-        index("features/classes/pages/class-messages-page.tsx"),
+        index("features/classes/pages/message/class-messages-page.tsx"),
         route(
           "/deliver",
           "features/classes/pages/action/message/class-message-deliver-page.tsx"
         ),
         route(
           "/:classMessageRoomId",
-          "features/classes/pages/class-message-page.tsx"
+          "features/classes/pages/message/class-message-page.tsx"
         ),
         route(
           "/:classMessageRoomId/delete",

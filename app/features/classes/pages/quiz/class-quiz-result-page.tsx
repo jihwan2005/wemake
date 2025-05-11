@@ -1,6 +1,5 @@
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-quiz-result-page";
-import { getClassQuizResult } from "../data/queries";
+
 import { getLoggedInUserId } from "~/features/users/queries";
 import { Button } from "~/common/components/ui/button";
 import {
@@ -10,10 +9,13 @@ import {
 } from "~/common/components/ui/popover";
 import { Textarea } from "~/common/components/ui/textarea";
 import { Form, useActionData } from "react-router";
-import { createClassQuizStudentDispute } from "../data/mutations";
+
 import { useNavigation } from "react-router";
 import { LoaderCircle } from "lucide-react";
 import { useEffect } from "react";
+import type { Route } from "./+types/class-quiz-result-page";
+import { getClassQuizResult } from "~/features/classes/data/queries";
+import { createClassQuizStudentDispute } from "~/features/classes/data/mutations";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);

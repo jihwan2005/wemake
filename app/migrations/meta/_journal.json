@@ -708,6 +708,13 @@
       "when": 1746785917042,
       "tag": "0100_nebulous_vulcan",
       "breakpoints": true
+    },
+    {
+      "idx": 101,
+      "version": "7",
+      "when": 1746939237321,
+      "tag": "0101_giant_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }

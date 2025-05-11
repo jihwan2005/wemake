@@ -536,3 +536,21 @@ export const classQuizScoreDispute = pgTable("class_quiz_score_dispute", {
   dispute_text: text().notNull(), // 학생이 제출한 이의신청 내용
   created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
+
+export const classMindMap = pgTable("class_mindmap", {
+  mindmap_id: bigint({ mode: "number" })
+    .primaryKey()
+    .generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" })
+    .notNull()
+    .references(() => classPosts.class_post_id, {
+      onDelete: "cascade",
+    }),
+  mindmap_title: text().notNull(),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+});

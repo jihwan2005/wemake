@@ -3,23 +3,24 @@ import {
   createHashtagIfNotExists,
   createShowcaseImage,
   linkHashtagToClass,
-} from "../data/mutations";
+} from "../../data/mutations";
 import { data } from "react-router";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
-import type { Route } from "./+types/classes-page";
+
 import { Hero } from "~/common/components/hero";
-import { getClasses, getKeywordRanking } from "../data/queries";
+import { getClasses, getKeywordRanking } from "../../data/queries";
 import { Link } from "react-router";
 import { z } from "zod";
-import CreateClassDialog from "../components/class/create-class-dialog";
-import KeyWordSearch from "../components/keyword/keword-search";
+import CreateClassDialog from "../../components/class/create-class-dialog";
+import KeyWordSearch from "../../components/keyword/keword-search";
 import { Button } from "~/common/components/ui/button";
 import { Folder } from "lucide-react";
 import { useState } from "react";
 import * as motion from "motion/react-client";
 import { AnimatePresence } from "motion/react";
-import ClassCard from "../components/class/class-card";
+import ClassCard from "../../components/class/class-card";
+import type { Route } from "./+types/classes-page";
 
 function parseHashtags(input: string): string[] {
   return input

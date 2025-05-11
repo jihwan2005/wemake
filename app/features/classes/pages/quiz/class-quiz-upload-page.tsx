@@ -10,22 +10,25 @@ import { Button } from "~/common/components/ui/button";
 import { Plus } from "lucide-react";
 import { Form, useFetcher, useNavigation } from "react-router";
 import { makeSSRClient } from "~/supa-client";
-import type { Route } from "./+types/class-quiz-upload-page";
-import { createQuizQuestion, updateQuizQuestion } from "../data/mutations";
-import { getClassQuestionByQuizId } from "../data/queries";
-import ClassQuestionTypeSelect from "./components/quiz/question/ClassQuestionTypeSelect";
-import ClassQuestionPointInput from "./components/quiz/question/ClassQuestionPointInput";
-import ClassQuestionTextTextArea from "./components/quiz/question/ClassQuestionTextTextArea";
-import ClassQuestionChoiceInput from "./components/quiz/question/ClassQuestionChoiceInput";
-import ClassQuestionMediaInput from "./components/quiz/question/ClassQuestionMediaInput";
-import ClassQuestionHintInput from "./components/quiz/question/ClassQuestionHintInput";
+
 import { useActionData } from "react-router";
-import ClassQuestionPositionInput from "./components/quiz/question/ClassQuestionPositionInput";
-import ClassQuestionHandleButton from "./components/quiz/question/ClassQuestionHandleButton";
-import { useCarouselSync } from "../hooks/useCarouselSync";
-import { useHandleDeleteEffect } from "../hooks/useHandleDeleteEffect";
-import { useSuccessAlert } from "../hooks/useSuccessAlert";
-import ClassQuestionMinLengthInput from "./components/quiz/question/ClassQuestionMinLengthInput";
+import type { Route } from "./+types/class-quiz-upload-page";
+import {
+  createQuizQuestion,
+  updateQuizQuestion,
+} from "~/features/classes/data/mutations";
+import { useCarouselSync } from "~/features/classes/hooks/useCarouselSync";
+import { useHandleDeleteEffect } from "~/features/classes/hooks/useHandleDeleteEffect";
+import { useSuccessAlert } from "~/features/classes/hooks/useSuccessAlert";
+import ClassQuestionHandleButton from "../components/quiz/question/ClassQuestionHandleButton";
+import ClassQuestionTypeSelect from "../components/quiz/question/ClassQuestionTypeSelect";
+import ClassQuestionPositionInput from "../components/quiz/question/ClassQuestionPositionInput";
+import ClassQuestionPointInput from "../components/quiz/question/ClassQuestionPointInput";
+import ClassQuestionTextTextArea from "../components/quiz/question/ClassQuestionTextTextArea";
+import ClassQuestionMediaInput from "../components/quiz/question/ClassQuestionMediaInput";
+import ClassQuestionHintInput from "../components/quiz/question/ClassQuestionHintInput";
+import ClassQuestionChoiceInput from "../components/quiz/question/ClassQuestionChoiceInput";
+import ClassQuestionMinLengthInput from "../components/quiz/question/ClassQuestionMinLengthInput";
 
 type QuizItem = {
   question: string;

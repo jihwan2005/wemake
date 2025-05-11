@@ -1,4 +1,3 @@
-import type { Route } from "./+types/class-page";
 import { makeSSRClient } from "~/supa-client";
 import {
   getChapterWithLessons,
@@ -14,7 +13,7 @@ import {
   getUserAttendance,
   getUserEmail,
   getUserReview,
-} from "../data/queries";
+} from "../../data/queries";
 import { Hero } from "~/common/components/hero";
 import { useState } from "react";
 import { Link, redirect } from "react-router";
@@ -36,22 +35,23 @@ import {
   updateClassNotify,
   updateGoal,
   updateLesson,
-} from "../data/mutations";
-import { updateClassHashtags } from "../data/mutations";
+} from "../../data/mutations";
+import { updateClassHashtags } from "../../data/mutations";
 import AuthorInfoCard from "~/features/classes/components/etc/author-info-card";
-import ClassCourse from "../components/class/class-course";
-import ClassActionButtons from "../components/class/class-action-buttons";
-import ClassCheckList from "../components/class/class-check-list";
-import EnrollClassDialog from "../components/class/enroll-class-dialog";
-import UpdateClassDialog from "../components/class/update-class-dialog";
-import DeleteClassDialog from "../components/class/delete-class-dialog";
-import CreateChapterDialog from "../components/chapter/create-chapter-dialog";
-import ClassAttendanceDialog from "../components/class/class-attendance-dialog";
-import ClassNotificationDialog from "../components/class/class-notification-dialog";
-import BookMarkedLessonsDropdownMenu from "../components/lesson/bookmarked-lessons-dropdownmenu";
-import ClassMyStudentsDialog from "../components/class/class-my-students-dialog";
+import ClassCourse from "../../components/class/class-course";
+import ClassActionButtons from "../../components/class/class-action-buttons";
+import ClassCheckList from "../../components/class/class-check-list";
+import EnrollClassDialog from "../../components/class/enroll-class-dialog";
+import UpdateClassDialog from "../../components/class/update-class-dialog";
+import DeleteClassDialog from "../../components/class/delete-class-dialog";
+import CreateChapterDialog from "../../components/chapter/create-chapter-dialog";
+import ClassAttendanceDialog from "../../components/class/class-attendance-dialog";
+import ClassNotificationDialog from "../../components/class/class-notification-dialog";
+import BookMarkedLessonsDropdownMenu from "../../components/lesson/bookmarked-lessons-dropdownmenu";
+import ClassMyStudentsDialog from "../../components/class/class-my-students-dialog";
 import { Button } from "~/common/components/ui/button";
-import { FileQuestion, MessageSquare } from "lucide-react";
+import { FileQuestion, MessageSquare, Share2 } from "lucide-react";
+import type { Route } from "./+types/class-page";
 
 function parseHashtags(input: string): string[] {
   return input
@@ -387,6 +387,11 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           </Button>
         </Link>
       ) : null}
+      <Link to={`/classes/${loaderData.classId}/mindmaps`}>
+        <Button variant="outline">
+          <Share2 className="size-4" />
+        </Button>
+      </Link>
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard
