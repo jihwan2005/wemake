@@ -1,12 +1,8 @@
-import { BaseEdge, getStraightPath } from "@xyflow/react";
+import { BaseEdge, type EdgeProps, getStraightPath } from "@xyflow/react";
 
-export default function CustomEdge({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-}: any) {
+function MindMapEdge(props: EdgeProps) {
+  const { sourceX, sourceY, targetX, targetY } = props;
+
   const [edgePath] = getStraightPath({
     sourceX,
     sourceY,
@@ -14,9 +10,7 @@ export default function CustomEdge({
     targetY,
   });
 
-  return (
-    <>
-      <BaseEdge id={id} path={edgePath} />
-    </>
-  );
+  return <BaseEdge path={edgePath} {...props} />;
 }
+
+export default MindMapEdge;
