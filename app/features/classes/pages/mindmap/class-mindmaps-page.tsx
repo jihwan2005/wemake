@@ -16,6 +16,11 @@ import { getLoggedInUserId } from "~/features/users/queries";
 import { getClassMindMaps } from "../../data/queries";
 import { Form, Link, redirect } from "react-router";
 import { createClassMindMap } from "../../data/mutations";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/common/components/ui/popover";
 
 export const loader = async ({ request, params }: Route.LoaderArgs) => {
   const { client } = await makeSSRClient(request);
@@ -78,17 +83,24 @@ export default function ClassMindMapsPage({
           </Dialog>
 
           {loaderData.mindmaps.map((mindmap) => (
-            <Link
-              to={`/classes/${loaderData.classId}/mindmaps/${mindmap.mindmap_id}`}
-            >
-              <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-2">
+              <Link
+                to={`/classes/${loaderData.classId}/mindmaps/${mindmap.mindmap_id}`}
+              >
                 <div
                   key={mindmap.mindmap_id}
                   className="w-[180px] h-[120px] border rounded-md p-4 flex items-center justify-center cursor-pointer"
                 />
-                <span>{mindmap.mindmap_title}</span>
-              </div>
-            </Link>
+              </Link>
+              <Popover>
+                <PopoverTrigger>
+                  <span className="cursor-pointer hover:underline transition-all">
+                    {mindmap.mindmap_title}
+                  </span>
+                </PopoverTrigger>
+                <PopoverContent></PopoverContent>
+              </Popover>
+            </div>
           ))}
         </div>
       </div>
