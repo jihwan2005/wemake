@@ -29,6 +29,7 @@ import ClassQuestionMediaInput from "../components/quiz/question/ClassQuestionMe
 import ClassQuestionHintInput from "../components/quiz/question/ClassQuestionHintInput";
 import ClassQuestionChoiceInput from "../components/quiz/question/ClassQuestionChoiceInput";
 import ClassQuestionMinLengthInput from "../components/quiz/question/ClassQuestionMinLengthInput";
+import { getClassQuestionByQuizId } from "../../data/queries";
 
 type QuizItem = {
   question: string;

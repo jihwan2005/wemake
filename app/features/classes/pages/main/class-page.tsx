@@ -50,7 +50,7 @@ import ClassNotificationDialog from "../../components/class/class-notification-d
 import BookMarkedLessonsDropdownMenu from "../../components/lesson/bookmarked-lessons-dropdownmenu";
 import ClassMyStudentsDialog from "../../components/class/class-my-students-dialog";
 import { Button } from "~/common/components/ui/button";
-import { FileQuestion, MessageSquare, Share2 } from "lucide-react";
+import { BookText, FileQuestion, MessageSquare, Share2 } from "lucide-react";
 import type { Route } from "./+types/class-page";
 
 function parseHashtags(input: string): string[] {
@@ -371,27 +371,35 @@ export default function ClassPage({ loaderData }: Route.ComponentProps) {
           />
         ) : null}
       </div>
-      <ClassMyStudentsDialog
-        students={loaderData.myStudents}
-        classId={loaderData.classId}
-      />
-      <Link to={`/classes/messages`}>
-        <Button variant="outline">
-          <MessageSquare className="size-4" />
-        </Button>
-      </Link>
-      {loaderData.cls.is_enrolled || loaderData.cls.author_id ? (
-        <Link to={`/classes/${loaderData.classId}/quiz`}>
+      <div className="flex gap-2 items-center">
+        <ClassMyStudentsDialog
+          students={loaderData.myStudents}
+          classId={loaderData.classId}
+        />
+        <Link to={`/classes/messages`}>
           <Button variant="outline">
-            <FileQuestion className="size-4" />
+            <MessageSquare className="size-4" />
           </Button>
         </Link>
-      ) : null}
-      <Link to={`/classes/${loaderData.classId}/mindmaps`}>
-        <Button variant="outline">
-          <Share2 className="size-4" />
-        </Button>
-      </Link>
+        {loaderData.cls.is_enrolled || loaderData.cls.author_id ? (
+          <Link to={`/classes/${loaderData.classId}/quiz`}>
+            <Button variant="outline">
+              <FileQuestion className="size-4" />
+            </Button>
+          </Link>
+        ) : null}
+        <Link to={`/classes/${loaderData.classId}/mindmaps`}>
+          <Button variant="outline">
+            <Share2 className="size-4" />
+          </Button>
+        </Link>
+        <Link to={`/classes/${loaderData.classId}/books`}>
+          <Button variant="outline">
+            <BookText className="size-4" />
+          </Button>
+        </Link>
+      </div>
+
       <div className="grid grid-cols-4 gap-4 w-full items-start">
         <div className="col-span-1 sticky top-0 self-start ml-[48.25px]">
           <AuthorInfoCard

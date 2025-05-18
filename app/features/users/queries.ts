@@ -1,4 +1,3 @@
-import { productListSelect } from "../products/queries";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "~/supa-client";
 import { redirect } from "react-router";
@@ -60,7 +59,6 @@ export const getUserProducts = async (
     .from("products")
     .select(
       `
-        ${productListSelect},
         profiles!products_to_profiles!inner (
             profile_id
         )

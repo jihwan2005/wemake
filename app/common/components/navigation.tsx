@@ -136,46 +136,6 @@ const menus = [
     name: "Class",
     to: "/classes",
   },
-  {
-    name: "IdeasGPT",
-    to: "/ideas",
-  },
-  {
-    name: "Teams",
-    to: "/teams",
-    items: [
-      {
-        name: "All Teams",
-        description: "See all teams in our community",
-        to: "/teams",
-      },
-      {
-        name: "Create a Team",
-        description: "Create a team in our community",
-        to: "/teams/create",
-      },
-    ],
-  },
-  {
-    name: "Feedback",
-    to: "/feedback",
-    items: [
-      {
-        name: "All Feedbacks",
-        description: "See all Feedback",
-        to: "/feedback",
-      },
-      {
-        name: "Submit a Feedback",
-        description: "Submit a feedback in our community",
-        to: "/feedback/submit",
-      },
-    ],
-  },
-  {
-    name: "FAQ",
-    to: "/faq",
-  },
 ];
 
 export default function Navigation({

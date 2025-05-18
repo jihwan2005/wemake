@@ -715,6 +715,62 @@
       "when": 1746939237321,
       "tag": "0101_giant_mariko_yashida",
       "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1747218272180,
+      "tag": "0102_bizarre_goliath",
+      "breakpoints": true
+    },
+    {
+      "idx": 103,
+      "version": "7",
+      "when": 1747221136740,
+      "tag": "0103_lucky_norman_osborn",
+      "breakpoints": true
+    },
+    {
+      "idx": 104,
+      "version": "7",
+      "when": 1747290619022,
+      "tag": "0104_regular_ultragirl",
+      "breakpoints": true
+    },
+    {
+      "idx": 105,
+      "version": "7",
+      "when": 1747310589160,
+      "tag": "0105_dark_warstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1747405114879,
+      "tag": "0106_omniscient_sprite",
+      "breakpoints": true
+    },
+    {
+      "idx": 107,
+      "version": "7",
+      "when": 1747551228582,
+      "tag": "0107_daily_yellow_claw",
+      "breakpoints": true
+    },
+    {
+      "idx": 108,
+      "version": "7",
+      "when": 1747551663649,
+      "tag": "0108_new_groot",
+      "breakpoints": true
+    },
+    {
+      "idx": 109,
+      "version": "7",
+      "when": 1747554084345,
+      "tag": "0109_many_black_panther",
+      "breakpoints": true
     }
   ]
 }

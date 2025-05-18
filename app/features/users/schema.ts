@@ -10,8 +10,6 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { products } from "../products/schema";
-import { posts } from "../community/schema";
 
 const users = pgSchema("auth").table("users", {
   id: uuid().primaryKey(),
@@ -61,28 +59,6 @@ export const notificationType = pgEnum("notification_type", [
   "mention",
 ]);
 
-export const notifications = pgTable("notifications", {
-  notification_id: bigint({ mode: "number" })
-    .primaryKey()
-    .generatedAlwaysAsIdentity(),
-  source_id: uuid().references(() => profiles.profile_id, {
-    onDelete: "cascade",
-  }),
-  product_id: bigint({ mode: "number" }).references(() => products.product_id, {
-    onDelete: "cascade",
-  }),
-  post_id: bigint({ mode: "number" }).references(() => posts.post_id, {
-    onDelete: "cascade",
-  }),
-  target_id: uuid()
-    .references(() => profiles.profile_id, {
-      onDelete: "cascade",
-    })
-    .notNull(),
-  seen: boolean().default(false).notNull(),
-  type: notificationType().notNull(),
-  created_at: timestamp().notNull().defaultNow(),
-});
 
 export const messageRooms = pgTable("message_rooms", {
   message_room_id: bigint({ mode: "number" })

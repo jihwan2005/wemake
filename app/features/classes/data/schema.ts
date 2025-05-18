@@ -3,6 +3,7 @@ import {
   boolean,
   date,
   decimal,
+  doublePrecision,
   integer,
   pgEnum,
   pgTable,
@@ -10,6 +11,7 @@ import {
   text,
   timestamp,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { profiles } from "../../users/schema";
 import { DIFFICULTY_TYPES } from "../constants/constants";
@@ -553,4 +555,67 @@ export const classMindMap = pgTable("class_mindmap", {
       onDelete: "cascade",
     })
     .notNull(),
+});
+
+export const classMindMapNode = pgTable("class_mindmap_node", {
+  mindmap_id: bigint({ mode: "number" })
+    .references(() => classMindMap.mindmap_id, { onDelete: "cascade" })
+    .notNull(),
+  node_id: text().primaryKey(),
+  parent_id: text().references((): AnyPgColumn => classMindMapNode.node_id, {
+    onDelete: "cascade",
+  }),
+  node_label: text(),
+  position_x: doublePrecision().notNull(),
+  position_y: doublePrecision().notNull(),
+});
+
+export const classMindMapEdge = pgTable(
+  "class_mindmap_edge",
+  {
+    mindmap_id: bigint({ mode: "number" })
+      .references(() => classMindMap.mindmap_id, { onDelete: "cascade" })
+      .notNull(),
+    edge_id: text().primaryKey(),
+    source_node_id: text()
+      .notNull()
+      .references(() => classMindMapNode.node_id, { onDelete: "cascade" }),
+    target_node_id: text()
+      .notNull()
+      .references(() => classMindMapNode.node_id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.source_node_id, table.target_node_id] }),
+  ]
+);
+
+export const classMindMapThumbnail = pgTable("class_mindmap_thumbnail", {
+  mindmap_id: bigint({ mode: "number" })
+    .primaryKey()
+    .references(() => classMindMap.mindmap_id, { onDelete: "cascade" }),
+  thumbnail_base64: text().notNull(), // base64 문자열 저장 (또는 bytea로 저장 가능)
+});
+
+export const classBook = pgTable("class_book", {
+  book_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  class_post_id: bigint({ mode: "number" })
+    .notNull()
+    .references(() => classPosts.class_post_id, {
+      onDelete: "cascade",
+    }),
+  book_title: text().notNull(),
+  profile_id: uuid()
+    .references(() => profiles.profile_id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
+  updated_at: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const classBookCover = pgTable("class_book_cover", {
+  book_id: bigint({ mode: "number" })
+    .primaryKey()
+    .references(() => classBook.book_id, { onDelete: "cascade" }),
+  cover_base64: text(), // base64 문자열 저장 (또는 bytea로 저장 가능)
 });

@@ -8,54 +8,6 @@ import {
 
 export default [
   index("common/pages/home-page.tsx"),
-  ...prefix("products", [
-    index("features/products/pages/products-page.tsx"),
-    layout("features/products/layouts/leaderboard-layout.tsx", [
-      ...prefix("leaderboards", [
-        index("features/products/pages/leaderboard-page.tsx"),
-        route(
-          "/yearly/:year",
-          "features/products/pages/yearly-leaderboard-page.tsx"
-        ),
-        route(
-          "/monthly/:year/:month",
-          "features/products/pages/monthly-leaderboard-page.tsx"
-        ),
-        route(
-          "/daily/:year/:month/:day",
-          "features/products/pages/daily-leaderboard-page.tsx"
-        ),
-        route(
-          "/weekly/:year/:week",
-          "features/products/pages/weekly-leaderboard-page.tsx"
-        ),
-        route(
-          "/:period",
-          "features/products/pages/leaderboard-redirection-page.tsx"
-        ),
-      ]),
-    ]),
-    ...prefix("categories", [
-      index("features/products/pages/categories-page.tsx"),
-      route("/:category", "features/products/pages/category-page.tsx"),
-    ]),
-    route("/search", "features/products/pages/search-page.tsx"),
-    route("/submit", "features/products/pages/submit-product-page.tsx"),
-    route("/promote", "features/products/pages/promote-page.tsx"),
-    ...prefix("/:productId", [
-      index("features/products/pages/product-redirect-page.tsx"),
-      layout("features/products/layouts/product-overview-layout.tsx", [
-        route("/overview", "features/products/pages/product-overview-page.tsx"),
-        ...prefix("/reviews", [
-          index("features/products/pages/product-reviews-page.tsx"),
-        ]),
-      ]),
-    ]),
-  ]),
-  ...prefix("/ideas", [
-    index("features/ideas/pages/ideas-page.tsx"),
-    route("/:ideaId", "features/ideas/pages/idea-page.tsx"),
-  ]),
   ...prefix("/classes", [
     index("features/classes/pages/main/classes-page.tsx"),
     route(":classId", "features/classes/pages/main/class-page.tsx"),
@@ -67,6 +19,11 @@ export default [
     route(
       ":classId/mindmaps",
       "features/classes/pages/mindmap/class-mindmaps-page.tsx"
+    ),
+    route(":classId/books", "features/classes/pages/book/class-books-page.tsx"),
+    route(
+      ":classId/books/:bookId",
+      "features/classes/pages/book/class-book-page.tsx"
     ),
     route(
       ":classId/mindmaps/:mindmapId",
@@ -180,16 +137,6 @@ export default [
       ]),
     ]),
   ]),
-  ...prefix("/feedback", [
-    index("features/feedback/pages/feedback-page.tsx"),
-    route("/submit", "features/feedback/pages/submit-feedback-page.tsx"),
-  ]),
-  ...prefix("/faq", [index("features/faq/pages/faq-page.tsx")]),
-  ...prefix("/jobs", [
-    index("features/jobs/pages/jobs-page.tsx"),
-    route("/:jobId", "features/jobs/pages/job-page.tsx"),
-    route("/submit", "features/jobs/pages/submit-job-page.tsx"),
-  ]),
   ...prefix("/auth", [
     layout("features/auth/layouts/auth-layout.tsx", [
       route("/login", "features/auth/pages/login-page.tsx"),
@@ -204,37 +151,6 @@ export default [
       ]),
     ]),
     route("/logout", "features/auth/pages/logout-page.tsx"),
-  ]),
-  ...prefix("/community", [
-    index("features/community/pages/community-page.tsx"),
-    route("/:postId", "features/community/pages/post-page.tsx"),
-    route("/:postId/upvote", "features/community/pages/upvote-post-page.tsx"),
-    route("/submit", "features/community/pages/submit-post-page.tsx"),
-    route("/votes", "features/community/pages/votes-page.tsx"),
-    route("/:postId/vote", "features/community/pages/vote-post-page.tsx"),
-    route("/videos", "features/community/pages/videos-page.tsx"),
-    route("/videos/:videoId", "features/community/pages/video-page.tsx"),
-    route(
-      "/videos/:videoId/upvote",
-      "features/community/pages/upvote-video-page.tsx"
-    ),
-    route(
-      "/videos/:videoId/reply",
-      "features/community/pages/reply-video-page.tsx"
-    ),
-    route(
-      "/videos/:videoId/delete",
-      "features/community/pages/delete-video-page.tsx"
-    ),
-    route(
-      "/videos/:videoId/update",
-      "features/community/pages/update-video-page.tsx"
-    ),
-  ]),
-  ...prefix("/teams", [
-    index("features/teams/pages/teams-page.tsx"),
-    route("/:teamId", "features/teams/pages/team-page.tsx"),
-    route("/create", "features/teams/pages/submit-team-page.tsx"),
   ]),
   ...prefix("/my", [
     layout("features/users/layouts/dashboard-layout.tsx", [

@@ -710,9 +710,71 @@ export const getClassMindMaps = async (
 ) => {
   const { data, error } = await client
     .from("class_mindmap")
-    .select("*")
+    .select("*, class_mindmap_thumbnail (thumbnail_base64)")
     .eq("class_post_id", Number(classId))
     .eq("profile_id", userId);
+  if (error) throw error;
+  return data;
+};
+
+export const getClassMindmapNodesById = async (
+  client: SupabaseClient<Database>,
+  { mindmapId }: { mindmapId: string }
+) => {
+  const { data, error } = await client
+    .from("class_mindmap_node")
+    .select("*")
+    .eq("mindmap_id", Number(mindmapId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassMindmapEdgesById = async (
+  client: SupabaseClient<Database>,
+  { mindmapId }: { mindmapId: string }
+) => {
+  const { data, error } = await client
+    .from("class_mindmap_edge")
+    .select("*")
+    .eq("mindmap_id", Number(mindmapId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassMindMapThumbnailById = async (
+  client: SupabaseClient<Database>,
+  { mindmapId }: { mindmapId: string }
+) => {
+  const { data, error } = await client
+    .from("class_mindmap_thumbnail")
+    .select("*")
+    .eq("mindmap_id", Number(mindmapId));
+  if (error) throw error;
+  return data;
+};
+
+export const getClassBooks = async (
+  client: SupabaseClient<Database>,
+  { classId, userId }: { classId: string; userId: string }
+) => {
+  const { data, error } = await client
+    .from("class_book")
+    .select("*, class_book_cover (cover_base64)")
+    .eq("class_post_id", Number(classId))
+    .eq("profile_id", userId);
+  if (error) throw error;
+  return data;
+};
+
+export const getClassBookById = async (
+  client: SupabaseClient<Database>,
+  { bookId }: { bookId: string }
+) => {
+  const { data, error } = await client
+    .from("class_book")
+    .select("book_title")
+    .eq("book_id", Number(bookId))
+    .single();
   if (error) throw error;
   return data;
 };

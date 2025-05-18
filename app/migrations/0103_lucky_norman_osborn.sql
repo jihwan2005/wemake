@@ -1,0 +1,2 @@
+ALTER TABLE "class_mindmap_node" ALTER COLUMN "position_x" SET DATA TYPE double precision;--> statement-breakpoint
+ALTER TABLE "class_mindmap_node" ALTER COLUMN "position_y" SET DATA TYPE double precision;

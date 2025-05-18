@@ -1173,3 +1173,123 @@ export const createClassMindMap = async (
   if (error) throw error;
   return data;
 };
+
+export const saveMindmap = async (
+  client: SupabaseClient<Database>,
+  mindmap_id: string,
+  nodes: {
+    node_id: string;
+    parent_id: string | null;
+    position_x: number;
+    position_y: number;
+    node_label: string;
+  }[],
+  edges: {
+    edge_id: string;
+    source_node_id: string;
+    target_node_id: string;
+  }[],
+  thumbnail: string
+) => {
+  const id = Number(mindmap_id);
+
+  // 1. 노드 & 엣지 삭제 (동시에 처리 가능)
+  const [deleteNodesResult, deleteEdgesResult, deleteThumbnailResult] =
+    await Promise.all([
+      client.from("class_mindmap_node").delete().eq("mindmap_id", id),
+      client.from("class_mindmap_edge").delete().eq("mindmap_id", id),
+      client.from("class_mindmap_thumbnail").delete().eq("mindmap_id", id),
+    ]);
+
+  if (
+    deleteNodesResult.error ||
+    deleteEdgesResult.error ||
+    deleteThumbnailResult.error
+  ) {
+    throw (
+      deleteNodesResult.error ||
+      deleteEdgesResult.error ||
+      deleteThumbnailResult.error
+    );
+  }
+
+  // 2. 노드 먼저 insert
+  const insertNodesResult = await client.from("class_mindmap_node").insert(
+    nodes.map((n) => ({
+      mindmap_id: id,
+      node_id: n.node_id,
+      parent_id: n.parent_id,
+      position_x: n.position_x,
+      position_y: n.position_y,
+      node_label: n.node_label,
+    }))
+  );
+
+  if (insertNodesResult.error) {
+    throw insertNodesResult.error;
+  }
+
+  // 3. 노드가 insert 완료된 후, 엣지를 insert
+  const insertEdgesResult = await client.from("class_mindmap_edge").insert(
+    edges.map((e) => ({
+      mindmap_id: id,
+      edge_id: e.edge_id,
+      source_node_id: e.source_node_id,
+      target_node_id: e.target_node_id,
+    }))
+  );
+
+  if (insertEdgesResult.error) {
+    throw insertEdgesResult.error;
+  }
+
+  const insertThumbnailResult = await client
+    .from("class_mindmap_thumbnail")
+    .insert({
+      mindmap_id: id,
+      thumbnail_base64: thumbnail,
+    });
+
+  if (insertThumbnailResult.error) {
+    throw insertThumbnailResult.error;
+  }
+
+  return {
+    nodes: insertNodesResult.data,
+    edges: insertEdgesResult.data,
+    thumbnail: insertThumbnailResult.data,
+  };
+};
+
+export const createClassBook = async (
+  client: SupabaseClient<Database>,
+  { classId, userId, title }: { classId: string; userId: string; title: string }
+) => {
+  const { data, error } = await client
+    .from("class_book")
+    .insert({
+      class_post_id: Number(classId),
+      profile_id: userId,
+      book_title: title,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const createClassBookCover = async (
+  client: SupabaseClient<Database>,
+  { bookId, cover }: { bookId: number; cover: string }
+) => {
+  const { data, error } = await client
+    .from("class_book_cover")
+    .insert({
+      book_id: bookId,
+      cover_base64: cover,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};

@@ -222,8 +222,8 @@ html, body {
 .inputWrapper {
   display: flex;
   height: 20px;
-  position: relative;
   z-index: 1;
+  position: relative;
   pointer-events: none;
 }
  
@@ -236,7 +236,7 @@ html, body {
   align-items: center;
   pointer-events: all;
 }
-
+ 
 .input {
   border: none;
   padding: 0 2px;
@@ -254,7 +254,6 @@ html, body {
   background: rgba(255, 255, 255, 0.25);
   pointer-events: all;
 }
-
 /*
 ---break---
 */

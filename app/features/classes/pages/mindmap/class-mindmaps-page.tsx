@@ -13,7 +13,10 @@ import { Input } from "~/common/components/ui/input";
 import type { Route } from "./+types/class-mindmaps-page";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
-import { getClassMindMaps } from "../../data/queries";
+import {
+  getClassMindMaps,
+  getClassMindMapThumbnailById,
+} from "../../data/queries";
 import { Form, Link, redirect } from "react-router";
 import { createClassMindMap } from "../../data/mutations";
 import {
@@ -88,8 +91,15 @@ export default function ClassMindMapsPage({
                 to={`/classes/${loaderData.classId}/mindmaps/${mindmap.mindmap_id}`}
               >
                 <div
-                  key={mindmap.mindmap_id}
                   className="w-[180px] h-[120px] border rounded-md p-4 flex items-center justify-center cursor-pointer"
+                  style={{
+                    backgroundImage: mindmap.class_mindmap_thumbnail
+                      ?.thumbnail_base64
+                      ? `url(${mindmap.class_mindmap_thumbnail.thumbnail_base64})`
+                      : undefined,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                 />
               </Link>
               <Popover>

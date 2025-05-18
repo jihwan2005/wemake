@@ -14,8 +14,6 @@ import { Settings } from "luxon";
 import { makeSSRClient } from "./supa-client";
 import { getUserById } from "./features/users/queries";
 import { countNotifications } from "./features/users/queries";
-import { Provider } from "react-redux";
-import { store } from "./store/store";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -67,40 +65,40 @@ export default function App({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const isLoggedIn = loaderData.user !== null;
   const isLessonPage = /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
-  const isMindmapPage = /^\/classes\/[^/]+\/mindmap$/.test(pathname);
+  const isMindmapPage = /^\/classes\/[^/]+\/mindmaps(\/[^/]*)?$/.test(pathname);
+
   const hideNavigation =
     pathname.includes("/auth") ||
-    /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname);
+    /^\/classes\/[^/]+\/lesson\/[^/]+$/.test(pathname) ||
+    isMindmapPage;
   return (
-    <Provider store={store}>
-      <div
-        className={
-          pathname.includes("/auth/") || isLessonPage || isMindmapPage
-            ? ""
-            : "py-28 px-5 md:px-20"
-        }
-      >
-        {hideNavigation ? null : (
-          <Navigation
-            isLoggedIn={isLoggedIn}
-            username={loaderData.profile?.username}
-            name={loaderData.profile?.name}
-            avatar={loaderData.profile?.avatar}
-            hasNotifications={loaderData.notificationsCount > 0}
-            hasMessages={false}
-          />
-        )}
-        <Outlet
-          context={{
-            isLoggedIn,
-            name: loaderData.profile?.name,
-            username: loaderData.profile?.username,
-            avatar: loaderData.profile?.avatar,
-            userId: loaderData.user?.id,
-          }}
+    <div
+      className={
+        pathname.includes("/auth/") || isLessonPage || isMindmapPage
+          ? ""
+          : "py-28 px-5 md:px-20"
+      }
+    >
+      {hideNavigation ? null : (
+        <Navigation
+          isLoggedIn={isLoggedIn}
+          username={loaderData.profile?.username}
+          name={loaderData.profile?.name}
+          avatar={loaderData.profile?.avatar}
+          hasNotifications={loaderData.notificationsCount > 0}
+          hasMessages={false}
         />
-      </div>
-    </Provider>
+      )}
+      <Outlet
+        context={{
+          isLoggedIn,
+          name: loaderData.profile?.name,
+          username: loaderData.profile?.username,
+          avatar: loaderData.profile?.avatar,
+          userId: loaderData.user?.id,
+        }}
+      />
+    </div>
   );
 }
 

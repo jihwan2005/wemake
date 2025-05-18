@@ -4,7 +4,12 @@ import { makeSSRClient } from "~/supa-client";
 import { useEffect, useRef, useState } from "react";
 import { getLoggedInUserId } from "~/features/users/queries";
 import type { Route } from "./+types/class-message-page";
-import { sendClassMessageToRoom } from "~/features/classes/data/queries";
+import {
+  getClassMessageRoomNotification,
+  getClassMessagesByClassMessagesRoomId,
+  getClassRoomsParticipant,
+  sendClassMessageToRoom,
+} from "~/features/classes/data/queries";
 import { createMessageImage } from "~/features/classes/data/mutations";
 import { useMessageHandler } from "~/features/classes/hooks/useMessageHandler";
 import ClassMessageHeader from "../components/message/ClassMessageHeader";
